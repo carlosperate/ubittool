@@ -12,7 +12,7 @@ from pyOCD.board import MbedBoard
 from intelhex import bin2hex
 
 #: MAJOR, MINOR, RELEASE, STATUS [alpha, beta, final], VERSION
-__version__ = "0.1.0"
+__version__ = '0.1alpha1'
 
 
 def get_version():

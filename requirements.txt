@@ -1,2 +1,3 @@
 pyOCD
-uflash
+uflash>=1.0.8
+intelhex
