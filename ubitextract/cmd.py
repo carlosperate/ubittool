@@ -11,16 +11,6 @@ from cStringIO import StringIO
 from pyOCD.board import MbedBoard
 from intelhex import bin2hex
 
-#: MAJOR, MINOR, RELEASE, STATUS [alpha, beta, final], VERSION
-__version__ = '0.1alpha1'
-
-
-def get_version():
-    """
-    Returns a string representation of the version information of this project.
-    """
-    return __version__
-
 
 def get_microbit():
     """

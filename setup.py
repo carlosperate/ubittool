@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
-from sys import version_info
+import sys
 from setuptools import setup
+from ubitextract import __version__
 
 # Stop if not using Python 2
-if version_info.major != 1:
+if sys.version_info.major != 2:
     print("Due to dependencies, this package is Python 2 only.")
     sys.exit(1)
 
@@ -15,14 +16,14 @@ with open('requirements.txt') as f:
 
 setup(
     name='ubitextract',
-    version='0.1alpha1',
+    version=__version__,
     description='A module and utility to read the memory contents of the BBC micro:bit.',
     long_description=readme,
     author='carlosperate',
     author_email='carlosperate@embeddedlog.com',
     url='https://github.com/carlosperate/ubitextract',
     install_requires=requires,
-    py_modules=['ubitextract', ],
+    packages=['ubitextract'],
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -37,6 +38,6 @@ setup(
         'Topic :: Software Development :: Embedded Systems',
     ],
     entry_points={
-        'console_scripts': ['ubitextract=ubitextract:main'],
+        'console_scripts': ['ubitextract=ubitextract.__main__:main'],
     }
 )
