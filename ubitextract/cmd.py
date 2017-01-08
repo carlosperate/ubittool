@@ -4,81 +4,143 @@
 Description
 """
 from __future__ import print_function, absolute_import
+import os
 import sys
 import logging
 import argparse
 from cStringIO import StringIO
 from pyOCD.board import MbedBoard
 from intelhex import bin2hex
+from uflash import extract_script
 
 
-def get_microbit():
+MICROBIT_FLASH_SIZE_BYTES = (256*1024)
+MICROBIT_START_ADDRESS = 0x0
+MICROPYTHON_START_ADDRESS = 0x3E000
+
+
+def read_flash(address=0x0, count=4):
     """
-    Description.
-    :return:
+    Reads the contents of the micro:bit flash memory from the memory address
+    and for as many bytes as indicated by the arguments.
+    :param address: Integer indicating the start address to read.
+    :param count: Hoy many bytes to read.
+    :return: A list of integers, each representing a byte of data.
     """
+    if not (MICROBIT_START_ADDRESS <= address < MICROBIT_FLASH_SIZE_BYTES) or \
+            (address + count) > MICROBIT_FLASH_SIZE_BYTES:
+        # TODO: Log an error, maybe through an exception ?
+        return ''
+
+    # TODO: Implement a time out, figure out possible exceptions
     board = MbedBoard.chooseBoard()
     target = board.target
     target.resume()
     target.halt()
-    return board
+    # TODO: Figure out what type of exceptions this can throw as well
+    flash_data = target.readBlockMemoryUnaligned8(address, count)
+    board.uninit()
+    return flash_data
 
 
-def read_flash(target, address=0x0, count=4):
+def bytes_to_hex(data, hex_op, offset=0x0000):
     """
-    The micro:bit flash memory space starts at 0x00000000 and ends at
-    0x40000000.
-    :param target:
-    :param address:
-    :param count:
-    :return:
-    """
-    if not (0x0 <= address < 0x40000000):
-        # TODO: Log an error, maybe through an exception ?
-        return ''
-
-    # TODO: Figure out what type of exceptions this can throw
-    return target.readBlockMemoryUnaligned8(address, count)
-
-
-def data_to_hex(data, hex_op):
-    """
-    Description.
-    :param data:
-    :param hex_op:
-    :return:
+    Takes a list of bytes and writes it into the hex_op file in the Intel
+    Hex format.
+    :param data: List of integers, each representing a single byte.
+    :param hex_op: Output file to write the intel hex string.
+    :param offset: Start address offset.
+    :return: It does not return anything, all data written to hex_op argument.
     """
     fake_bin = StringIO()
     fake_bin.write(bytearray(data))
     fake_bin.seek(0)
-    bin2hex(fake_bin, hex_op,offset=0x0000)
+    bin2hex(fake_bin, hex_op, offset=offset)
+    fake_bin.close()
 
 
-def flash_to_hex(file_path=None):
+def read_python_code():
     """
-    Reads all the microbit flash contents into a file if given by the file_path
-    argument, or prints it into the stdout.
-    :param file_path:
-    :return:
+    Reads the MicroPython script from the micro:bit flash contents
+    :return: String with the MicroPython code.
     """
-    board = get_microbit()
-    flash_data = read_flash(board.target, address=0x0, count=(256*1024))
-    board.uninit()
+    flash_data = read_flash(
+            address=MICROPYTHON_START_ADDRESS,
+            count=(MICROBIT_FLASH_SIZE_BYTES - MICROPYTHON_START_ADDRESS))
+    hex_file = StringIO()
+    bytes_to_hex(flash_data, hex_file, offset=MICROPYTHON_START_ADDRESS)
+    python_code = extract_script(hex_file.getvalue())
+    hex_file.close()
+    return python_code
+
+
+def extract_py_script(file_path=None):
+    """
+    Extracts the MicroPython script and writes it a file if given by the
+    argument, or prints it into the std out.
+    :param file_path: Path to the output file to write the MicroPython code.
+    :return: Nothing.
+    """
+    print('Extracting MicroPython script from flash:')
 
     if file_path:
-        # TODO: Check file is valid
-        # TODO: proper catch exception
-        hex_file = open(file_path, 'w')
+        if os.path.isfile(file_path):
+            print('Abort: The %s file already exists.' % file_path)
+            return
+        else:
+            print('Writing MicroPython code into file: %s' % file_path)
+    else:
+        print('Writing MicroPython code into console.')
+
+    print('Reading the micro:bit flash contents...')
+    python_code = read_python_code()
+
+    print('Saving the MicroPython code...')
+    if file_path:
+        with open(file_path, 'w') as python_script:
+            python_script.write(python_code)
     else:
         hex_file = StringIO()
-
-    data_to_hex(flash_data, hex_file)
-
-    if not file_path:
-        # TODO: Redirect hex_file to stdout instead of using StringIO ?
+        bytes_to_hex(python_code, hex_file)
         print(hex_file.getvalue())
+        hex_file.close()
 
-    hex_file.close()
+    print('Finished successfully!')
+
+
+def extract_full_hex(file_path=None):
+    """
+    Reads all the micro:bit flash contents into a file if given by the argument,
+    or prints it into the std out.
+    :param file_path: Path to the output file to write the flash contents.
+    :return: Nothing.
+    """
+    print('Extracting the full flash contents:')
+
+    if file_path:
+        if os.path.isfile(file_path):
+            print('Abort: The %s file already exists.' % file_path)
+            return
+        else:
+            print('Writing flash into file: %s' % file_path)
+    else:
+        print('Writing flash into console.')
+
+    print('Reading the micro:bit flash contents...')
+    flash_data = read_flash(
+            address=MICROBIT_START_ADDRESS, count=MICROBIT_FLASH_SIZE_BYTES)
+
+    print('Saving the flash contents...')
+    if file_path:
+        with open(file_path, 'w') as hex_file:
+            bytes_to_hex(flash_data, hex_file)
+    else:
+        hex_file = StringIO()
+        bytes_to_hex(flash_data, hex_file)
+        print(hex_file.getvalue())
+        hex_file.close()
+
+    print('Finished successfully!')
 
 
 def main(argv=None):
@@ -116,11 +178,11 @@ def main(argv=None):
         args = parser.parse_args(argv)
 
         if args.script:
-            print("The 'script' flag functionality is not implemented.")
+            extract_py_script(args.script)
         elif args.micropython:
             print("The 'micropython' flag functionality is not implemented.")
         elif args.flash:
-            flash_to_hex(args.flash)
+            extract_full_hex(args.flash)
         else:
             print("what?")
     except Exception as ex:

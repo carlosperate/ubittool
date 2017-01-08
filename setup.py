@@ -3,6 +3,7 @@ import sys
 from setuptools import setup
 from ubitextract import __version__
 
+
 # Stop if not using Python 2
 if sys.version_info.major != 2:
     print("Due to dependencies, this package is Python 2 only.")
@@ -13,6 +14,7 @@ with open('README.md') as f:
     readme = f.read()
 with open('requirements.txt') as f:
     requires = f.read().splitlines()
+
 
 setup(
     name='ubitextract',
@@ -25,6 +27,7 @@ setup(
     install_requires=requires,
     packages=['ubitextract'],
     license='MIT',
+    keywords=['microbit', 'micro:bit', 'bbcmicrobit', ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -33,6 +36,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Topic :: Education',
         'Topic :: Software Development :: Embedded Systems',
