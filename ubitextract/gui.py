@@ -7,7 +7,7 @@
 from __future__ import absolute_import, print_function
 from sys import version_info
 from idlelib.WidgetRedirector import WidgetRedirector
-from cmd import read_python_code
+from ubitextract.cmd import read_python_code
 if version_info.major == 3:
     # Tkinter imports
     from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,

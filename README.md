@@ -13,8 +13,14 @@ To run:
 ubitextract -s extracted_script.py
 ```
 
-To run the GUI there is no command line shortcut yet. So from this directory:
+To run the GUI:
 
 ```
-python ubitextract\gui.py
+ubitextract --gui
+```
+
+or from this directory:
+
+```
+python -m ubitextract --gui
 ```
