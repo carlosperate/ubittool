@@ -41,12 +41,14 @@ install:
   - cmd: pip freeze
 
   # Build mu using PyInstaller, rename dist folder
-  - cmd: pyinstaller ubitextract\gui.py --onefile --name ubitextract-gui
+  - cmd: pyinstaller package\pyinstaller-cli.spec
+  - cmd: pyinstaller package\pyinstaller-gui.spec
   - ps: Rename-Item -path .\dist artifacts
   - cmd: dir artifacts
 
   # Create AppVeyor artifact
   - ps: Push-AppveyorArtifact .\artifacts\ubitextract-gui.exe
+  - ps: Push-AppveyorArtifact .\artifacts\ubitextract-cli.exe
 
 # Not a project with an msbuild file, build done at install.
 build: None

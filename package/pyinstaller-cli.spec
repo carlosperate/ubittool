@@ -1,7 +1,12 @@
 # -*- mode: python -*-
+from sys import version_info
 
 block_cipher = None
 
+if version_info.major == 3:
+    excludes = ['tkinter']
+elif version_info.major == 2:
+    excludes = ['Tkinter', 'tkMessageBox', 'tkFileDialog']
 
 a = Analysis(['../ubitextract/cmd.py'],
              pathex=['../'],
@@ -10,7 +15,7 @@ a = Analysis(['../ubitextract/cmd.py'],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
-             excludes=[],
+             excludes=excludes,
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)
