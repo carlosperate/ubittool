@@ -1,8 +1,5 @@
 # -*- mode: python -*-
 
-block_cipher = None
-
-
 a = Analysis(['../ubitflashtool/gui.py'],
              pathex=['../'],
              binaries=None,
@@ -13,11 +10,11 @@ a = Analysis(['../ubitflashtool/gui.py'],
              excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
-             cipher=block_cipher)
+             cipher=None)
 
 pyz = PYZ(a.pure,
           a.zipped_data,
-          cipher=block_cipher)
+          cipher=None)
 
 exe = EXE(pyz,
           a.scripts,
