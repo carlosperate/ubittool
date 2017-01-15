@@ -7,7 +7,7 @@
 from __future__ import absolute_import, print_function
 from sys import version_info
 from idlelib.WidgetRedirector import WidgetRedirector
-from ubitextract.cmd import read_python_code
+from ubitflashtool.cmd import read_python_code
 if version_info.major == 3:
     # Tkinter imports
     from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,
@@ -37,14 +37,14 @@ class ReadOnlyEditor(Text):
                 'delete', lambda *args, **kw: 'break')
 
 
-class UBitExtractFrame():
+class UBitFlashToolFrame():
     """
     Attaches a Frame to a TK window with a text editor.
     """
 
     def __init__(self, root):
         self.root = root
-        self.root.title('uBitExtract')
+        self.root.title('uBitFlashTool')
 
         frame = Frame(root)
         self.y_scrollbar = Scrollbar(frame, orient='vertical')
@@ -130,7 +130,7 @@ class UBitExtractFrame():
 def open_editor():
     root = Tk()
     root.geometry('{}x{}'.format(600, 480))
-    editor = UBitExtractFrame(root)
+    editor = UBitFlashToolFrame(root)
     root.mainloop()
 
 

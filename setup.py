@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 import sys
 from setuptools import setup
-from ubitextract import __version__
+from ubitflashtool import __version__
 
 
 # Stop if not using Python 2
@@ -17,15 +17,15 @@ with open('requirements.txt') as f:
 
 
 setup(
-    name='ubitextract',
+    name='ubitflashtool',
     version=__version__,
     description='A module and utility to read the memory contents of the BBC micro:bit.',
     long_description=readme,
     author='carlosperate',
     author_email='carlosperate@embeddedlog.com',
-    url='https://github.com/carlosperate/ubitextract',
+    url='https://github.com/carlosperate/ubitflashtool',
     install_requires=requires,
-    packages=['ubitextract'],
+    packages=['ubitflashtool'],
     license='MIT',
     keywords=['microbit', 'micro:bit', 'bbcmicrobit', ],
     classifiers=[
@@ -42,6 +42,6 @@ setup(
         'Topic :: Software Development :: Embedded Systems',
     ],
     entry_points={
-        'console_scripts': ['ubitextract=ubitextract.__main__:main'],
+        'console_scripts': ['ubitflashtool=ubitflashtool.__main__:main'],
     }
 )

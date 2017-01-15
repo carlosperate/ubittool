@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import sys
-from ubitextract.cmd import main
-from ubitextract.gui import open_editor
+from ubitflashtool.cmd import main
+from ubitflashtool.gui import open_editor
 
 
 if __name__ == "__main__":

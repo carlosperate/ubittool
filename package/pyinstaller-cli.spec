@@ -8,7 +8,7 @@ if version_info.major == 3:
 elif version_info.major == 2:
     excludes = ['Tkinter', 'tkMessageBox', 'tkFileDialog']
 
-a = Analysis(['../ubitextract/cmd.py'],
+a = Analysis(['../ubitflashtool/cmd.py'],
              pathex=['../'],
              binaries=None,
              datas=None,
@@ -29,7 +29,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='ubitextract-cli',
+          name='ubitflashtool-cli',
           strip=False,
           upx=True,
           # False hides the cli window, useful ON to debug

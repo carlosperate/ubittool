@@ -47,8 +47,8 @@ install:
   - cmd: dir artifacts
 
   # Create AppVeyor artifact
-  - ps: Push-AppveyorArtifact .\artifacts\ubitextract-gui.exe
-  - ps: Push-AppveyorArtifact .\artifacts\ubitextract-cli.exe
+  - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-gui.exe
+  - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-cli.exe
 
 # Not a project with an msbuild file, build done at install.
 build: None

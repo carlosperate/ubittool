@@ -150,13 +150,13 @@ def main(argv=None):
     :return: None
     """
     HELP_TEXT = """ Usage:
-    ubitextract extracted_script.py
-    ubitextract -s extracted_script.py
-    ubitextract --script extracted_script.py
-    ubitextract -m extracted_micropython.hex
-    ubitextract --micropython extracted_micropython.hex
-    ubitextract -f full_flash.hex
-    ubitextract --flash full_flash.hex
+    ubitflashtool extracted_script.py
+    ubitflashtool -s extracted_script.py
+    ubitflashtool --script extracted_script.py
+    ubitflashtool -m extracted_micropython.hex
+    ubitflashtool --micropython extracted_micropython.hex
+    ubitflashtool -f full_flash.hex
+    ubitflashtool --flash full_flash.hex
     """
     logging.basicConfig(level=logging.INFO)
 

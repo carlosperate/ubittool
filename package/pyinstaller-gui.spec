@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['../ubitextract/gui.py'],
+a = Analysis(['../ubitflashtool/gui.py'],
              pathex=['../'],
              binaries=None,
              datas=None,
@@ -24,7 +24,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='ubitextract-gui',
+          name='ubitflashtool-gui',
           strip=False,
           upx=True,
           # False hides the cli window, useful ON to debug
@@ -32,6 +32,6 @@ exe = EXE(pyz,
           debug=False)
 
 app = BUNDLE(exe,
-             name='ubitextract-gui.app',
+             name='ubitflashtool-gui.app',
              bundle_identifier=None,
              info_plist={'NSHighResolutionCapable': 'True'})
