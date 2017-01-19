@@ -4,13 +4,10 @@
 Description
 """
 from __future__ import print_function, absolute_import
-import os
 import sys
-import logging
-import argparse
 from cStringIO import StringIO
 from pyOCD.board import MbedBoard
-from intelhex import bin2hex
+from intelhex import IntelHex
 from uflash import extract_script
 
 
@@ -33,7 +30,7 @@ def read_flash(address=0x0, count=4):
         return ''
 
     # TODO: Implement a time out, figure out possible exceptions
-    board = MbedBoard.chooseBoard()
+    board = MbedBoard.chooseBoard(blocking=False)
     target = board.target
     target.resume()
     target.halt()
@@ -43,154 +40,91 @@ def read_flash(address=0x0, count=4):
     return flash_data
 
 
-def bytes_to_hex(data, hex_op, offset=0x0000):
+def bytes_to_intel_hex(data, offset=0x0000):
     """
-    Takes a list of bytes and writes it into the hex_op file in the Intel
-    Hex format.
+    Takes a list of bytes and returns a string in the Intel Hex format.
     :param data: List of integers, each representing a single byte.
-    :param hex_op: Output file to write the intel hex string.
     :param offset: Start address offset.
-    :return: It does not return anything, all data written to hex_op argument.
+    :return: A string with the Intel Hex encoded data.
     """
-    fake_bin = StringIO()
-    fake_bin.write(bytearray(data))
-    fake_bin.seek(0)
-    bin2hex(fake_bin, hex_op, offset=offset)
-    fake_bin.close()
+    i_hex = IntelHex()
+    i_hex.frombytes(data, offset)
+
+    fake_file = StringIO()
+    try:
+        i_hex.tofile(fake_file, format='hex')
+    except IOError as e:
+        sys.stderr.write("ERROR: File write: %s\n%s" % (fake_file, str(e)))
+        return
+
+    intel_hex_str = fake_file.getvalue()
+    fake_file.close()
+    return intel_hex_str
+
+
+def bytes_to_pretty_hex(data, offset=0x0000):
+    """
+    Takes a list of bytes and converts it into a string of a nicely formatted
+    and ASCII decoded hex.
+    :param data: List of integers, each representing a single byte.
+    :param offset: Start address offset.
+    :return: A string with the formatted hex data.
+    """
+    i_hex = IntelHex()
+    i_hex.frombytes(data, offset)
+
+    fake_file = StringIO()
+    try:
+        i_hex.dump(tofile=fake_file, width=16, withpadding=False)
+    except IOError as e:
+        sys.stderr.write("ERROR: File write: %s\n%s" % (fake_file, str(e)))
+        return
+
+    pretty_hex_str = fake_file.getvalue()
+    fake_file.close()
+    return pretty_hex_str
+
+
+def read_flash_hex(start_address=0x0, count=4, decoded_hex=False):
+    """
+    Reads the as many bytes of the micro:bit flash and from the given address
+    as indicated by the arguments. Can return it in Intel Hex of pretty
+    formatted and decoded hex string.
+    :param address: Integer indicating the start address to read.
+    :param count: Hoy many bytes to read.
+    :param decoded_hex: True selects nice decided format, False selects Intel
+            Hex format.
+    :return: String with the hex formatted as indicated.
+    """
+    flash_data = read_flash(address=start_address, count=count)
+    if decoded_hex:
+        return bytes_to_pretty_hex(flash_data)
+    else:
+        return bytes_to_intel_hex(flash_data)
+
+
+def read_full_flash_hex(decoded_hex=False):
+    """
+    Shortcut to read all flash contents without exposing the internal
+    addresses.
+    :param decoded_hex: True selects nice decided format, False selects Intel
+            Hex format.
+    :return: String with the hex formatted as indicated.
+    """
+    return read_flash_hex(
+        start_address=MICROBIT_START_ADDRESS, count=MICROBIT_FLASH_SIZE_BYTES,
+        decoded_hex=decoded_hex)
 
 
 def read_python_code():
     """
-    Reads the MicroPython script from the micro:bit flash contents
+    Reads the MicroPython script from the micro:bit flash contents.
     :return: String with the MicroPython code.
     """
     flash_data = read_flash(
             address=MICROPYTHON_START_ADDRESS,
             count=(MICROBIT_FLASH_SIZE_BYTES - MICROPYTHON_START_ADDRESS))
-    hex_file = StringIO()
-    bytes_to_hex(flash_data, hex_file, offset=MICROPYTHON_START_ADDRESS)
-    python_code = extract_script(hex_file.getvalue())
-    hex_file.close()
+    py_code_hex = bytes_to_intel_hex(flash_data,
+                                     offset=MICROPYTHON_START_ADDRESS)
+    python_code = extract_script(py_code_hex)
     return python_code
-
-
-def extract_py_script(file_path=None):
-    """
-    Extracts the MicroPython script and writes it a file if given by the
-    argument, or prints it into the std out.
-    :param file_path: Path to the output file to write the MicroPython code.
-    :return: Nothing.
-    """
-    print('Extracting MicroPython script from flash:')
-
-    if file_path:
-        if os.path.isfile(file_path):
-            print('Abort: The %s file already exists.' % file_path)
-            return
-        else:
-            print('Writing MicroPython code into file: %s' % file_path)
-    else:
-        print('Writing MicroPython code into console.')
-
-    print('Reading the micro:bit flash contents...')
-    python_code = read_python_code()
-
-    print('Saving the MicroPython code...')
-    if file_path:
-        with open(file_path, 'w') as python_script:
-            python_script.write(python_code)
-    else:
-        hex_file = StringIO()
-        bytes_to_hex(python_code, hex_file)
-        print(hex_file.getvalue())
-        hex_file.close()
-
-    print('Finished successfully!')
-
-
-def extract_full_hex(file_path=None):
-    """
-    Reads all the micro:bit flash contents into a file if given by the argument,
-    or prints it into the std out.
-    :param file_path: Path to the output file to write the flash contents.
-    :return: Nothing.
-    """
-    print('Extracting the full flash contents:')
-
-    if file_path:
-        if os.path.isfile(file_path):
-            print('Abort: The %s file already exists.' % file_path)
-            return
-        else:
-            print('Writing flash into file: %s' % file_path)
-    else:
-        print('Writing flash into console.')
-
-    print('Reading the micro:bit flash contents...')
-    flash_data = read_flash(
-            address=MICROBIT_START_ADDRESS, count=MICROBIT_FLASH_SIZE_BYTES)
-
-    print('Saving the flash contents...')
-    if file_path:
-        with open(file_path, 'w') as hex_file:
-            bytes_to_hex(flash_data, hex_file)
-    else:
-        hex_file = StringIO()
-        bytes_to_hex(flash_data, hex_file)
-        print(hex_file.getvalue())
-        hex_file.close()
-
-    print('Finished successfully!')
-
-
-def main(argv=None):
-    """
-    Entry point for the command line interface.
-    :param argv:
-    :return: None
-    """
-    HELP_TEXT = """ Usage:
-    ubitflashtool extracted_script.py
-    ubitflashtool -s extracted_script.py
-    ubitflashtool --script extracted_script.py
-    ubitflashtool -m extracted_micropython.hex
-    ubitflashtool --micropython extracted_micropython.hex
-    ubitflashtool -f full_flash.hex
-    ubitflashtool --flash full_flash.hex
-    """
-    logging.basicConfig(level=logging.INFO)
-
-    if not argv:
-        print(HELP_TEXT)
-        sys.exit(0)
-    try:
-        parser = argparse.ArgumentParser(description=HELP_TEXT)
-        # FIXME: This is an incorrect usage of ArgumentParser, read the docs
-        parser.add_argument('-f', '--flash',
-                            nargs='?',
-                            help=("Extract all microbit flash contents."), )
-        parser.add_argument('-s', '--script',
-                            nargs='?',
-                            help=("Extract python source from the microbit."), )
-        parser.add_argument('-m', '--micropython',
-                            nargs='?',
-                            help='Extract the micropython source code')
-        args = parser.parse_args(argv)
-
-        if args.script:
-            extract_py_script(args.script)
-        elif args.micropython:
-            print("The 'micropython' flag functionality is not implemented.")
-        elif args.flash:
-            extract_full_hex(args.flash)
-        else:
-            print("what?")
-    except Exception as ex:
-        # The exception of no return. Print the exception information.
-        print(ex)
-
-    sys.exit(0)
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
