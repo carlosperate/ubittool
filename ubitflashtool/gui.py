@@ -5,14 +5,15 @@
 # flash or a hex file.
 #
 from __future__ import absolute_import, print_function
-from sys import version_info
+import sys
+import logging
 from idlelib.WidgetRedirector import WidgetRedirector
-from ubitflashtool.cmd import read_python_code
-if version_info.major == 3:
+from ubitflashtool.cmd import read_python_code, read_full_flash_hex
+if sys.version_info.major == 3:
     # Tkinter imports
     from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,
                          Frame)
-elif version_info.major == 2:
+elif sys.version_info.major == 2:
     # Tkinter imports
     from Tkinter import (Tk, Text, Scrollbar, Menu, Frame)
     import tkMessageBox as messagebox
@@ -37,36 +38,57 @@ class ReadOnlyEditor(Text):
                 'delete', lambda *args, **kw: 'break')
 
 
-class UBitFlashToolFrame():
+class StdoutRedirector(object):
+    """
+    A class to redirect stdout to a text widget.
+    """
+    def __init__(self, text_area, text_color=None):
+        self.text_area = text_area
+        self.text_color = text_color
+        self.tag = 'colour_change_%s' % text_color
+        if self.text_color:
+            self.text_area.tag_configure(self.tag, foreground=text_color)
+
+    def write(self, string):
+        start_position = self.text_area.index('insert')
+        self.text_area.insert('end', string)
+        if self.text_color:
+            self.text_area.tag_add(
+                    self.tag, start_position, self.text_area.index('insert'))
+
+    def flush(self):
+        pass
+
+
+class UBitFlashToolWindow(Tk):
     """
     Attaches a Frame to a TK window with a text editor.
     """
 
-    def __init__(self, root):
-        self.root = root
-        self.root.title('uBitFlashTool')
+    def __init__(self, *args, **kwargs):
+        Tk.__init__(self, *args, **kwargs)
+        self.title('uBitFlashTool')
+        self.geometry('{}x{}'.format(600, 480))
 
-        frame = Frame(root)
-        self.y_scrollbar = Scrollbar(frame, orient='vertical')
-        self.editor = ReadOnlyEditor(frame, yscrollcommand=self.y_scrollbar.set)
-        self.editor.pack(side='left', fill='both', expand=1)
-        self.editor.config(wrap='char', width=1)
-        self.editor.focus()
-        self.y_scrollbar.pack(side='right', fill='y')
-        self.y_scrollbar.config(command=self.editor.yview)
-        frame.pack(fill='both', expand=1)
+        self.frame_editor = Frame(self)
+        self.frame_console = Frame(self)
+        self.menu_bar = Menu(self)
+        self.editor = None
+        self.console = None
+
+        self.set_menu_bar(self.menu_bar)
+        self.set_editor(self.frame_editor)
+        self.set_console(self.frame_console)
+        self.activate_console()
 
         # instead of closing the window, execute a function
-        self.root.protocol('WM_DELETE_WINDOW', self.file_quit)
+        self.protocol('WM_DELETE_WINDOW', self.file_quit)
 
-        self.add_menu_bad()
         self.bind_shorcuts()
 
-    def add_menu_bad(self):
-        # create a top level menu
-        self.menubar = Menu(self.root)
+    def set_menu_bar(self, menu):
         # Menu item File
-        file_menu = Menu(self.menubar, tearoff=0)
+        file_menu = Menu(menu, tearoff=0)
         file_menu.add_command(label='Open', underline=1,
                               command=self.file_open, accelerator='Ctrl+O')
         file_menu.add_command(label='Save As', underline=5,
@@ -74,17 +96,57 @@ class UBitFlashToolFrame():
         file_menu.add_separator()
         file_menu.add_command(label='Exit', underline=2,
                               command=self.file_quit, accelerator='Alt+F4')
-        self.menubar.add_cascade(label='File', underline=0, menu=file_menu)
+        menu.add_cascade(label='File', underline=0, menu=file_menu)
         # Menu item micro:bit
-        ubit_menu = Menu(self.menubar, tearoff=0)
-        ubit_menu.add_command(label='Read micro:bit', underline=1,
-                              command=self.open_microbit_code, accelerator='Ctrl+N')
-        ubit_menu.add_command(label='Open Hex file', underline=1,
-                              command=self.unimplemented, accelerator='Ctrl+H')
-        self.menubar.add_cascade(
-                label='micro:bit', underline=0, menu=ubit_menu)
+        ubit_menu = Menu(menu, tearoff=0)
+        ubit_menu.add_command(label='Read MicroPython', underline=1,
+                              command=self.read_ubit_upy_code, accelerator='Ctrl+N')
+        ubit_menu.add_command(label='Read full flash contents (Intel Hex)',
+                              underline=1, command=self.read_full_flash_intel,
+                              accelerator='Ctrl+I')
+        ubit_menu.add_command(label='Read full flash contents (Pretty Hex)',
+                              underline=1, command=self.read_full_flash_pretty,
+                              accelerator='Ctrl+H')
+        menu.add_cascade(label='micro:bit', underline=0, menu=ubit_menu)
         # display the menu
-        self.root.config(menu=self.menubar)
+        self.config(menu=menu)
+
+    def set_editor(self, frame):
+        scrollbar = Scrollbar(frame, orient='vertical')
+        self.editor = ReadOnlyEditor(frame, yscrollcommand=scrollbar.set)
+        self.editor.pack(side='left', fill='both', expand=1)
+        self.editor.config(wrap='char', width=1)
+        self.editor.focus()
+        scrollbar.pack(side='right', fill='y')
+        scrollbar.config(command=self.editor.yview)
+        frame.pack(fill='both', expand=1)
+
+    def set_console(self, frame):
+        scrollbar = Scrollbar(frame, orient='vertical')
+        self.console = ReadOnlyEditor(frame, yscrollcommand=scrollbar.set,
+                                      background="#222", foreground="#DDD")
+        self.console.pack(side='left', fill='both', expand=1)
+        self.console.config(wrap='char', width=1)
+        self.console.focus()
+        scrollbar.pack(side='right', fill='y')
+        scrollbar.config(command=self.console.yview)
+        frame.pack(fill='both', expand=1)
+
+    def activate_console(self):
+        sys.stdout = StdoutRedirector(self.console, text_color='#0D4')
+        sys.stderr = StdoutRedirector(self.console, text_color='#D00')
+        logger = logging.getLogger()
+        logger.setLevel(level=logging.INFO)
+        logging_handler_out = logging.StreamHandler(sys.stdout)
+        logging_handler_out.setLevel(logging.INFO)
+        logger.addHandler(logging_handler_out)
+        logging_handler_err = logging.StreamHandler(sys.stderr)
+        logging_handler_err.setLevel(logging.WARNING)
+        logger.addHandler(logging_handler_err)
+
+    def deactivate_console(self):
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
 
     def bind_shorcuts(self, event=None):
         self.editor.bind('<Control-o>', self.file_open)
@@ -95,13 +157,21 @@ class UBitFlashToolFrame():
     def unimplemented(self):
         messagebox.showinfo('Not Implemented',
                             'This feature has not yet been implemented.')
-        # messagebox.askyesnocancel('Title', 'Question?')
-        # yes = True, no = False, cancel = None
 
-    def open_microbit_code(self):
+    def read_ubit_upy_code(self):
         python_code = read_python_code()
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, python_code)
+
+    def read_full_flash_intel(self):
+        hex_str = read_full_flash_hex(decoded_hex=False)
+        self.editor.delete(1.0, 'end')
+        self.editor.insert(1.0, hex_str)
+
+    def read_full_flash_pretty(self):
+        hex_str = read_full_flash_hex(decoded_hex=True)
+        self.editor.delete(1.0, 'end')
+        self.editor.insert(1.0, hex_str)
 
     def file_open(self, event=None, file_path=None):
         file_path = filedialog.askopenfilename()
@@ -124,14 +194,14 @@ class UBitFlashToolFrame():
             return None
 
     def file_quit(self, event=None):
-        self.root.destroy()
+        if messagebox.askyesnocancel('Exit', 'Exit?'):
+            self.deactivate_console()
+            self.destroy()
 
 
 def open_editor():
-    root = Tk()
-    root.geometry('{}x{}'.format(600, 480))
-    editor = UBitFlashToolFrame(root)
-    root.mainloop()
+    app = UBitFlashToolWindow()
+    app.mainloop()
 
 
 if __name__ == '__main__':
