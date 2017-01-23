@@ -1,0 +1,45 @@
+# Travis can building for OS X (El Capitan)
+matrix:
+  include:
+    - os: osx
+      sudo: required
+      language: generic
+
+before_install:
+  # OS and Python info
+  - uname -a
+  - python --version
+  - python -c "import sys; print(sys.executable)"
+  - pip --version
+
+install:
+  - pip install --upgrade pip
+  - pip install pyinstaller
+  - pip install cython
+  #- pip install --pre -U pyocd
+  - pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
+  #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
+  #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
+  #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
+  - python setup.py install
+  - python -c "import hid"
+  - pip freeze
+
+  # Build mu using PyInstaller
+  - pyinstaller package/pyinstaller-cli.spec
+  - pyinstaller package/pyinstaller-gui.spec
+  - mv dist artifacts
+  - ls -l artifacts
+  - chmod +x ./artifacts/ubitflashtool-cli
+  - cd artifacts && zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
+
+script:
+  - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
+  - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
+  - ./artifacts/ubitflashtool-cli -s my_script.py
+
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
