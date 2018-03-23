@@ -12,9 +12,8 @@ before_install:
   - python --version
   - python -c "import sys; print(sys.executable)"
   - curl -O https://bootstrap.pypa.io/get-pip.py
-  - python get-pip.py
+  - sudo -H python get-pip.py
   - rm get-pip.py
-  - pip install --upgrade pip
   - pip --version
   #- which pip2
   #- sudo ln -s /usr/local/bin/pip2 /usr/local/bin/pip
@@ -29,6 +28,8 @@ install:
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
   - python setup.py install
+  
+  # Check things were installed correctly
   - python -c "import hid"
   - pip freeze
 
