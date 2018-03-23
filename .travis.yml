@@ -9,13 +9,8 @@ matrix:
 before_install:
   # OS and Python info
   - uname -a
-  - python --version
-  - python -c "import sys; print(sys.executable)"
   - sudo -H python -c "import sys; print(sys.executable)"
-  - curl -O https://bootstrap.pypa.io/get-pip.py
-  - sudo -H python get-pip.py
-  - rm get-pip.py
-  - pip --version
+  - curl -O https://bootstrap.pypa.io/get-pip.py && sudo -H python get-pip.py && rm get-pip.py
   - sudo -H pip --version
   - sudo -H pip freeze
 
@@ -24,17 +19,17 @@ install:
   - sudo -H pip install pyinstaller
   - sudo -H pip install cython
   - sudo -H pip install setuptools_scm
-  #- sudo -H pip install --pre -U https://github.com/mbedmicro/pyOCD/archive/b5c9bc62b68323129aa258e128a8fc68aaa2527f.zip
   - sudo -H pip install --pre -U pyocd
   #- sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
   - sudo -H python setup.py install
+  - sudo -H pip install .
   
   # Check things were installed correctly
-  - python -c "import hid"
-  - pip freeze
+  - sudo -H python -c "import hid"
+  - sudo -H pip freeze
 
   # Build mu using PyInstaller
   - pyinstaller package/pyinstaller-cli.spec
