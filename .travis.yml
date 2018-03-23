@@ -2,6 +2,7 @@
 matrix:
   include:
     - os: osx
+      osx_image: xcode6.4
       sudo: required
       language: generic
 
