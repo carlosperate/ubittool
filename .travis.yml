@@ -3,7 +3,7 @@ matrix:
   include:
     - os: osx
       osx_image: xcode6.4
-      sudo: required
+      sudo: false
       language: generic
 
 before_install:
@@ -12,7 +12,7 @@ before_install:
   - python --version
   - python -c "import sys; print(sys.executable)"
   - curl -O https://bootstrap.pypa.io/get-pip.py
-  - sudo -H python get-pip.py
+  - python get-pip.py
   - rm get-pip.py
   - pip --version
   #- which pip2
