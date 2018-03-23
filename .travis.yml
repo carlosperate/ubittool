@@ -24,7 +24,7 @@ install:
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
-  - sudo -H python setup.py install
+  #- sudo -H python setup.py install
   - sudo -H pip install .
   
   # Check things were installed correctly
