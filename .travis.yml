@@ -11,6 +11,7 @@ before_install:
   - uname -a
   - python --version
   - python -c "import sys; print(sys.executable)"
+  - sudo -H python -c "import sys; print(sys.executable)"
   - curl -O https://bootstrap.pypa.io/get-pip.py
   - sudo -H python get-pip.py
   - rm get-pip.py
@@ -22,12 +23,12 @@ before_install:
 install:
   - sudo -H pip install pyinstaller
   - sudo -H pip install cython
-  - sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
-  #- pip install --pre -U pyocd
+  - sudo -H pip install --pre -U pyocd
+  #- sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
-  - python setup.py install
+  - sudo -H python setup.py install
   
   # Check things were installed correctly
   - python -c "import hid"
