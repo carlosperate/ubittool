@@ -23,8 +23,9 @@ before_install:
 install:
   - sudo -H pip install pyinstaller
   - sudo -H pip install cython
-  - sudo -H pip install --pre -U https://github.com/mbedmicro/pyOCD/archive/master.zip
-  #- sudo -H pip install --pre -U pyocd
+  - sudo -H pip install setuptools_scm
+  #- sudo -H pip install --pre -U https://github.com/mbedmicro/pyOCD/archive/b5c9bc62b68323129aa258e128a8fc68aaa2527f.zip
+  - sudo -H pip install --pre -U pyocd
   #- sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
