@@ -3,7 +3,7 @@ matrix:
   include:
     - os: osx
       osx_image: xcode6.4
-      sudo: true
+      sudo: required
       language: generic
 
 before_install:
@@ -21,8 +21,8 @@ before_install:
 
 install:
   - sudo -H pip install pyinstaller
-  - pip install cython
-  - pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
+  - sudo -H pip install cython
+  - sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- pip install --pre -U pyocd
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
