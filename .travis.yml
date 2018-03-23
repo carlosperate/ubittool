@@ -17,10 +17,9 @@ before_install:
 install:
   #- sudo -H pip install --upgrade setuptools
   - sudo -H pip install pyinstaller
-  #- sudo -H pip install cython
+  - sudo -H pip install cython
   - sudo -H pip install setuptools_scm
   - sudo -H pip install --pre -U pyocd
-  #- sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
@@ -30,7 +29,7 @@ install:
   - sudo -H python -c "import hid"
   - sudo -H pip freeze
 
-  # Build mu using PyInstaller
+  # Build the two versions of ubitflashtool using PyInstaller
   - pyinstaller package/pyinstaller-cli.spec
   - pyinstaller package/pyinstaller-gui.spec
   - mv dist artifacts
@@ -39,10 +38,9 @@ install:
   - cd artifacts && zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
 script:
+  - ./artifacts/ubitflashtool-cli -s my_script.py
   - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
   - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
-  - ./artifacts/ubitflashtool-cli -s my_script.py
-
 
 notifications:
   email:
