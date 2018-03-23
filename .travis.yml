@@ -11,10 +11,10 @@ before_install:
   - uname -a
   - python --version
   - python -c "import sys; print(sys.executable)"
-  #- curl -O https://bootstrap.pypa.io/get-pip.py
-  #- sudo -H python get-pip.py
-  #- rm get-pip.py
-  #- pip install --upgrade pip
+  - curl -O https://bootstrap.pypa.io/get-pip.py
+  - python get-pip.py
+  - rm get-pip.py
+  - pip install --upgrade pip
   - pip --version
   #- which pip2
   #- sudo ln -s /usr/local/bin/pip2 /usr/local/bin/pip
