@@ -16,9 +16,9 @@ before_install:
   - sudo -H python get-pip.py
   - rm get-pip.py
   - pip --version
-  #- which pip2
-  #- sudo ln -s /usr/local/bin/pip2 /usr/local/bin/pip
-  #- sudo ln -s /usr/local/bin/pip2 /usr/bin/pip
+  - sudo -H pip --version
+  - pip freeze
+  - sudo -H pip freeze
 
 install:
   - sudo -H pip install pyinstaller
