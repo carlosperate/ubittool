@@ -15,16 +15,18 @@ before_install:
   - sudo -H pip freeze
 
 install:
-  #- sudo -H pip install --upgrade setuptools
-  - sudo -H pip install pyinstaller
+  # PyOCD and this dependencies need to be manually installed
   - sudo -H pip install cython
   - sudo -H pip install setuptools_scm
-  - sudo -H pip install --pre -U pyocd
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
+  - sudo -H pip install --pre -U pyocd
+  - sudo -H pip install pyinstaller
+
+  # Install ubitflashtool
   - sudo -H pip install .
-  
+
   # Check things were installed correctly
   - sudo -H python -c "import hid"
   - sudo -H pip freeze
@@ -32,13 +34,17 @@ install:
   # Build the two versions of ubitflashtool using PyInstaller
   - pyinstaller package/pyinstaller-cli.spec
   - pyinstaller package/pyinstaller-gui.spec
+
+  # Collect the outputs
   - mv dist artifacts
   - ls -l artifacts
   - chmod +x ./artifacts/ubitflashtool-cli
   - cd artifacts && zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
 script:
+  # First run this as a simple test to check ubitflashtool is not broken
   - ./artifacts/ubitflashtool-cli -s my_script.py
+  # Upload built executables to a temporary service
   - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
   - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
 
