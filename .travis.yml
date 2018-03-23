@@ -15,10 +15,10 @@ before_install:
   - sudo -H pip freeze
 
 install:
-  - sudo -H pip install --upgrade setuptools
+  #- sudo -H pip install --upgrade setuptools
   - sudo -H pip install pyinstaller
-  - sudo -H pip install cython
-  - sudo -H pip install setuptools_scm
+  #- sudo -H pip install cython
+  #- sudo -H pip install setuptools_scm
   - sudo -H pip install --pre -U pyocd
   #- sudo -H pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
