@@ -10,11 +10,13 @@ before_install:
   - uname -a
   - python --version
   - python -c "import sys; print(sys.executable)"
-  - curl -O https://bootstrap.pypa.io/get-pip.py
-  - sudo -H python get-pip.py
-  - rm get-pip.py
-  - pip install --upgrade pip
-  - pip --version
+  #- curl -O https://bootstrap.pypa.io/get-pip.py
+  #- sudo -H python get-pip.py
+  #- rm get-pip.py
+  #- pip install --upgrade pip
+  - pip2 --version
+  - which pip2
+  - sudo ln -s /usr/bin/pip2 /usr/bin/pip
 
 install:
   - pip install pyinstaller
