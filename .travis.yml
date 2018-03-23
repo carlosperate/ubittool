@@ -10,17 +10,17 @@ before_install:
   - uname -a
   - python --version
   - python -c "import sys; print(sys.executable)"
-  - pip --version
-
-install:
   - curl -O https://bootstrap.pypa.io/get-pip.py
   - python get-pip.py
   - rm get-pip.py
   - pip install --upgrade pip
+  - pip --version
+
+install:
   - pip install pyinstaller
   - pip install cython
-  #- pip install --pre -U pyocd
   - pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
+  #- pip install --pre -U pyocd
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
