@@ -17,10 +17,10 @@ before_install:
   - rm get-pip.py
   - pip --version
   - sudo -H pip --version
-  - pip freeze
   - sudo -H pip freeze
 
 install:
+  - sudo -H pip install --upgrade setuptools
   - sudo -H pip install pyinstaller
   - sudo -H pip install cython
   - sudo -H pip install setuptools_scm
