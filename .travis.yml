@@ -1,4 +1,4 @@
-# Travis can building for OS X (El Capitan)
+# Travis can building for OS X 10.10 Yosemite
 matrix:
   include:
     - os: osx
@@ -15,9 +15,10 @@ before_install:
   #- sudo -H python get-pip.py
   #- rm get-pip.py
   #- pip install --upgrade pip
-  - pip2 --version
-  - which pip2
-  - sudo ln -s /usr/bin/pip2 /usr/bin/pip
+  - pip --version
+  #- which pip2
+  #- sudo ln -s /usr/local/bin/pip2 /usr/local/bin/pip
+  #- sudo ln -s /usr/local/bin/pip2 /usr/bin/pip
 
 install:
   - pip install pyinstaller
