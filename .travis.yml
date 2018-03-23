@@ -3,7 +3,7 @@ matrix:
   include:
     - os: osx
       osx_image: xcode6.4
-      sudo: false
+      sudo: true
       language: generic
 
 before_install:
@@ -12,7 +12,7 @@ before_install:
   - python --version
   - python -c "import sys; print(sys.executable)"
   - curl -O https://bootstrap.pypa.io/get-pip.py
-  - python get-pip.py
+  - sudo -H python get-pip.py
   - rm get-pip.py
   - pip --version
   #- which pip2
@@ -20,7 +20,7 @@ before_install:
   #- sudo ln -s /usr/local/bin/pip2 /usr/bin/pip
 
 install:
-  - pip install pyinstaller
+  - sudo -H pip install pyinstaller
   - pip install cython
   - pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
   #- pip install --pre -U pyocd
