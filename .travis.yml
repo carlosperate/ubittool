@@ -1,43 +1,52 @@
-# Travis can building for OS X (El Capitan)
+# Travis can building for OS X 10.10 Yosemite
 matrix:
   include:
     - os: osx
+      osx_image: xcode6.4
       sudo: required
       language: generic
 
 before_install:
   # OS and Python info
   - uname -a
-  - python --version
-  - python -c "import sys; print(sys.executable)"
-  - pip --version
+  - sudo -H python -c "import sys; print(sys.executable)"
+  - curl -O https://bootstrap.pypa.io/get-pip.py && sudo -H python get-pip.py && rm get-pip.py
+  - sudo -H pip --version
+  - sudo -H pip freeze
 
 install:
-  - pip install --upgrade pip
-  - pip install pyinstaller
-  - pip install cython
-  #- pip install --pre -U pyocd
-  - pip install --pre -U git+https://github.com/mbedmicro/pyOCD.git#egg=proj
+  # PyOCD and this dependencies need to be manually installed
+  - sudo -H pip install cython
+  - sudo -H pip install setuptools_scm
   #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
   #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
-  - python setup.py install
-  - python -c "import hid"
-  - pip freeze
+  - sudo -H pip install --pre -U pyocd
+  - sudo -H pip install pyinstaller
 
-  # Build mu using PyInstaller
+  # Install ubitflashtool
+  - sudo -H pip install .
+
+  # Check things were installed correctly
+  - sudo -H python -c "import hid"
+  - sudo -H pip freeze
+
+  # Build the two versions of ubitflashtool using PyInstaller
   - pyinstaller package/pyinstaller-cli.spec
   - pyinstaller package/pyinstaller-gui.spec
+
+  # Collect the outputs
   - mv dist artifacts
   - ls -l artifacts
   - chmod +x ./artifacts/ubitflashtool-cli
   - cd artifacts && zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
 script:
+  # First run this as a simple test to check ubitflashtool is not broken
+  - ./artifacts/ubitflashtool-cli -s my_script.py
+  # Upload built executables to a temporary service
   - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
   - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
-  - ./artifacts/ubitflashtool-cli -s my_script.py
-
 
 notifications:
   email:
