@@ -1,21 +1,21 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-#
-# A text viewer that can read and save a Python script from the micro:bit
-# flash or a hex file.
-#
+"""
+A text viewer that can can perform the ubitflashtool actions.
+"""
 from __future__ import absolute_import, print_function
 import sys
 import logging
 from idlelib.WidgetRedirector import WidgetRedirector
-from ubitflashtool.cmd import read_python_code, read_full_flash_hex
+from ubitflashtool.cmd import (read_python_code, read_micropython,
+                               read_full_flash_hex, read_uicr_customer)
 if sys.version_info.major == 3:
     # Tkinter imports
     from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,
                          Frame)
 elif sys.version_info.major == 2:
     # Tkinter imports
-    from Tkinter import (Tk, Text, Scrollbar, Menu, Frame)
+    from Tkinter import Tk, Text, Scrollbar, Menu, Frame
     import tkMessageBox as messagebox
     import tkFileDialog as filedialog
     # Open with encodings
@@ -84,7 +84,7 @@ class UBitFlashToolWindow(Tk):
         # instead of closing the window, execute a function
         self.protocol('WM_DELETE_WINDOW', self.file_quit)
 
-        self.bind_shorcuts()
+        self.bind_shortcuts()
 
     def set_menu_bar(self, menu):
         # Menu item File
@@ -99,15 +99,20 @@ class UBitFlashToolWindow(Tk):
         menu.add_cascade(label='File', underline=0, menu=file_menu)
         # Menu item micro:bit
         ubit_menu = Menu(menu, tearoff=0)
-        ubit_menu.add_command(label='Read MicroPython', underline=1,
-                              command=self.read_ubit_upy_code, accelerator='Ctrl+N')
-        ubit_menu.add_command(label='Read full flash contents (Intel Hex)',
-                              underline=1, command=self.read_full_flash_intel,
-                              accelerator='Ctrl+I')
-        ubit_menu.add_command(label='Read full flash contents (Pretty Hex)',
-                              underline=1, command=self.read_full_flash_pretty,
-                              accelerator='Ctrl+H')
+        ubit_menu.add_command(label='Read MicroPython code', underline=1,
+                              command=self.read_python_code)
+        ubit_menu.add_command(label='Read MicroPython runtime', underline=1,
+                              command=self.read_micropython)
         menu.add_cascade(label='micro:bit', underline=0, menu=ubit_menu)
+        # Menu item nrf
+        nrf_menu = Menu(menu, tearoff=0)
+        nrf_menu.add_command(label='Read full flash contents (Intel Hex)',
+                             underline=1, command=self.read_full_flash_intel)
+        nrf_menu.add_command(label='Read full flash contents (Pretty Hex)',
+                             underline=1, command=self.read_full_flash_pretty)
+        nrf_menu.add_command(label='Read UICR Customer', underline=1,
+                             command=self.read_uicr_customer)
+        menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
         # display the menu
         self.config(menu=menu)
 
@@ -148,7 +153,7 @@ class UBitFlashToolWindow(Tk):
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
 
-    def bind_shorcuts(self, event=None):
+    def bind_shortcuts(self, event=None):
         self.editor.bind('<Control-o>', self.file_open)
         self.editor.bind('<Control-O>', self.file_open)
         self.editor.bind('<Control-S>', self.file_save_as)
@@ -158,20 +163,30 @@ class UBitFlashToolWindow(Tk):
         messagebox.showinfo('Not Implemented',
                             'This feature has not yet been implemented.')
 
-    def read_ubit_upy_code(self):
+    def read_python_code(self):
         python_code = read_python_code()
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, python_code)
 
+    def read_micropython(self):
+        hex_str = read_micropython()
+        self.editor.delete(1.0, 'end')
+        self.editor.insert(1.0, hex_str)
+
     def read_full_flash_intel(self):
-        hex_str = read_full_flash_hex(decoded_hex=False)
+        hex_str = read_full_flash_hex(decode_hex=False)
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, hex_str)
 
     def read_full_flash_pretty(self):
-        hex_str = read_full_flash_hex(decoded_hex=True)
+        hex_str = read_full_flash_hex(decode_hex=True)
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, hex_str)
+
+    def read_uicr_customer(self):
+        uicr_hex_str = read_uicr_customer()
+        self.editor.delete(1.0, 'end')
+        self.editor.insert(1.0, uicr_hex_str)
 
     def file_open(self, event=None, file_path=None):
         file_path = filedialog.askopenfilename()
