@@ -1,6 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 from setuptools import setup
+
 from ubitflashtool import __version__
 
 
@@ -21,13 +23,13 @@ setup(
     version=__version__,
     description='A module and utility to read the memory contents of the BBC micro:bit.',
     long_description=readme,
-    author='carlosperate',
+    author='Carlos Pereira Atencio',
     author_email='carlosperate@embeddedlog.com',
     url='https://github.com/carlosperate/ubitflashtool',
     install_requires=requires,
     packages=['ubitflashtool'],
-    license='MIT',
-    keywords=['microbit', 'micro:bit', 'bbcmicrobit', ],
+    license='MIT license',
+    keywords=['microbit', 'micro:bit', 'bbcmicrobit', 'ubitflashtool'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
