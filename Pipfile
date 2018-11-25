@@ -6,10 +6,11 @@ name = "pypi"
 [packages]
 IntelHex = ">=2.2.1"
 uflash = ">=1.1.0,<1.2.1"
-pyOCD = "==0.8.1a1"
+setuptools_scm = "*"
+pyOCD = "==0.12.0"
 
 [dev-packages]
-
+PyInstaller = ">=3.3"
 
 [requires]
 python_version = "2.7"

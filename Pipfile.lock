@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cd7d46362d3b75d12d27409f7fab63e89e6ce35602f6e1fb7d1e07dc64397e79"
+            "sha256": "d6332938f224cae3e8178e92c76254d3aa0143f6e0d5f16e4a8b4c2d8e0325bd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "colorama": {
+            "hashes": [
+                "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
+                "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
+            ],
+            "version": "==0.4.1"
+        },
         "enum34": {
             "hashes": [
                 "sha256:2d81cbbe0e73112bdfe6ef8576f2238f2ba27dd0d55752a776c41d38b7da2850",
@@ -55,12 +62,36 @@
             "index": "pypi",
             "version": "==2.2.1"
         },
+        "intervaltree": {
+            "hashes": [
+                "sha256:aca5804b88f70cb49050c37b6de59090570f77a75aec1932966cf69f6a48810b"
+            ],
+            "version": "==2.1.0"
+        },
+        "pyelftools": {
+            "hashes": [
+                "sha256:89c6da6f56280c37a5ff33468591ba9a124e17d71fe42de971818cbff46c1b24"
+            ],
+            "version": "==0.25"
+        },
         "pyocd": {
             "hashes": [
-                "sha256:f81c49d0fafb47ef4a682633aaaf1510abf24ae42d0380ad4d98dd8107cbb351"
+                "sha256:9c79f0734e2ccafcc50264f309b548f9a8f1ea9b31b867eb0150986647d0627c"
             ],
             "index": "pypi",
-            "version": "==0.8.1a1"
+            "version": "==0.12.0"
+        },
+        "setuptools-scm": {
+            "hashes": [
+                "sha256:1191f2a136b5e86f7ca8ab00a97ef7aef997131f1f6d4971be69a1ef387d8b40",
+                "sha256:14db63c379b69393e9581df438e761b10d2d4060ae81b22a910d87751c0dc15a",
+                "sha256:5be82a2168dcac8994b6db467c101019424b475e6239ec347dc719df08e6baf9",
+                "sha256:7eb101cc7412b1a2d2be9a9996508e147f91648bf2fee6222d476639b48626f5",
+                "sha256:c9e9e5ca820bc26793e55a06af56ad180aec3c355b77dc52959efcecda5af2d5",
+                "sha256:cc6953d224a22f10e933fa2f55c95979317c55259016adcf93310ba2997febfa"
+            ],
+            "index": "pypi",
+            "version": "==3.1.0"
         },
         "six": {
             "hashes": [
@@ -68,6 +99,13 @@
                 "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
             ],
             "version": "==1.11.0"
+        },
+        "sortedcontainers": {
+            "hashes": [
+                "sha256:974e9a32f56b17c1bac2aebd9dcf197f3eb9cd30553c5852a3187ad162e1a03a",
+                "sha256:d9e96492dd51fae31e60837736b38fe42a187b5404c16606ff7ee7cd582d4c60"
+            ],
+            "version": "==2.1.0"
         },
         "uflash": {
             "hashes": [
@@ -84,5 +122,46 @@
             "version": "==0.54.0"
         }
     },
-    "develop": {}
+    "develop": {
+        "altgraph": {
+            "hashes": [
+                "sha256:d6814989f242b2b43025cba7161fc1b8fb487a62cd49c49245d6fd01c18ac997",
+                "sha256:ddf5320017147ba7b810198e0b6619bd7b5563aa034da388cea8546b877f9b0c"
+            ],
+            "version": "==0.16.1"
+        },
+        "dis3": {
+            "hashes": [
+                "sha256:675fec228b7d7258c5f2ae527dd7d9e6799b86f5066e76d89ac3ef5455f4266c",
+                "sha256:b98e5a9e3d8df54396219c0093fed1454416cec2b74ec15dc63e6a72b3bab94a"
+            ],
+            "version": "==0.1.2"
+        },
+        "future": {
+            "hashes": [
+                "sha256:67045236dcfd6816dc439556d009594abf643e5eb48992e36beac09c2ca659b8"
+            ],
+            "version": "==0.17.1"
+        },
+        "macholib": {
+            "hashes": [
+                "sha256:ac02d29898cf66f27510d8f39e9112ae00590adb4a48ec57b25028d6962b1ae1",
+                "sha256:c4180ffc6f909bf8db6cd81cff4b6f601d575568f4d5dee148c830e9851eb9db"
+            ],
+            "version": "==1.11"
+        },
+        "pefile": {
+            "hashes": [
+                "sha256:4c5b7e2de0c8cb6c504592167acf83115cbbde01fe4a507c16a1422850e86cd6"
+            ],
+            "version": "==2018.8.8"
+        },
+        "pyinstaller": {
+            "hashes": [
+                "sha256:a5a6e04a66abfcf8761e89a2ebad937919c6be33a7b8963e1a961b55cb35986b"
+            ],
+            "index": "pypi",
+            "version": "==3.4"
+        }
+    }
 }

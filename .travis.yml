@@ -1,8 +1,8 @@
-# Travis can building for OS X 10.10 Yosemite
+# Travis can building for OS X 10.11 El Capitan
 matrix:
   include:
     - os: osx
-      osx_image: xcode6.4
+      osx_image: xcode7.3
       sudo: required
       language: generic
 
@@ -15,31 +15,21 @@ before_install:
   - sudo -H pip freeze
 
 install:
-  # PyOCD and this dependencies need to be manually installed
-  - sudo -H pip install cython
-  - sudo -H pip install setuptools_scm
-  #- cd .. && git clone https://github.com/gbishop/cython-hidapi.git && cd ubitflashtool
-  #- cd ../cython-hidapi && python setup-mac.py build && cd ../ubitflashtool
-  #- cd ../cython-hidapi && python setup-mac.py install && cd ../ubitflashtool
-  - sudo -H pip install --pre -U pyocd
-  - sudo -H pip install pyinstaller
-
-  # Install ubitflashtool
-  - sudo -H pip install .
+  - sudo -H pip install pipenv
+  - sudo -H pipenv install --dev .
 
   # Check things were installed correctly
-  - sudo -H python -c "import hid"
-  - sudo -H pip freeze
+  - sudo -H pipenv run pip freeze
 
   # Build the two versions of ubitflashtool using PyInstaller
-  - pyinstaller package/pyinstaller-cli.spec
-  - pyinstaller package/pyinstaller-gui.spec
+  - sudo -H pipenv run pyinstaller package/pyinstaller-cli.spec
+  - sudo -H pipenv run pyinstaller package/pyinstaller-gui.spec
 
   # Collect the outputs
-  - mv dist artifacts
+  - sudo -H mv dist artifacts
   - ls -l artifacts
-  - chmod +x ./artifacts/ubitflashtool-cli
-  - cd artifacts && zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
+  - sudo -H chmod +x ./artifacts/ubitflashtool-cli
+  - cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
 script:
   # First run this as a simple test to check ubitflashtool is not broken
