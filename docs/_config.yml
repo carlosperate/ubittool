@@ -1,1 +1,50 @@
 remote_theme: allejo/jekyll-docs-theme
+
+# Markdown settings: https://jekyllrb.com/docs/configuration/markdown/
+kramdown:
+  # GitHub flavoured markdown
+  input: GFM
+  # Interprets line breaks literally
+  hard_wrap: false
+
+name: ubitflashtool
+
+project:
+  version: 0.1a4
+  download_url: https://github.com/carlosperate/ubitflashtool/releases
+
+license:
+  software: MIT License
+  software_url: http://opensource.org/licenses/MIT
+  docs: CC BY 4.0
+  docs_url: https://creativecommons.org/licenses/by/4.0/
+
+links:
+  header:
+    - title: GitHub
+      url: https://github.com/carlosperate/ubitflashtool/
+  footer:
+    - title: GitHub
+      url: https://github.com/carlosperate/ubitflashtool/
+    - title: Issues
+      url: https://github.com/carlosperate/ubitflashtool/issues/
+
+ui:
+  header:
+    color1: "#3883D2"
+    color2: "#330C58"
+    # https://trianglify.io
+    trianglify: true
+
+social:
+  github:
+    user: carlosperate
+    repo: ubitflashtool
+  twitter:
+    enabled: true
+    via:
+    hash:
+    account: carlosperate
+  facebook:
+    enabled: false
+    profileUrl:
