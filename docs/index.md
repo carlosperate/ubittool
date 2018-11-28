@@ -1,6 +1,6 @@
 ---
-layout: default
-title: ubitflashtools docs
+layout: page
+homepage: true
 ---
 
 WIP

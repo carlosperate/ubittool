@@ -10,7 +10,7 @@ kramdown:
 name: ubitflashtool
 
 project:
-  version: 0.1a4
+  version: 0.1.0
   download_url: https://github.com/carlosperate/ubitflashtool/releases
 
 license:
