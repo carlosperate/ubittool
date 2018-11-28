@@ -35,10 +35,10 @@ script:
   # First run this as a simple test to check ubitflashtool is not broken
   - ./artifacts/ubitflashtool-cli -s my_script.py
   # Upload built executables to a temporary service
-  # - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
-  # - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
-  - curl -F "file=@./artifacts/ubitflashtool-gui.zip" "https://file.io/?expires=3"
-  - curl -F "file=@./artifacts/ubitflashtool-cli" "https://file.io/?expires=3"
+  - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
+  - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
+  # - curl -F "file=@./artifacts/ubitflashtool-gui.zip" "https://file.io/?expires=3"
+  # - curl -F "file=@./artifacts/ubitflashtool-cli" "https://file.io/?expires=3"
 notifications:
   email:
     on_success: change

@@ -6,11 +6,14 @@ name = "pypi"
 [packages]
 IntelHex = ">=2.2.1"
 uflash = ">=1.1.0,<1.2.1"
-setuptools_scm = "*"
 pyOCD = "==0.12.0"
 
 [dev-packages]
 PyInstaller = ">=3.3"
+# PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
+# Travis doesn't pick it up and PyOCD fails to install or run
+setuptools_scm = "*"
+ubitflashtool = {path = "."}
 
 [requires]
 python_version = "2.7"

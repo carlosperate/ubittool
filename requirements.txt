@@ -1,5 +1,5 @@
+# In contrast to the normal convention, these are the minimum packages
+# required to run, i.e. what setup.py will use for install_requires
 intelhex>=2.2.1
 uflash>=1.1.0,<1.2.1
-pyOCD==0.8.1a1
-
-
+pyOCD==0.12.0
