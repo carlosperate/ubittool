@@ -46,6 +46,14 @@ install:
   - ps: Rename-Item -path .\dist artifacts
   - cmd: dir artifacts
 
+  # Install with Pipenv
+  - cmd: pip install pipenv
+  - cmd: pipenv install --dev .
+
+test_script:
+  - cmd: pipenv run flake8 ubitflashtool/
+
+after_test:
   # Create AppVeyor artifact
   - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-gui.exe
   - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-cli.exe

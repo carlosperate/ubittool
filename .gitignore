@@ -1,7 +1,12 @@
 ####################
 # Project Specific #
 ####################
+# Nothing yet
 
+########
+# IDEs #
+########
+.vscode/*
 
 ###################
 # Python Specific #
@@ -66,7 +71,6 @@ target/
 .venv/
 venv/
 ENV/
-
 
 #####################
 # OS Specific files #
