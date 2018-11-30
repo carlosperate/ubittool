@@ -10,6 +10,8 @@ pyOCD = "==0.12.0"
 
 [dev-packages]
 PyInstaller = ">=3.3"
+flake8 = "*"
+flake8-docstrings = "*"
 # PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
 # Travis doesn't pick it up and PyOCD fails to install or run
 setuptools_scm = "*"
