@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Commands to carry out all the actions for ubitflash control.
+Commands to carry out all the actions for ubitflashtool control.
 
 This module internal functions can read any memory location from the micro:bit
 via PyOCD, which uses the CMSIS interface provided by DAPLink.
@@ -13,8 +13,8 @@ format, or human readable text (for the Python code).
 """
 from __future__ import print_function, absolute_import
 import sys
-from traceback import format_exc
 from cStringIO import StringIO
+from traceback import format_exc
 
 from pyOCD.board import MbedBoard
 from intelhex import IntelHex
@@ -50,9 +50,14 @@ UICR_CUSTOMER_END = UICR_CUSTOMER_START + UICR_CUSTOMER_SIZE_BYTES
 
 
 def _read_continuous_memory(address=0x0, count=4):
-    """
+    """Read any continuous memory area from the micro:bit.
+
     Reads the contents of any micro:bit continuous memory area, starting from
     the 'address' argument for as many bytes as indicated by 'count'.
+    There is no input sanitation in this function and is the responsibility of
+    the caller to input values within range of the target board or deal with
+    any exceptions raised by PyOCD.
+
     :param address: Integer indicating the start address to read.
     :param count: Integer, how many bytes to read.
     :return: A list of integers, each representing a byte of data.
@@ -69,9 +74,11 @@ def _read_continuous_memory(address=0x0, count=4):
 
 
 def read_flash(address=MICROBIT_FLASH_START, count=4):
-    """
-    Reads the contents of the micro:bit flash memory, starting from the
-    'address' argument for as many bytes as indicated by the 'count' argument.
+    """Read the contents of the micro:bit flash memory.
+
+    Start from the 'address' argument for as many bytes as indicated by the
+    'count' argument.
+
     :param address: Integer indicating the start address to read.
     :param count: Integer indicating how many bytes to read.
     :return: A list of integers, each representing a byte of data.
@@ -87,9 +94,11 @@ def read_flash(address=MICROBIT_FLASH_START, count=4):
 
 
 def read_uicr(address=UICR_START, count=4):
-    """
-    Reads the contents of the micro:bit UICR memory, starting from the
-    'address' argument for as many bytes as indicated by the 'count' argument.
+    """Read the contents of the micro:bit UICR memory.
+
+    Start from the 'address' argument for as many bytes as indicated by the
+    'count' argument.
+
     :param address: Integer indicating the start address to read.
     :param count: Integer indicating how many bytes to read.
     :return: A list of integers, each representing a byte of data.
@@ -103,8 +112,8 @@ def read_uicr(address=UICR_START, count=4):
 
 
 def bytes_to_intel_hex(data, offset=0x0000):
-    """
-    Takes a list of bytes and returns a string in the Intel Hex format.
+    """Take a list of bytes and return a string in the Intel Hex format.
+
     :param data: List of integers, each representing a single byte.
     :param offset: Start address offset.
     :return: A string with the Intel Hex encoded data.
@@ -125,9 +134,8 @@ def bytes_to_intel_hex(data, offset=0x0000):
 
 
 def bytes_to_pretty_hex(data, offset=0x0000):
-    """
-    Takes a list of bytes and converts it into a string of a nicely formatted
-    ASCII decoded hex.
+    """Convert a list of bytes to a nicely formatted ASCII decoded hex string.
+
     :param data: List of integers, each representing a single byte.
     :param offset: Start address offset.
     :return: A string with the formatted hex data.
@@ -148,10 +156,12 @@ def bytes_to_pretty_hex(data, offset=0x0000):
 
 
 def read_flash_hex(address=MICROBIT_FLASH_START, count=4, decode_hex=False):
-    """
-    Reads the as many bytes of the micro:bit flash and from the given address
-    as indicated by the arguments. Can return it in Intel Hex format or a
-    pretty formatted and decoded hex string.
+    """Read flash memory and return as a hex string.
+
+    Read as a number of bytes of the micro:bit flash from the given address.
+    Can return it in Intel Hex format or a pretty formatted and decoded hex
+    string.
+
     :param address: Integer indicating the start address to read.
     :param count: Integer indicating hoy many bytes to read.
     :param decode_hex: True selects nice decoded format, False selects Intel
@@ -166,9 +176,8 @@ def read_flash_hex(address=MICROBIT_FLASH_START, count=4, decode_hex=False):
 
 
 def read_full_flash_hex(decode_hex=False):
-    """
-    Shortcut to read all flash contents without exposing the internal
-    addresses.
+    """Shortcut to read all flash without exposing the internal addresses.
+
     :param decode_hex: True selects nice decided format, False selects Intel
             Hex format.
     :return: String with the hex formatted as indicated.
@@ -179,8 +188,8 @@ def read_full_flash_hex(decode_hex=False):
 
 
 def read_micropython():
-    """
-    Reads the MicroPython runtime from the micro:bit flash.
+    """Read the MicroPython runtime from the micro:bit flash.
+
     :return: String with Intel Hex format for the MicroPython runtime.
     """
     return read_flash_hex(address=MICROPYTHON_START,
@@ -189,8 +198,8 @@ def read_micropython():
 
 
 def read_python_code():
-    """
-    Reads the MicroPython user code from the micro:bit flash contents.
+    """Read the MicroPython user code from the micro:bit flash.
+
     :return: String with the MicroPython code.
     """
     flash_data = read_flash(address=PYTHON_CODE_START,
@@ -205,8 +214,8 @@ def read_python_code():
 
 
 def read_uicr_customer():
-    """
-    Reads the UICR Customer data.
+    """Read the UICR Customer data.
+
     :return: String with the nicely decoded UIR Customer area data.
     """
     uicr_data = read_uicr(address=UICR_CUSTOMER_START,

@@ -1,8 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""
-Command line interface entry point.
-"""
+"""Command line interface entry point."""
 from __future__ import print_function, absolute_import
 import os
 import sys
@@ -12,9 +10,8 @@ from ubitflashtool.cmd import read_full_flash_hex, read_python_code
 
 
 def extract_py_script(file_path=None):
-    """
-    Extracts the MicroPython script and writes it a file if given by the
-    argument, or prints it into the std out.
+    """Extract the MicroPython script to a file or std out.
+
     :param file_path: Path to the output file to write the MicroPython code.
     :return: Nothing.
     """
@@ -43,9 +40,8 @@ def extract_py_script(file_path=None):
 
 
 def extract_full_hex(file_path=None):
-    """
-    Reads all the micro:bit flash contents into a file if given by the argument,
-    or prints it into the std out.
+    """Read all the micro:bit flash contents into a file or std out.
+
     :param file_path: Path to the output file to write the flash contents.
     :return: Nothing.
     """
@@ -74,8 +70,8 @@ def extract_full_hex(file_path=None):
 
 
 def main(argv=None):
-    """
-    Entry point for the command line interface.
+    """Entry point for the command line interface.
+
     :param argv:
     :return: None
     """
@@ -96,15 +92,18 @@ def main(argv=None):
     try:
         parser = argparse.ArgumentParser(description=HELP_TEXT)
         # FIXME: This is an incorrect usage of ArgumentParser, read the docs
-        parser.add_argument('-f', '--flash',
-                            nargs='?',
-                            help=("Extract all microbit flash contents."), )
-        parser.add_argument('-s', '--script',
-                            nargs='?',
-                            help=("Extract python source from the microbit."), )
-        parser.add_argument('-m', '--micropython',
-                            nargs='?',
-                            help='Extract the micropython source code')
+        parser.add_argument(
+                '-f', '--flash',
+                nargs='?',
+                help=("Extract all microbit flash contents."), )
+        parser.add_argument(
+                '-s', '--script',
+                nargs='?',
+                help=("Extract python source from the microbit."), )
+        parser.add_argument(
+                '-m', '--micropython',
+                nargs='?',
+                help=('Extract the micropython source code'), )
         args = parser.parse_args(argv)
 
         if args.script:
