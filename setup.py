@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Setup.py."""
 import sys
 from setuptools import setup
 
@@ -21,7 +22,8 @@ with open('requirements.txt') as f:
 setup(
     name='ubitflashtool',
     version=__version__,
-    description='A module and utility to read the memory contents of the BBC micro:bit.',
+    description='A module and utility to read the memory contents of the '
+                'BBC micro:bit.',
     long_description=readme,
     author='Carlos Pereira Atencio',
     author_email='carlosperate@embeddedlog.com',

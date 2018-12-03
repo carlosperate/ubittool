@@ -1,8 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-A text viewer that can can perform the ubitflashtool actions.
-"""
+"""A text viewer that can can perform the ubitflashtool actions."""
 from __future__ import absolute_import, print_function
 import sys
 import logging
@@ -23,13 +21,14 @@ elif sys.version_info.major == 2:
 
 
 class ReadOnlyEditor(Text):
-    """
-    Implement a read only mode by replacing the bindings for the
-    insert and delete events. From:
+    """Implement a read only mode text editor class.
+
+    Done by replacing the bindings for the insert and delete events. From:
     http://stackoverflow.com/questions/3842155/is-there-a-way-to-make-the-tkinter-text-widget-read-only
     """
 
     def __init__(self, *args, **kwargs):
+        """Init the class and set the insert and delete event bindings."""
         Text.__init__(self, *args, **kwargs)
         self.redirector = WidgetRedirector(self)
         self.insert = self.redirector.register(
@@ -39,10 +38,10 @@ class ReadOnlyEditor(Text):
 
 
 class StdoutRedirector(object):
-    """
-    A class to redirect stdout to a text widget.
-    """
+    """A class to redirect stdout to a text widget."""
+
     def __init__(self, text_area, text_color=None):
+        """Get the text area widget as a reference and configure its colour."""
         self.text_area = text_area
         self.text_color = text_color
         self.tag = 'colour_change_%s' % text_color
@@ -50,6 +49,7 @@ class StdoutRedirector(object):
             self.text_area.tag_configure(self.tag, foreground=text_color)
 
     def write(self, string):
+        """Write text to the fake stream."""
         start_position = self.text_area.index('insert')
         self.text_area.insert('end', string)
         if self.text_color:
@@ -57,15 +57,18 @@ class StdoutRedirector(object):
                     self.tag, start_position, self.text_area.index('insert'))
 
     def flush(self):
+        """All flushed inmediately on each write call."""
         pass
 
 
 class UBitFlashToolWindow(Tk):
-    """
-    Attaches a Frame to a TK window with a text editor.
+    """Main app window.
+
+    Attaches a Frame to a TK window with a text editor and menus for options.
     """
 
     def __init__(self, *args, **kwargs):
+        """Initialise the window."""
         Tk.__init__(self, *args, **kwargs)
         self.title('uBitFlashTool')
         self.geometry('{}x{}'.format(600, 480))
@@ -87,6 +90,10 @@ class UBitFlashToolWindow(Tk):
         self.bind_shortcuts()
 
     def set_menu_bar(self, menu):
+        """Create the menu bar with all user options.
+
+        :param menu: A Menu() instance to attach all options.
+        """
         # Menu item File
         file_menu = Menu(menu, tearoff=0)
         file_menu.add_command(label='Open', underline=1,
@@ -117,6 +124,10 @@ class UBitFlashToolWindow(Tk):
         self.config(menu=menu)
 
     def set_editor(self, frame):
+        """Set a read-only the text editor to a frame to display text.
+
+        :param frame: A Frame() instance to set a text editor.
+        """
         scrollbar = Scrollbar(frame, orient='vertical')
         self.editor = ReadOnlyEditor(frame, yscrollcommand=scrollbar.set)
         self.editor.pack(side='left', fill='both', expand=1)
@@ -127,6 +138,10 @@ class UBitFlashToolWindow(Tk):
         frame.pack(fill='both', expand=1)
 
     def set_console(self, frame):
+        """Set a read-only editor to a frame to display std out and in streams.
+
+        :param frame: A Frame() instance to set a text editor.
+        """
         scrollbar = Scrollbar(frame, orient='vertical')
         self.console = ReadOnlyEditor(frame, yscrollcommand=scrollbar.set,
                                       background="#222", foreground="#DDD")
@@ -138,6 +153,7 @@ class UBitFlashToolWindow(Tk):
         frame.pack(fill='both', expand=1)
 
     def activate_console(self):
+        """Configure std out/in to send to write to the console text widget."""
         sys.stdout = StdoutRedirector(self.console, text_color='#0D4')
         sys.stderr = StdoutRedirector(self.console, text_color='#D00')
         logger = logging.getLogger()
@@ -150,45 +166,70 @@ class UBitFlashToolWindow(Tk):
         logger.addHandler(logging_handler_err)
 
     def deactivate_console(self):
+        """Restore std out/in."""
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
 
     def bind_shortcuts(self, event=None):
+        """Bind shortcuts to operations."""
         self.editor.bind('<Control-o>', self.file_open)
         self.editor.bind('<Control-O>', self.file_open)
         self.editor.bind('<Control-S>', self.file_save_as)
         self.editor.bind('<Control-s>', self.file_save_as)
 
     def unimplemented(self):
+        """Display an window to show the user a feature is not implemented."""
         messagebox.showinfo('Not Implemented',
                             'This feature has not yet been implemented.')
 
     def read_python_code(self):
+        """Read the Python user code from the micro:bit flash.
+
+        Displays it as text code in the read-only text editor.
+        """
         python_code = read_python_code()
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, python_code)
 
     def read_micropython(self):
+        """Read the Python user code from the micro:bit flash.
+
+        Displays it as Intel Hex in the read-only text editor.
+        """
         hex_str = read_micropython()
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, hex_str)
 
     def read_full_flash_intel(self):
+        """Read the full contents of flash.
+
+        Displays it as Intel Hex in the read-only text editor.
+        """
         hex_str = read_full_flash_hex(decode_hex=False)
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, hex_str)
 
     def read_full_flash_pretty(self):
+        """Read the full contents of flash.
+
+        Displays it as a pretty hex and ASCII string in the read-only text
+        editor.
+        """
         hex_str = read_full_flash_hex(decode_hex=True)
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, hex_str)
 
     def read_uicr_customer(self):
+        """Read the full contents of flash.
+
+        Displays it as Intel Hex in the read-only text editor.
+        """
         uicr_hex_str = read_uicr_customer()
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, uicr_hex_str)
 
     def file_open(self, event=None, file_path=None):
+        """Open a file picker and loads a file into the editor."""
         file_path = filedialog.askopenfilename()
         if file_path:
             with open(file_path, encoding='utf-8') as f:
@@ -198,6 +239,7 @@ class UBitFlashToolWindow(Tk):
             self.editor.insert(1.0, file_contents)
 
     def file_save_as(self, event=None,):
+        """Save the text in the text editor into a file."""
         file_path = filedialog.asksaveasfilename(filetypes=(
                 ('Python files', '*.py *.pyw'), ('All files', '*.*')))
         if file_path:
@@ -209,12 +251,14 @@ class UBitFlashToolWindow(Tk):
             return None
 
     def file_quit(self, event=None):
+        """Confirm with the user to quite the app."""
         if messagebox.askyesnocancel('Exit', 'Exit?'):
             self.deactivate_console()
             self.destroy()
 
 
 def open_editor():
+    """Create the app window and launch it."""
     app = UBitFlashToolWindow()
     app.mainloop()
 
