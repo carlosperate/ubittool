@@ -32,7 +32,7 @@ install:
   - cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
 script:
-  - pipenv run flake8 ubitflashtool/
+  - sudo -H pipenv run flake8 ubitflashtool/
   # Lastly just run it as a simple test to check ubitflashtool is not broken
   - ./artifacts/ubitflashtool-cli -s my_script.py
 
