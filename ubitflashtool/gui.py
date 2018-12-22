@@ -5,9 +5,12 @@ from __future__ import absolute_import, print_function
 import sys
 import logging
 from idlelib.WidgetRedirector import WidgetRedirector
+
+from ubitflashtool import __version__
 from ubitflashtool.cmd import (read_python_code, read_micropython,
                                read_full_flash_hex, read_uicr_customer,
                                compare_full_flash_hex, compare_uicr_customer)
+
 if sys.version_info.major == 3:
     # Tkinter imports
     from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,
@@ -71,7 +74,7 @@ class UBitFlashToolWindow(Tk):
     def __init__(self, *args, **kwargs):
         """Initialise the window."""
         Tk.__init__(self, *args, **kwargs)
-        self.title('uBitFlashTool')
+        self.title('uBitFlashTool v{}'.format(__version__))
         self.geometry('{}x{}'.format(600, 480))
 
         self.frame_editor = Frame(self)

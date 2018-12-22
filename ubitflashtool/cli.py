@@ -6,6 +6,8 @@ import os
 import sys
 import logging
 import argparse
+
+from ubitflashtool import __version__
 from ubitflashtool.cmd import (read_full_flash_hex, read_python_code,
                                compare_full_flash_hex)
 
@@ -92,7 +94,7 @@ def main(argv=None):
     :param argv:
     :return: None
     """
-    HELP_TEXT = """ Usage:
+    HELP_TEXT = """ubitflashtool v{}.\n\nUsage:
     ubitflashtool extracted_script.py
     ubitflashtool -s extracted_script.py
     ubitflashtool --script extracted_script.py
@@ -102,7 +104,7 @@ def main(argv=None):
     ubitflashtool --flash full_flash.hex
     ubitflashtool --compare existing_file.hex
     ubitflashtool -c existing_file.hex
-    """
+    """.format(__version__)
     logging.basicConfig(level=logging.INFO)
 
     if not argv:
