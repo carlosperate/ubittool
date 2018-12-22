@@ -6,7 +6,8 @@ import sys
 import logging
 from idlelib.WidgetRedirector import WidgetRedirector
 from ubitflashtool.cmd import (read_python_code, read_micropython,
-                               read_full_flash_hex, read_uicr_customer)
+                               read_full_flash_hex, read_uicr_customer,
+                               compare_full_flash_hex, compare_uicr_customer)
 if sys.version_info.major == 3:
     # Tkinter imports
     from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,
@@ -16,7 +17,7 @@ elif sys.version_info.major == 2:
     from Tkinter import Tk, Text, Scrollbar, Menu, Frame
     import tkMessageBox as messagebox
     import tkFileDialog as filedialog
-    # Open with encodings
+    # open() with encodings
     from io import open
 
 
@@ -57,7 +58,7 @@ class StdoutRedirector(object):
                     self.tag, start_position, self.text_area.index('insert'))
 
     def flush(self):
-        """All flushed inmediately on each write call."""
+        """All flushed immediately on each write call."""
         pass
 
 
@@ -119,6 +120,13 @@ class UBitFlashToolWindow(Tk):
                              underline=1, command=self.read_full_flash_pretty)
         nrf_menu.add_command(label='Read UICR Customer', underline=1,
                              command=self.read_uicr_customer)
+        nrf_menu.add_separator()
+        nrf_menu.add_command(label='Compare full flash contents (Intel Hex)',
+                             underline=1,
+                             command=self.compare_full_flash_intel)
+        nrf_menu.add_command(label='Compare UICR Customer (Intel Hex)',
+                             underline=1,
+                             command=self.compare_uicr_customer_intel)
         menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
         # display the menu
         self.config(menu=menu)
@@ -224,9 +232,38 @@ class UBitFlashToolWindow(Tk):
 
         Displays it as Intel Hex in the read-only text editor.
         """
-        uicr_hex_str = read_uicr_customer()
+        uicr_hex_str = read_uicr_customer(decode_hex=True)
         self.editor.delete(1.0, 'end')
         self.editor.insert(1.0, uicr_hex_str)
+
+    def compare_full_flash_intel(self):
+        """Compare a hex file with the micro:bit flash.
+
+        Ask the user to select a hex file, compares it with flash contents and
+        opens the default web browser to display the comparison results.
+        """
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            self.editor.delete(1.0, 'end')
+            self.editor.insert(1.0, 'Reading flash contents...')
+            compare_full_flash_hex(file_path)
+            self.editor.delete(1.0, 'end')
+            self.editor.insert(1.0, 'Diff content loaded in default browser.')
+
+    def compare_uicr_customer_intel(self):
+        """Compare a hex file with the micro:bit user UICR memory.
+
+        Ask the user to select a hex file, compares it with the user UICR
+        contents and opens the default web browser to display the comparison
+        results.
+        """
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            self.editor.delete(1.0, 'end')
+            self.editor.insert(1.0, 'Reading User UICR contents...')
+            compare_uicr_customer(file_path)
+            self.editor.delete(1.0, 'end')
+            self.editor.insert(1.0, 'Diff content loaded in default browser.')
 
     def file_open(self, event=None, file_path=None):
         """Open a file picker and loads a file into the editor."""

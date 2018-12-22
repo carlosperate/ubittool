@@ -6,7 +6,8 @@ import os
 import sys
 import logging
 import argparse
-from ubitflashtool.cmd import read_full_flash_hex, read_python_code
+from ubitflashtool.cmd import (read_full_flash_hex, read_python_code,
+                               compare_full_flash_hex)
 
 
 def extract_py_script(file_path=None):
@@ -69,6 +70,22 @@ def extract_full_hex(file_path=None):
     print('Finished successfully!')
 
 
+def compare_full_flash(file_path):
+    """Compare the micro:bit flash contents with a hex file.
+
+    Opens the default browser to display an HTML page with the comparison
+    output.
+
+    :param hex_file_path: File path to the hex file to compare against.
+    """
+    if not file_path or not os.path.isfile(file_path):
+        print('Abort: File does not exists'.format(file_path))
+        sys.exit(1)
+    print('Comparing the flash contents...')
+    compare_full_flash_hex(file_path)
+    print('Diff output loaded in default browser.')
+
+
 def main(argv=None):
     """Entry point for the command line interface.
 
@@ -83,6 +100,8 @@ def main(argv=None):
     ubitflashtool --micropython extracted_micropython.hex
     ubitflashtool -f full_flash.hex
     ubitflashtool --flash full_flash.hex
+    ubitflashtool --compare existing_file.hex
+    ubitflashtool -c existing_file.hex
     """
     logging.basicConfig(level=logging.INFO)
 
@@ -104,6 +123,10 @@ def main(argv=None):
                 '-m', '--micropython',
                 nargs='?',
                 help=('Extract the micropython source code'), )
+        parser.add_argument(
+                '-c', '--compare',
+                nargs='?',
+                help=('Compare flash contents with hex file'), )
         args = parser.parse_args(argv)
 
         if args.script:
@@ -112,6 +135,8 @@ def main(argv=None):
             print("The 'micropython' flag functionality is not implemented.")
         elif args.flash:
             extract_full_hex(args.flash)
+        elif args.compare:
+            compare_full_flash(args.compare)
         else:
             print("what?")
     except Exception as ex:

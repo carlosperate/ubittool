@@ -12,13 +12,22 @@ customer data), and format the output into Intel Hex, a nicely decoded string
 format, or human readable text (for the Python code).
 """
 from __future__ import print_function, absolute_import
+import os
 import sys
+import tempfile
+import webbrowser
+from threading import Timer
+from difflib import HtmlDiff
 from cStringIO import StringIO
 from traceback import format_exc
 
 from pyOCD.board import MbedBoard
 from intelhex import IntelHex
 from uflash import extract_script
+
+if sys.version_info.major == 2:
+    # open() with encodings
+    from io import open
 
 
 # nRF51 256 KBs of flash starts at address 0
@@ -49,6 +58,9 @@ UICR_CUSTOMER_START = UICR_START + UICR_CUSTOMER_OFFSET
 UICR_CUSTOMER_END = UICR_CUSTOMER_START + UICR_CUSTOMER_SIZE_BYTES
 
 
+#
+# Memory read operations
+#
 def _read_continuous_memory(address=0x0, count=4):
     """Read any continuous memory area from the micro:bit.
 
@@ -111,7 +123,10 @@ def read_uicr(address=UICR_START, count=4):
     return _read_continuous_memory(address=address, count=count)
 
 
-def bytes_to_intel_hex(data, offset=0x0000):
+#
+# Data format conversions
+#
+def _bytes_to_intel_hex(data, offset=0x0000):
     """Take a list of bytes and return a string in the Intel Hex format.
 
     :param data: List of integers, each representing a single byte.
@@ -133,7 +148,7 @@ def bytes_to_intel_hex(data, offset=0x0000):
     return intel_hex_str
 
 
-def bytes_to_pretty_hex(data, offset=0x0000):
+def _bytes_to_pretty_hex(data, offset=0x0000):
     """Convert a list of bytes to a nicely formatted ASCII decoded hex string.
 
     :param data: List of integers, each representing a single byte.
@@ -155,6 +170,22 @@ def bytes_to_pretty_hex(data, offset=0x0000):
     return pretty_hex_str
 
 
+#
+# Commands
+#
+def read_uicr_customer(decode_hex=False):
+    """Read the UICR Customer data.
+
+    :return: String with the nicely decoded UIR Customer area data.
+    """
+    uicr_data = read_uicr(address=UICR_CUSTOMER_START,
+                          count=UICR_CUSTOMER_SIZE_BYTES)
+    if decode_hex:
+        return _bytes_to_pretty_hex(uicr_data, UICR_CUSTOMER_START)
+    else:
+        return _bytes_to_intel_hex(uicr_data, UICR_CUSTOMER_START)
+
+
 def read_flash_hex(address=MICROBIT_FLASH_START, count=4, decode_hex=False):
     """Read flash memory and return as a hex string.
 
@@ -170,9 +201,9 @@ def read_flash_hex(address=MICROBIT_FLASH_START, count=4, decode_hex=False):
     """
     flash_data = read_flash(address=address, count=count)
     if decode_hex:
-        return bytes_to_pretty_hex(flash_data, address)
+        return _bytes_to_pretty_hex(flash_data, address)
     else:
-        return bytes_to_intel_hex(flash_data, address)
+        return _bytes_to_intel_hex(flash_data, address)
 
 
 def read_full_flash_hex(decode_hex=False):
@@ -204,7 +235,7 @@ def read_python_code():
     """
     flash_data = read_flash(address=PYTHON_CODE_START,
                             count=(PYTHON_CODE_END - PYTHON_CODE_START))
-    py_code_hex = bytes_to_intel_hex(flash_data, offset=PYTHON_CODE_START)
+    py_code_hex = _bytes_to_intel_hex(flash_data, offset=PYTHON_CODE_START)
     try:
         python_code = extract_script(py_code_hex)
     except Exception as e:
@@ -213,11 +244,108 @@ def read_python_code():
     return python_code
 
 
-def read_uicr_customer():
-    """Read the UICR Customer data.
+#
+# Hex comparison
+#
+def _open_temp_html(html_str):
+    """Create a temporary html file, open it in a browser and delete it.
 
-    :return: String with the nicely decoded UIR Customer area data.
+    :param html_str: String to write to the temporary file.
     """
-    uicr_data = read_uicr(address=UICR_CUSTOMER_START,
-                          count=UICR_CUSTOMER_SIZE_BYTES)
-    return bytes_to_pretty_hex(uicr_data, UICR_CUSTOMER_START)
+    fd, path = tempfile.mkstemp(suffix='.html')
+    try:
+        with os.fdopen(fd, 'w') as tmp:
+            # do stuff with temp file
+            tmp.write(html_str)
+        webbrowser.open('file://' + os.path.realpath(path))
+    finally:
+        t = Timer(60.0, lambda del_f: os.remove(del_f), args=[path])
+        t.start()
+
+
+def _gen_diff_html(from_title, from_lines, to_title, to_lines):
+    """Compare two strings and string of HTML code with the output.
+
+    :param from_title: Title of the left content to compare.
+    :param from_lines: List of lines to compare.
+    :param to_title: Title of the right content to compare.
+    :param to_lines: List of lines to compare.
+    :return: String of HTML code with the comparison output.
+    """
+    html_template = """<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Diff %(from_title)s vs. %(to_title)s</title>
+        <style type="text/css">
+            table {font-family:Courier; border:medium}
+            .diff_header {background-color:#e0e0e0; padding:0px 10px}
+            td.diff_header {text-align:right}
+            .diff_next {background-color:#c0c0c0; padding:0px 10px}
+            .diff_add {background-color:#aaffaa}
+            .diff_chg {background-color:#ffff77}
+            .diff_sub {background-color:#ffaaaa}
+        </style>
+    </head>
+    <body>
+        <table>
+            <tr><td><table>
+                <tr><th>Colors</th></tr>
+                <tr><td class="diff_add">Added</td></tr>
+                <tr><td class="diff_chg">Changed</td></tr>
+                <tr><td class="diff_sub">Deleted</td></tr>
+            </table></td><td><table>
+                <tr><th>Links<th></tr>
+                <tr><td>(f)irst change</td></tr>
+                <tr><td>(n)ext change</td></tr>
+                <tr><td>(t)op</td></tr>
+            </table></td><td><table>
+                <tr><th>Files<th></tr>
+                <tr><td>Left: %(from_title)s</td></tr>
+                <tr><td>Right: %(to_title)s</td></tr>
+                <tr><td> </td></tr>
+            </table></td></tr>
+        </table>
+        %(diff_table)s
+    </body>
+    </html>"""
+    differ = HtmlDiff()
+    filled_template = html_template % dict(
+            from_title=from_title,
+            to_title=to_title,
+            diff_table=differ.make_table(from_lines, to_lines))
+    return filled_template
+
+
+def compare_full_flash_hex(hex_file_path):
+    """Compare the micro:bit flash contents with a hex file.
+
+    Opens the default browser to display an HTML page with the comparison
+    output.
+
+    :param hex_file_path: File path to the hex file to compare against.
+    """
+    with open(hex_file_path, encoding='utf-8') as f:
+        file_hex_str = f.readlines()
+    flash_hex_str = read_full_flash_hex(decode_hex=False)
+
+    html_code = _gen_diff_html('micro:bit', flash_hex_str.splitlines(),
+                               'Hex file', file_hex_str)
+    _open_temp_html(html_code)
+
+
+def compare_uicr_customer(hex_file_path):
+    """Compare the micro:bit User UICR contents with a hex file.
+
+    Opens the default browser to display an HTML page with the comparison
+    output.
+
+    :param hex_file_path: File path to the hex file to compare against.
+    """
+    with open(hex_file_path, encoding='utf-8') as f:
+        file_hex_str = f.readlines()
+    flash_hex_str = read_uicr_customer(decode_hex=False)
+
+    html_code = _gen_diff_html('micro:bit', flash_hex_str.splitlines(),
+                               'Hex file', file_hex_str)
+    _open_temp_html(html_code)
