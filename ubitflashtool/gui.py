@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """A text viewer that can can perform the ubitflashtool actions."""
 from __future__ import absolute_import, print_function
@@ -297,6 +297,9 @@ class UBitFlashToolWindow(Tk):
 def open_editor():
     """Create the app window and launch it."""
     app = UBitFlashToolWindow()
+    app.lift()
+    app.attributes('-topmost', True)
+    app.after_idle(app.attributes, '-topmost', False)
     app.mainloop()
 
 
