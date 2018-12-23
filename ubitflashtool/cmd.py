@@ -99,9 +99,9 @@ def read_flash(address=MICROBIT_FLASH_START, count=4):
     if not (MICROBIT_FLASH_START <= address < MICROBIT_FLASH_END) or \
             last_byte > MICROBIT_FLASH_END:
         raise ValueError('Cannot read a flash location out of boundaries.\n'
-                         'Reading from %s to %s,\n' % (address, last_byte) +
-                         'limits from %s to %s' % (MICROBIT_FLASH_START,
-                                                   MICROBIT_FLASH_END))
+                         'Reading from {} to {},\nlimits from {} to {}'.format(
+                             address, last_byte,
+                             MICROBIT_FLASH_START, MICROBIT_FLASH_END))
     return _read_continuous_memory(address=address, count=count)
 
 
@@ -118,8 +118,8 @@ def read_uicr(address=UICR_START, count=4):
     last_byte = address + count
     if not (UICR_START <= address < UICR_END) or (address + count) > UICR_END:
         raise ValueError('Cannot read a UICR location out of boundaries.\n'
-                         'Reading from %s to %s,\n' % (address, last_byte) +
-                         'limits from %s to %s' % (UICR_START, UICR_END))
+                         'Reading from {} to {},\nlimits from {} to {}'.format(
+                             address, last_byte, UICR_START, UICR_END))
     return _read_continuous_memory(address=address, count=count)
 
 
@@ -140,7 +140,7 @@ def _bytes_to_intel_hex(data, offset=0x0000):
     try:
         i_hex.tofile(fake_file, format='hex')
     except IOError as e:
-        sys.stderr.write('ERROR: File write: %s\n%s' % (fake_file, str(e)))
+        sys.stderr.write('ERROR: File write: {}\n{}'.format(fake_file, str(e)))
         return
 
     intel_hex_str = fake_file.getvalue()
@@ -162,7 +162,7 @@ def _bytes_to_pretty_hex(data, offset=0x0000):
     try:
         i_hex.dump(tofile=fake_file, width=16, withpadding=False)
     except IOError as e:
-        sys.stderr.write('ERROR: File write: %s\n%s' % (fake_file, str(e)))
+        sys.stderr.write('ERROR: File write: {}\n{}'.format(fake_file, str(e)))
         return
 
     pretty_hex_str = fake_file.getvalue()
@@ -257,9 +257,9 @@ def _open_temp_html(html_str):
         with os.fdopen(fd, 'w') as tmp:
             # do stuff with temp file
             tmp.write(html_str)
-        webbrowser.open('file://' + os.path.realpath(path))
+        webbrowser.open('file://{}'.format(os.path.realpath(path)))
     finally:
-        t = Timer(60.0, lambda del_f: os.remove(del_f), args=[path])
+        t = Timer(30.0, lambda del_f: os.remove(del_f), args=[path])
         t.start()
 
 
@@ -276,15 +276,15 @@ def _gen_diff_html(from_title, from_lines, to_title, to_lines):
     <html>
     <head>
         <meta charset="UTF-8">
-        <title>Diff %(from_title)s vs. %(to_title)s</title>
+        <title>Diff {from_title} vs. {to_title}</title>
         <style type="text/css">
-            table {font-family:Courier; border:medium}
-            .diff_header {background-color:#e0e0e0; padding:0px 10px}
-            td.diff_header {text-align:right}
-            .diff_next {background-color:#c0c0c0; padding:0px 10px}
-            .diff_add {background-color:#aaffaa}
-            .diff_chg {background-color:#ffff77}
-            .diff_sub {background-color:#ffaaaa}
+            table {{font-family:Courier; border:medium}}
+            .diff_header {{background-color:#e0e0e0; padding:0px 10px}}
+            td.diff_header {{text-align:right}}
+            .diff_next {{background-color:#c0c0c0; padding:0px 10px}}
+            .diff_add {{background-color:#aaffaa}}
+            .diff_chg {{background-color:#ffff77}}
+            .diff_sub {{background-color:#ffaaaa}}
         </style>
     </head>
     <body>
@@ -301,16 +301,15 @@ def _gen_diff_html(from_title, from_lines, to_title, to_lines):
                 <tr><td>(t)op</td></tr>
             </table></td><td><table>
                 <tr><th>Files<th></tr>
-                <tr><td>Left: %(from_title)s</td></tr>
-                <tr><td>Right: %(to_title)s</td></tr>
-                <tr><td> </td></tr>
+                <tr><td>Left: {from_title}</td></tr>
+                <tr><td>Right: {to_title}</td></tr>
             </table></td></tr>
         </table>
-        %(diff_table)s
+        {diff_table}
     </body>
     </html>"""
     differ = HtmlDiff()
-    filled_template = html_template % dict(
+    filled_template = html_template.format(
             from_title=from_title,
             to_title=to_title,
             diff_table=differ.make_table(from_lines, to_lines))
