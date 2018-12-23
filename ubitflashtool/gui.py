@@ -7,9 +7,9 @@ import logging
 from idlelib.WidgetRedirector import WidgetRedirector
 
 from ubitflashtool import __version__
-from ubitflashtool.cmd import (read_python_code, read_micropython,
-                               read_full_flash_hex, read_uicr_customer,
-                               compare_full_flash_hex, compare_uicr_customer)
+from ubitflashtool.cmds import (read_python_code, read_micropython,
+                                read_full_flash_hex, read_uicr_customer,
+                                compare_full_flash_hex, compare_uicr_customer)
 
 if sys.version_info.major == 3:
     # Tkinter imports

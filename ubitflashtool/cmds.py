@@ -259,6 +259,8 @@ def _open_temp_html(html_str):
             tmp.write(html_str)
         webbrowser.open('file://{}'.format(os.path.realpath(path)))
     finally:
+        # It can take some time for the browser to open the file, so wait a
+        # bit before deleting the file
         t = Timer(30.0, lambda del_f: os.remove(del_f), args=[path])
         t.start()
 

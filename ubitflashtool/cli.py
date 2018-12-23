@@ -8,8 +8,8 @@ import logging
 import argparse
 
 from ubitflashtool import __version__
-from ubitflashtool.cmd import (read_full_flash_hex, read_python_code,
-                               compare_full_flash_hex)
+from ubitflashtool.cmds import (read_full_flash_hex, read_python_code,
+                                compare_full_flash_hex)
 
 
 def extract_py_script(file_path=None):
