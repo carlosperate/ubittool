@@ -7,15 +7,21 @@ name = "pypi"
 IntelHex = ">=2.2.1"
 uflash = ">=1.1.0,<1.2.1"
 pyOCD = "==0.12.0"
+ubitflashtool = {path = "."}
 
 [dev-packages]
 PyInstaller = ">=3.3"
-flake8 = "*"
-flake8-docstrings = "*"
 # PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
 # Travis doesn't pick it up and PyOCD fails to install or run
 setuptools_scm = "*"
-ubitflashtool = {path = "."}
+# Linting
+flake8 = "*"
+flake8-docstrings = "*"
+# Tests
+pytest = "*"
+pytest-cov = "*"
+mock = {version = "*", markers = "python_version < '3.4'"}
+ubitflashtool = {path = ".", editable = true}
 
 [requires]
 python_version = "2.7"

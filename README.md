@@ -24,3 +24,9 @@ or from this directory:
 ```
 python -m ubitflashtool --gui
 ```
+
+To run the tests, from this directory execute:
+
+```
+pytest -v --cov=ubitflashtool tests/
+```
