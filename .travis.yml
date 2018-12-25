@@ -34,6 +34,9 @@ install:
   - sudo -H chmod +x ./artifacts/ubitflashtool-cli
   - cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
+  # Prepare codecov coverage
+  - pip install codecov
+
 script:
   - sudo -H pipenv run flake8 ubitflashtool/ tests/
   - sudo -H pipenv run python -m pytest -v --cov=ubitflashtool tests/
@@ -46,6 +49,9 @@ after_script:
   - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
   # - curl -F "file=@./artifacts/ubitflashtool-gui.zip" "https://file.io/?expires=3"
   # - curl -F "file=@./artifacts/ubitflashtool-cli" "https://file.io/?expires=3"
+
+  # Upload test coverage report
+  - codecov
 
 notifications:
   email:

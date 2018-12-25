@@ -49,6 +49,9 @@ install:
   - cmd: pipenv install --dev .
   - cmd: pipenv run pip freeze
 
+  # Prepare codecov coverage
+  - cmd: pip install codecov
+
 test_script:
   - cmd: pipenv run flake8 ubitflashtool/ tests/
   - cmd: pipenv run python -m pytest -v --cov=ubitflashtool tests/
@@ -59,6 +62,9 @@ after_test:
   # Create AppVeyor artifact to be uploaded
   - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-gui.exe
   - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-cli.exe
+
+  # Upload test coverage report
+  - cmd: codecov
 
 # Not a project with an msbuild file, build done at install.
 build: None
