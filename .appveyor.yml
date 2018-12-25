@@ -13,7 +13,7 @@ init:
   - cmd: ECHO Processor architecture - %PROCESSOR_ARCHITECTURE%
   - cmd: wmic OS get OSArchitecture
 
-  # As AppVeyor has multiple python install, check which one uses by default
+  # As AppVeyor has multiple python installs, check which one used by default
   - cmd: ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%
   - cmd: python --version
   - cmd: python -c "import struct; print(struct.calcsize('P') * 8)"
@@ -33,28 +33,30 @@ init:
   - cmd: pip freeze
 
 install:
-  # Install python dependencies (v3.2 has VC++ redistributable dependencies)
+  # Install globally (pyinstaller v3.2 has VC++ redistributable dependencies)
   - cmd: pip install pyinstaller==3.1.1
   - cmd: python setup.py install
-
-  # Check installed packages
   - cmd: pip freeze
 
-  # Build mu using PyInstaller, rename dist folder
+  # Build using PyInstaller, rename dist folder
   - cmd: pyinstaller package\pyinstaller-cli.spec
   - cmd: pyinstaller package\pyinstaller-gui.spec
   - ps: Rename-Item -path .\dist artifacts
   - cmd: dir artifacts
 
-  # Install with Pipenv
+  # Install with Pipenv so that we can run the tests
   - cmd: pip install pipenv
   - cmd: pipenv install --dev .
+  - cmd: pipenv run pip freeze
 
 test_script:
-  - cmd: pipenv run flake8 ubitflashtool/
+  - cmd: pipenv run flake8 ubitflashtool/ tests/
+  - cmd: pipenv run python -m pytest -v --cov=ubitflashtool tests/
+  # Lastly just run it as a simple test to check ubitflashtool is not broken
+  - cmd: .\artifacts\ubitflashtool-cli.exe -s my_script.py
 
 after_test:
-  # Create AppVeyor artifact
+  # Create AppVeyor artifact to be uploaded
   - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-gui.exe
   - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-cli.exe
 

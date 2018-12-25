@@ -9,16 +9,19 @@ matrix:
 before_install:
   # OS and Python info
   - uname -a
+  - sudo -H python --version
+  - sudo -H python -c "import struct; print(struct.calcsize('P') * 8)"
   - sudo -H python -c "import sys; print(sys.executable)"
+
+  # Install pip
   - curl -O https://bootstrap.pypa.io/get-pip.py && sudo -H python get-pip.py && rm get-pip.py
   - sudo -H pip --version
   - sudo -H pip freeze
 
 install:
+  # Install and check installed packages
   - sudo -H pip install pipenv
   - sudo -H pipenv install --dev .
-
-  # Check things were installed correctly
   - sudo -H pipenv run pip freeze
 
   # Build the two versions of ubitflashtool using PyInstaller
@@ -32,7 +35,8 @@ install:
   - cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
 
 script:
-  - sudo -H pipenv run flake8 ubitflashtool/
+  - sudo -H pipenv run flake8 ubitflashtool/ tests/
+  - sudo -H pipenv run python -m pytest -v --cov=ubitflashtool tests/
   # Lastly just run it as a simple test to check ubitflashtool is not broken
   - ./artifacts/ubitflashtool-cli -s my_script.py
 
