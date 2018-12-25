@@ -17,11 +17,13 @@ setuptools_scm = "*"
 # Linting
 flake8 = "*"
 flake8-docstrings = "*"
+flake8-builtins = "*"
 # Tests
 pytest = "*"
 pytest-cov = "*"
-mock = {version = "*", markers = "python_version < '3.4'"}
-ubitflashtool = {path = ".", editable = true}
+mock = {version = "*",markers = "python_version < '3.4'"}
+# Install package in editable mode
+ubitflashtool = {editable = true,path = "."}
 
 [requires]
 python_version = "2.7"
