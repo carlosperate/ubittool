@@ -3,4 +3,4 @@
 """Package init."""
 
 #: MAJOR, MINOR, RELEASE, STATUS [alpha, beta, final], VERSION
-__version__ = '0.1.0'
+__version__ = '0.2.0'
