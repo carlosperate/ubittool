@@ -96,6 +96,44 @@ class TextViewer(ReadOnlyEditor):
         self.insert(1.0, new_content)
 
 
+class ConsoleOutput(ReadOnlyEditor):
+    """A read-only editor to display std out and err streams."""
+
+    def __init__(self, parent, *args, **kwargs):
+        """Construct the editor into a parent frame.
+
+        :param frame: A Frame() instance to set this text editor.
+        """
+        self.scrollbar = Scrollbar(parent, orient='vertical')
+        ReadOnlyEditor.__init__(
+                self, parent, yscrollcommand=self.scrollbar.set,
+                background="#222", foreground="#DDD", *args, **kwargs)
+        self.pack(side='left', fill='both', expand=1)
+        self.config(wrap='char', width=1)
+        self.scrollbar.pack(side='right', fill='y')
+        self.scrollbar.config(command=self.yview)
+        parent.pack(fill='both', expand=1)
+        self.activate()
+
+    def activate(self):
+        """Configure std out/in to send to write to the console text widget."""
+        sys.stdout = StdoutRedirector(self, text_color='#0D4')
+        sys.stderr = StdoutRedirector(self, text_color='#D00')
+        logger = logging.getLogger()
+        logger.setLevel(level=logging.INFO)
+        logging_handler_out = logging.StreamHandler(sys.stdout)
+        logging_handler_out.setLevel(logging.INFO)
+        logger.addHandler(logging_handler_out)
+        logging_handler_err = logging.StreamHandler(sys.stderr)
+        logging_handler_err.setLevel(logging.WARNING)
+        logger.addHandler(logging_handler_err)
+
+    def deactivate(self):
+        """Restore std out/in."""
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
+
 class UBitFlashToolWindow(Tk):
     """Main app window.
 
@@ -116,9 +154,7 @@ class UBitFlashToolWindow(Tk):
         self.editor.focus()
 
         self.frame_console = Frame(self)
-        self.console = None
-        self.set_console(self.frame_console)
-        self.activate_console()
+        self.console = ConsoleOutput(self.frame_console)
 
         # instead of closing the window, execute a function
         self.protocol('WM_DELETE_WINDOW', self.file_quit)
@@ -165,39 +201,6 @@ class UBitFlashToolWindow(Tk):
         menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
         # display the menu
         self.config(menu=menu)
-
-    def set_console(self, frame):
-        """Set a read-only editor to a frame to display std out and in streams.
-
-        :param frame: A Frame() instance to set a text editor.
-        """
-        scrollbar = Scrollbar(frame, orient='vertical')
-        self.console = ReadOnlyEditor(frame, yscrollcommand=scrollbar.set,
-                                      background="#222", foreground="#DDD")
-        self.console.pack(side='left', fill='both', expand=1)
-        self.console.config(wrap='char', width=1)
-        self.console.focus()
-        scrollbar.pack(side='right', fill='y')
-        scrollbar.config(command=self.console.yview)
-        frame.pack(fill='both', expand=1)
-
-    def activate_console(self):
-        """Configure std out/in to send to write to the console text widget."""
-        sys.stdout = StdoutRedirector(self.console, text_color='#0D4')
-        sys.stderr = StdoutRedirector(self.console, text_color='#D00')
-        logger = logging.getLogger()
-        logger.setLevel(level=logging.INFO)
-        logging_handler_out = logging.StreamHandler(sys.stdout)
-        logging_handler_out.setLevel(logging.INFO)
-        logger.addHandler(logging_handler_out)
-        logging_handler_err = logging.StreamHandler(sys.stderr)
-        logging_handler_err.setLevel(logging.WARNING)
-        logger.addHandler(logging_handler_err)
-
-    def deactivate_console(self):
-        """Restore std out/in."""
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
 
     def bind_shortcuts(self, event=None):
         """Bind shortcuts to operations."""
@@ -301,7 +304,7 @@ class UBitFlashToolWindow(Tk):
     def file_quit(self, event=None):
         """Confirm with the user to quite the app."""
         if messagebox.askyesnocancel('Exit', 'Exit?'):
-            self.deactivate_console()
+            self.console.deactivate()
             self.destroy()
 
 
