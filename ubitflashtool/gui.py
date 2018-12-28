@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""A text viewer that can can perform the ubitflashtool actions."""
+"""A GUI that display the content from performing the uBitFlashTool actions."""
 from __future__ import absolute_import, print_function
 import sys
 import logging
+import platform
 from idlelib.WidgetRedirector import WidgetRedirector
 
 from ubitflashtool import __version__
@@ -166,37 +167,39 @@ class UBitFlashToolWindow(Tk):
 
         :param menu: A Menu() instance to attach all options.
         """
+        # In macOS we use the command key instead of option
+        cmd_key = 'Command' if platform.system() == 'Darwin' else 'Ctrl'
         # Menu item File
         file_menu = Menu(menu, tearoff=0)
-        file_menu.add_command(label='Open', underline=1,
-                              command=self.file_open, accelerator='Ctrl+O')
-        file_menu.add_command(label='Save As', underline=5,
-                              command=self.file_save_as, accelerator='Ctrl+S')
+        file_menu.add_command(label='Open', underline=0,
+                              command=self.file_open,
+                              accelerator='{}+O'.format(cmd_key))
+        file_menu.add_command(label='Save As', underline=0,
+                              command=self.file_save_as,
+                              accelerator='{}+S'.format(cmd_key))
         file_menu.add_separator()
-        file_menu.add_command(label='Exit', underline=2,
+        file_menu.add_command(label='Exit',
                               command=self.file_quit, accelerator='Alt+F4')
         menu.add_cascade(label='File', underline=0, menu=file_menu)
         # Menu item micro:bit
         ubit_menu = Menu(menu, tearoff=0)
-        ubit_menu.add_command(label='Read MicroPython code', underline=1,
+        ubit_menu.add_command(label='Read MicroPython code',
                               command=self.read_python_code)
-        ubit_menu.add_command(label='Read MicroPython runtime', underline=1,
+        ubit_menu.add_command(label='Read MicroPython runtime',
                               command=self.read_micropython)
         menu.add_cascade(label='micro:bit', underline=0, menu=ubit_menu)
         # Menu item nrf
         nrf_menu = Menu(menu, tearoff=0)
         nrf_menu.add_command(label='Read full flash contents (Intel Hex)',
-                             underline=1, command=self.read_full_flash_intel)
+                             command=self.read_full_flash_intel)
         nrf_menu.add_command(label='Read full flash contents (Pretty Hex)',
-                             underline=1, command=self.read_full_flash_pretty)
-        nrf_menu.add_command(label='Read UICR Customer', underline=1,
+                             command=self.read_full_flash_pretty)
+        nrf_menu.add_command(label='Read UICR Customer',
                              command=self.read_uicr_customer)
         nrf_menu.add_separator()
         nrf_menu.add_command(label='Compare full flash contents (Intel Hex)',
-                             underline=1,
                              command=self.compare_full_flash_intel)
         nrf_menu.add_command(label='Compare UICR Customer (Intel Hex)',
-                             underline=1,
                              command=self.compare_uicr_customer_intel)
         menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
         # display the menu
@@ -204,10 +207,12 @@ class UBitFlashToolWindow(Tk):
 
     def bind_shortcuts(self, event=None):
         """Bind shortcuts to operations."""
-        self.editor.bind('<Control-o>', self.file_open)
-        self.editor.bind('<Control-O>', self.file_open)
-        self.editor.bind('<Control-S>', self.file_save_as)
-        self.editor.bind('<Control-s>', self.file_save_as)
+        # In macOS we use the command key instead of option
+        cmd_key = 'Command' if platform.system() == 'Darwin' else 'Control'
+        self.bind('<{}-o>'.format(cmd_key), self.file_open)
+        self.bind('<{}-O>'.format(cmd_key), self.file_open)
+        self.bind('<{}-S>'.format(cmd_key), self.file_save_as)
+        self.bind('<{}-s>'.format(cmd_key), self.file_save_as)
 
     def unimplemented(self):
         """Display an window to show the user a feature is not implemented."""
@@ -280,7 +285,7 @@ class UBitFlashToolWindow(Tk):
             compare_uicr_customer(file_path)
             self.editor.replace('Diff content loaded in default browser.')
 
-    def file_open(self, event=None, file_path=None):
+    def file_open(self, event=None):
         """Open a file picker and loads a file into the editor."""
         file_path = filedialog.askopenfilename()
         if file_path:
@@ -289,7 +294,7 @@ class UBitFlashToolWindow(Tk):
             # Set current text to file contents
             self.editor.replace(file_contents)
 
-    def file_save_as(self, event=None,):
+    def file_save_as(self, event=None):
         """Save the text in the text editor into a file."""
         file_path = filedialog.asksaveasfilename(filetypes=(
                 ('Python files', '*.py *.pyw'), ('All files', '*.*')))
