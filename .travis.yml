@@ -41,7 +41,7 @@ script:
   - sudo -H pipenv run flake8 ubitflashtool/ tests/
   - sudo -H pipenv run python -m pytest -v --cov=ubitflashtool tests/
   # Lastly just run it as a simple test to check ubitflashtool is not broken
-  - ./artifacts/ubitflashtool-cli -s my_script.py
+  - ./artifacts/ubitflashtool-cli --help
 
 after_script:
   # Upload built executables to a temporary service
