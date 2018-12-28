@@ -76,6 +76,8 @@ def _read_continuous_memory(address=0x0, count=4):
     """
     # TODO: Implement a time out, figure out possible exceptions
     board = MbedBoard.chooseBoard(blocking=False)
+    if not board:
+        raise Exception('Did not find any connected boards.')
     target = board.target
     target.resume()
     target.halt()
@@ -259,8 +261,8 @@ def _open_temp_html(html_str):
             tmp.write(html_str)
         webbrowser.open('file://{}'.format(os.path.realpath(path)))
     finally:
-        # It can take some time for the browser to open the file, so wait a
-        # bit before deleting the file
+        # It can take a bit of time for the browser to open the file,
+        # so wait some time before deleting it
         t = Timer(30.0, lambda del_f: os.remove(del_f), args=[path])
         t.start()
 

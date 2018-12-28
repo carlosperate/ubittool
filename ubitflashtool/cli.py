@@ -1,152 +1,135 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""Command line interface entry point."""
+"""CLI and GUI utility to read content from the micro:bit."""
 from __future__ import print_function, absolute_import
 import os
 import sys
-import logging
-import argparse
+
+import click
 
 from ubitflashtool import __version__
 from ubitflashtool.cmds import (read_full_flash_hex, read_python_code,
                                 compare_full_flash_hex)
 
 
-def extract_py_script(file_path=None):
-    """Extract the MicroPython script to a file or std out.
+@click.group(help='ubitflashtool v{}.\n\n{}'.format(__version__, __doc__))
+def cli():
+    """Click entry point."""
+    pass
 
-    :param file_path: Path to the output file to write the MicroPython code.
-    :return: Nothing.
+
+def _file_checker(subject, file_path):
+    """Check if a file exists and informs user about content output.
+
+    :param subject: Very short file description, subject for printed sentences.
     """
-    print('Extracting MicroPython script from flash:')
-
     if file_path:
-        if os.path.isfile(file_path):
-            print('Abort: The %s file already exists.' % file_path)
-            return
+        if os.path.exists(file_path):
+            click.echo(click.style('Abort: The {} file already exists.',
+                                   fg='red').format(file_path), err=True)
+            sys.exit(1)
         else:
-            print('Writing MicroPython code into file: %s' % file_path)
+            click.echo('{} will be written to: {}'.format(subject, file_path))
     else:
-        print('Will output MicroPython code into console.')
-
-    print('Reading the micro:bit flash contents...')
-    python_code = read_python_code()
-
-    print('Saving the MicroPython code...')
-    if file_path:
-        with open(file_path, 'w') as python_script:
-            python_script.write(python_code)
-    else:
-        print(python_code)
-
-    print('Finished successfully!')
+        click.echo('{} will be output to console.'.format(subject))
 
 
-def extract_full_hex(file_path=None):
-    """Read all the micro:bit flash contents into a file or std out.
+@cli.command()
+@click.option('-f', '--file_path', 'file_path', type=click.Path(),
+              help='Path to the output file to write the MicroPython code.')
+def read_code(file_path=None):
+    """Extract the MicroPython code to a file or print it."""
+    click.echo('Executing: {}\n'.format(read_code.__doc__))
+    _file_checker('MicroPython code', file_path)
 
-    :param file_path: Path to the output file to write the flash contents.
-    :return: Nothing.
-    """
-    print('Extracting the full flash contents:')
+    click.echo('Reading the micro:bit flash contents...')
+    try:
+        python_code = read_python_code()
+    except Exception as e:
+        click.echo(click.style('Error: {}', fg='red').format(e), err=True)
+        sys.exit(1)
 
     if file_path:
-        if os.path.isfile(file_path):
-            print('Abort: The %s file already exists.' % file_path)
-            return
-        else:
-            print('Writing flash into file: %s' % file_path)
+        click.echo('Saving the MicroPython code...')
+        with open(file_path, 'w') as python_file:
+            python_file.write(python_code)
     else:
-        print('Will output flash into console.')
+        click.echo('Printing the MicroPython code')
+        click.echo('----------------------------------------')
+        click.echo(python_code)
+        click.echo('----------------------------------------')
 
-    print('Reading the micro:bit flash contents...')
-    flash_data = read_full_flash_hex()
+    click.echo('\nFinished successfully!')
 
-    print('Saving the flash contents...')
+
+@cli.command()
+@click.option('-f', '--file_path', 'file_path', type=click.Path(),
+              help='Path to the output file to write micro:bit flash content.')
+def read_flash(file_path=None):
+    """Read the micro:bit flash contents into a hex file or console."""
+    click.echo('Executing: {}\n'.format(read_flash.__doc__))
+    _file_checker('micro:bit flash hex', file_path)
+
+    click.echo('Reading the micro:bit flash contents...')
+    try:
+        flash_data = read_full_flash_hex()
+    except Exception as e:
+        click.echo(click.style('Error: {}', fg='red').format(e), err=True)
+        sys.exit(1)
+
     if file_path:
+        click.echo('Saving the flash contents...')
         with open(file_path, 'w') as hex_file:
             hex_file.write(flash_data)
     else:
-        print(flash_data)
+        click.echo('Printing the flash contents')
+        click.echo('----------------------------------------')
+        click.echo(flash_data)
+        click.echo('----------------------------------------')
 
-    print('Finished successfully!')
+    click.echo('\nFinished successfully!')
 
 
-def compare_full_flash(file_path):
+@cli.command()
+@click.option('-f', '--file_path', 'file_path',
+              type=click.Path(), required=True,
+              help='Path to to the hex file to compare against the micro:bit.')
+def compare_flash(file_path):
     """Compare the micro:bit flash contents with a hex file.
 
     Opens the default browser to display an HTML page with the comparison
     output.
-
-    :param hex_file_path: File path to the hex file to compare against.
     """
+    click.echo('Executing: Compare the micro:bit flash with a hex file.\n')
     if not file_path or not os.path.isfile(file_path):
-        print('Abort: File does not exists'.format(file_path))
+        click.echo(click.style('Abort: File does not exists', fg='red'),
+                   err=True)
         sys.exit(1)
-    print('Comparing the flash contents...')
-    compare_full_flash_hex(file_path)
-    print('Diff output loaded in default browser.')
 
-
-def main(argv=None):
-    """Entry point for the command line interface.
-
-    :param argv:
-    :return: None
-    """
-    HELP_TEXT = """ubitflashtool v{}.\n\nUsage:
-    ubitflashtool extracted_script.py
-    ubitflashtool -s extracted_script.py
-    ubitflashtool --script extracted_script.py
-    ubitflashtool -m extracted_micropython.hex
-    ubitflashtool --micropython extracted_micropython.hex
-    ubitflashtool -f full_flash.hex
-    ubitflashtool --flash full_flash.hex
-    ubitflashtool --compare existing_file.hex
-    ubitflashtool -c existing_file.hex
-    """.format(__version__)
-    logging.basicConfig(level=logging.INFO)
-
-    if not argv:
-        print(HELP_TEXT)
-        sys.exit(0)
+    click.echo('Reading the micro:bit flash contents...')
     try:
-        parser = argparse.ArgumentParser(description=HELP_TEXT)
-        # FIXME: This is an incorrect usage of ArgumentParser, read the docs
-        parser.add_argument(
-                '-f', '--flash',
-                nargs='?',
-                help=("Extract all microbit flash contents."), )
-        parser.add_argument(
-                '-s', '--script',
-                nargs='?',
-                help=("Extract python source from the microbit."), )
-        parser.add_argument(
-                '-m', '--micropython',
-                nargs='?',
-                help=('Extract the micropython source code'), )
-        parser.add_argument(
-                '-c', '--compare',
-                nargs='?',
-                help=('Compare flash contents with hex file'), )
-        args = parser.parse_args(argv)
+        compare_full_flash_hex(file_path)
+    except Exception as e:
+        click.echo(click.style('Error: {}', fg='red').format(e), err=True)
+        sys.exit(1)
+    click.echo('Diff output loaded in default browser.')
 
-        if args.script:
-            extract_py_script(args.script)
-        elif args.micropython:
-            print("The 'micropython' flag functionality is not implemented.")
-        elif args.flash:
-            extract_full_hex(args.flash)
-        elif args.compare:
-            compare_full_flash(args.compare)
-        else:
-            print("what?")
-    except Exception as ex:
-        # The exception of no return. Print the exception information.
-        print(ex)
+    click.echo('\nFinished successfully!')
 
-    sys.exit(0)
+
+@cli.command()
+def gui():
+    """Launch the GUI version of this app (has more options)."""
+    # GUI depends on tkinter, which could be packaged separately from Python
+    # for users that only want the CLI we can still use all the other commands
+    from ubitflashtool.gui import open_editor
+    open_editor()
+
+
+def main():
+    """Command line interface entry point."""
+    cli(prog_name='ubitflashtool')
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
