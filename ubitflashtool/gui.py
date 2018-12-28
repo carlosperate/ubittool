@@ -65,6 +65,37 @@ class StdoutRedirector(object):
         pass
 
 
+class TextViewer(ReadOnlyEditor):
+    """A read-only text editor for viewing text."""
+
+    def __init__(self, parent, *args, **kwargs):
+        """Construct the editor into a parent frame.
+
+        :param frame: A Frame() instance to set the text editor.
+        """
+        self.scrollbar = Scrollbar(parent, orient='vertical')
+        ReadOnlyEditor.__init__(self, parent,
+                                yscrollcommand=self.scrollbar.set,
+                                *args, **kwargs)
+        self.pack(side='left', fill='both', expand=1)
+        self.config(wrap='char', width=1)
+        self.scrollbar.pack(side='right', fill='y')
+        self.scrollbar.config(command=self.yview)
+        parent.pack(fill='both', expand=1)
+
+    def clear(self):
+        """Remove all the content in the editor."""
+        self.delete(1.0, 'end')
+
+    def replace(self, new_content):
+        """Remove all editor content and inserts the new content.
+
+        :param new_content: String to insert.
+        """
+        self.delete(1.0, 'end')
+        self.insert(1.0, new_content)
+
+
 class UBitFlashToolWindow(Tk):
     """Main app window.
 
@@ -77,14 +108,15 @@ class UBitFlashToolWindow(Tk):
         self.title('uBitFlashTool v{}'.format(__version__))
         self.geometry('{}x{}'.format(600, 480))
 
-        self.frame_editor = Frame(self)
-        self.frame_console = Frame(self)
         self.menu_bar = Menu(self)
-        self.editor = None
-        self.console = None
-
         self.set_menu_bar(self.menu_bar)
-        self.set_editor(self.frame_editor)
+
+        self.frame_editor = Frame(self)
+        self.editor = TextViewer(self.frame_editor)
+        self.editor.focus()
+
+        self.frame_console = Frame(self)
+        self.console = None
         self.set_console(self.frame_console)
         self.activate_console()
 
@@ -133,20 +165,6 @@ class UBitFlashToolWindow(Tk):
         menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
         # display the menu
         self.config(menu=menu)
-
-    def set_editor(self, frame):
-        """Set a read-only the text editor to a frame to display text.
-
-        :param frame: A Frame() instance to set a text editor.
-        """
-        scrollbar = Scrollbar(frame, orient='vertical')
-        self.editor = ReadOnlyEditor(frame, yscrollcommand=scrollbar.set)
-        self.editor.pack(side='left', fill='both', expand=1)
-        self.editor.config(wrap='char', width=1)
-        self.editor.focus()
-        scrollbar.pack(side='right', fill='y')
-        scrollbar.config(command=self.editor.yview)
-        frame.pack(fill='both', expand=1)
 
     def set_console(self, frame):
         """Set a read-only editor to a frame to display std out and in streams.
@@ -199,8 +217,7 @@ class UBitFlashToolWindow(Tk):
         Displays it as text code in the read-only text editor.
         """
         python_code = read_python_code()
-        self.editor.delete(1.0, 'end')
-        self.editor.insert(1.0, python_code)
+        self.editor.replace(python_code)
 
     def read_micropython(self):
         """Read the Python user code from the micro:bit flash.
@@ -208,8 +225,7 @@ class UBitFlashToolWindow(Tk):
         Displays it as Intel Hex in the read-only text editor.
         """
         hex_str = read_micropython()
-        self.editor.delete(1.0, 'end')
-        self.editor.insert(1.0, hex_str)
+        self.editor.replace(hex_str)
 
     def read_full_flash_intel(self):
         """Read the full contents of flash.
@@ -217,8 +233,7 @@ class UBitFlashToolWindow(Tk):
         Displays it as Intel Hex in the read-only text editor.
         """
         hex_str = read_full_flash_hex(decode_hex=False)
-        self.editor.delete(1.0, 'end')
-        self.editor.insert(1.0, hex_str)
+        self.editor.replace(hex_str)
 
     def read_full_flash_pretty(self):
         """Read the full contents of flash.
@@ -227,8 +242,7 @@ class UBitFlashToolWindow(Tk):
         editor.
         """
         hex_str = read_full_flash_hex(decode_hex=True)
-        self.editor.delete(1.0, 'end')
-        self.editor.insert(1.0, hex_str)
+        self.editor.replace(hex_str)
 
     def read_uicr_customer(self):
         """Read the full contents of flash.
@@ -236,8 +250,7 @@ class UBitFlashToolWindow(Tk):
         Displays it as Intel Hex in the read-only text editor.
         """
         uicr_hex_str = read_uicr_customer(decode_hex=True)
-        self.editor.delete(1.0, 'end')
-        self.editor.insert(1.0, uicr_hex_str)
+        self.editor.replace(uicr_hex_str)
 
     def compare_full_flash_intel(self):
         """Compare a hex file with the micro:bit flash.
@@ -247,11 +260,9 @@ class UBitFlashToolWindow(Tk):
         """
         file_path = filedialog.askopenfilename()
         if file_path:
-            self.editor.delete(1.0, 'end')
-            self.editor.insert(1.0, 'Reading flash contents...')
+            self.editor.replace('Reading flash contents...')
             compare_full_flash_hex(file_path)
-            self.editor.delete(1.0, 'end')
-            self.editor.insert(1.0, 'Diff content loaded in default browser.')
+            self.editor.replace('Diff content loaded in default browser.')
 
     def compare_uicr_customer_intel(self):
         """Compare a hex file with the micro:bit user UICR memory.
@@ -262,11 +273,9 @@ class UBitFlashToolWindow(Tk):
         """
         file_path = filedialog.askopenfilename()
         if file_path:
-            self.editor.delete(1.0, 'end')
-            self.editor.insert(1.0, 'Reading User UICR contents...')
+            self.editor.replace('Reading User UICR contents...')
             compare_uicr_customer(file_path)
-            self.editor.delete(1.0, 'end')
-            self.editor.insert(1.0, 'Diff content loaded in default browser.')
+            self.editor.replace('Diff content loaded in default browser.')
 
     def file_open(self, event=None, file_path=None):
         """Open a file picker and loads a file into the editor."""
@@ -275,8 +284,7 @@ class UBitFlashToolWindow(Tk):
             with open(file_path, encoding='utf-8') as f:
                 file_contents = f.read()
             # Set current text to file contents
-            self.editor.delete(1.0, 'end')
-            self.editor.insert(1.0, file_contents)
+            self.editor.replace(file_contents)
 
     def file_save_as(self, event=None,):
         """Save the text in the text editor into a file."""
