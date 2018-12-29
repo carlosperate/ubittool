@@ -5,8 +5,10 @@
 No dependencies outside of what is on the Pipfile, so it works on all platforms
 without installing other stuff (e.g. Make on Windows).
 """
+from __future__ import print_function
 import os
 import sys
+import shutil
 import subprocess
 
 import click
@@ -38,6 +40,48 @@ def _set_cwd():
     os.chdir(_this_file_dir())
 
 
+def _rm_dir(dir_to_remove):
+    """:param dir_to_remove: Directory to remove."""
+    if os.path.isdir(dir_to_remove):
+        print('Removing directory: {}'.format(dir_to_remove))
+        shutil.rmtree(dir_to_remove)
+    else:
+        print('Directory {} was not found.'.format(dir_to_remove))
+
+
+def _rm_folder_named(scan_path, folder_name):
+    """Remove all folders named folder_name from the given directory tree.
+
+    :param scan_path: Directory to scan for folders with specific name.
+    """
+    for root, dirs, files in os.walk(scan_path, topdown=False):
+        for name in dirs:
+            if name == folder_name:
+                _rm_dir(os.path.join(root, name))
+
+
+def _rm_file(file_to_remove):
+    """:param file_to_remove: File to remove."""
+    if os.path.isfile(file_to_remove):
+        print('Removing file: {}'.format(file_to_remove))
+        os.remove(file_to_remove)
+    else:
+        print('File {} was not found.'.format(file_to_remove))
+
+
+def _rm_file_extension(scan_path, file_extension):
+    """Remove all files with an specific extension from a given directory.
+
+    :param scan_path: Directory to scan for file removal.
+    :param file_extension: File extension of the files to remove
+    """
+    for root, dirs, files in os.walk(scan_path, topdown=False):
+        for file_ in files:
+            if file_.endswith('.{}'.format(file_extension)):
+                file_path = os.path.join(root, file_)
+                _rm_file(file_path)
+
+
 @click.group(help=__doc__)
 def make():
     """Click entry point."""
@@ -48,7 +92,9 @@ def make():
 def linter():
     """Run Flake8 linter with all its plugins."""
     _set_cwd()
-    print('Running linter...')
+    print('---------------')
+    print('Running linter:')
+    print('---------------')
     return_code = _run_cli_cmd(['flake8', 'ubitflashtool/', 'tests/'])
     if return_code == 0:
         print('All good :)')
@@ -75,8 +121,10 @@ def check(ctx):
 
 
 @make.command()
-def build():
+@click.pass_context
+def build(ctx):
     """Build the CLI and GUI executables."""
+    ctx.invoke(clean)
     _set_cwd()
     print('------------------------')
     print('Building CLI executable:')
@@ -84,10 +132,36 @@ def build():
     rtn_code = _run_cli_cmd(['pyinstaller', 'package/pyinstaller-cli.spec'])
     if rtn_code != 0:
         sys.exit(1)
-    print('\n------------------------')
+    print('------------------------')
     print('Building GUI executable:')
     print('------------------------')
     return _run_cli_cmd(['pyinstaller', 'package/pyinstaller-gui.spec'])
+
+
+@make.command()
+def clean():
+    """Remove unnecessary files (like build outputs)."""
+    _set_cwd()
+    print('---------')
+    print('Cleaning:')
+    print('---------')
+    folders_to_remove = [
+        '.pytest_cache',
+        'build',
+        'dist',
+        'ubitflashtool.egg-info'
+    ]
+    files_to_remove = [
+        '.coverage',
+    ]
+    for folder in folders_to_remove:
+        _rm_dir(folder)
+    for f in files_to_remove:
+        _rm_file(f)
+
+    _rm_folder_named('.', '__pycache__')
+    _rm_file_extension('.', 'pyc')
+    return 0
 
 
 def main():

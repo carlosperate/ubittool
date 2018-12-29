@@ -42,3 +42,9 @@ To run the tests, from this directory execute:
 ```
 python make.py check
 ```
+
+To see what other make actions there are run:
+
+```
+python make.py --help
+```
