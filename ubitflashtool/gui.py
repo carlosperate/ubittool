@@ -313,7 +313,7 @@ class UBitFlashToolWindow(Tk):
             self.destroy()
 
 
-def open_editor():
+def open_gui():
     """Create the app window and launch it."""
     app = UBitFlashToolWindow()
     app.lift()
@@ -323,4 +323,4 @@ def open_editor():
 
 
 if __name__ == '__main__':
-    open_editor()
+    open_gui()

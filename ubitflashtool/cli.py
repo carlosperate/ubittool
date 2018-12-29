@@ -122,13 +122,13 @@ def gui():
     """Launch the GUI version of this app (has more options)."""
     # GUI depends on tkinter, which could be packaged separately from Python
     # for users that only want the CLI we can still use all the other commands
-    from ubitflashtool.gui import open_editor
-    open_editor()
+    from ubitflashtool.gui import open_gui
+    open_gui()
 
 
 def main():
     """Command line interface entry point."""
-    cli(prog_name='ubitflashtool')
+    cli(prog_name='uBitFlashTool')
 
 
 if __name__ == '__main__':
