@@ -25,8 +25,7 @@ install:
   - sudo -H pipenv run pip freeze
 
   # Build the two versions of ubitflashtool using PyInstaller
-  - sudo -H pipenv run pyinstaller package/pyinstaller-cli.spec
-  - sudo -H pipenv run pyinstaller package/pyinstaller-gui.spec
+  - sudo -H pipenv run python make.py build
 
   # Collect the outputs
   - sudo -H mv dist artifacts

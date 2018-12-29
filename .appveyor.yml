@@ -39,8 +39,7 @@ install:
   - cmd: pip freeze
 
   # Build using PyInstaller, rename dist folder
-  - cmd: pyinstaller package\pyinstaller-cli.spec
-  - cmd: pyinstaller package\pyinstaller-gui.spec
+  - cmd: python make.py build
   - ps: Rename-Item -path .\dist artifacts
   - cmd: dir artifacts
 
