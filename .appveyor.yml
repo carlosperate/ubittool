@@ -3,6 +3,8 @@ environment:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.10"
       PYTHON_ARCH: "32"
+      # Needed for tkinter to find its libraries and run when testing
+      TCL_LIBRARY: "C:\\Python27\\tcl\\tcl8.6"
 
 platform: x86
 

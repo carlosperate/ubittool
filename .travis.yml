@@ -37,6 +37,7 @@ install:
   - pip install codecov
 
 script:
+  # If running tests on Linux we'll need to preprend the pipenv command with "xvfb-run"
   - sudo -H pipenv run python make.py check
   # Lastly, run cli app as a simple test to check ubitflashtool is not broken
   - ./artifacts/ubitflashtool-cli --help
