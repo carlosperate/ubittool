@@ -38,9 +38,8 @@ install:
   - pip install codecov
 
 script:
-  - sudo -H pipenv run flake8 ubitflashtool/ tests/
-  - sudo -H pipenv run python -m pytest -v --cov=ubitflashtool tests/
-  # Lastly just run it as a simple test to check ubitflashtool is not broken
+  - sudo -H pipenv run python make.py check
+  # Lastly, run cli app as a simple test to check ubitflashtool is not broken
   - ./artifacts/ubitflashtool-cli --help
 
 after_script:
