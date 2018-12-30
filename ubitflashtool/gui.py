@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""A GUI that display the content from performing the uBitFlashTool actions."""
+"""A GUI to display the content from performing the uBitFlashTool actions."""
 from __future__ import absolute_import, print_function
 import sys
 import logging
@@ -12,14 +12,12 @@ from ubitflashtool.cmds import (read_python_code, read_micropython,
                                 read_full_flash_hex, read_uicr_customer,
                                 compare_full_flash_hex, compare_uicr_customer)
 
-if sys.version_info.major == 3:
+if sys.version_info.major == 3:    # pragma: no cover
     # Tkinter imports
-    from tkinter import (Tk, Text, Scrollbar, Menu, messagebox, filedialog,
-                         Frame)
+    from tkinter import Tk, Text, Scrollbar, Menu, filedialog, Frame
 elif sys.version_info.major == 2:
     # Tkinter imports
     from Tkinter import Tk, Text, Scrollbar, Menu, Frame
-    import tkMessageBox as messagebox
     import tkFileDialog as filedialog
     # open() with encodings
     from io import open
@@ -40,10 +38,6 @@ class ReadOnlyEditor(Text):
                 'insert', lambda *args, **kw: 'break')
         self.delete = self.redirector.register(
                 'delete', lambda *args, **kw: 'break')
-
-    def clear(self):
-        """Remove all the content in the editor."""
-        self.delete(1.0, 'end')
 
     def replace(self, new_content):
         """Remove all editor content and inserts the new content.
@@ -212,11 +206,6 @@ class UBitFlashToolWindow(Tk):
         self.bind('<{}-O>'.format(cmd_key), self.file_open)
         self.bind('<{}-S>'.format(cmd_key), self.file_save_as)
         self.bind('<{}-s>'.format(cmd_key), self.file_save_as)
-
-    def unimplemented(self):
-        """Display an window to show the user a feature is not implemented."""
-        messagebox.showinfo('Not Implemented',
-                            'This feature has not yet been implemented.')
 
     def read_python_code(self):
         """Read the Python user code from the micro:bit flash.

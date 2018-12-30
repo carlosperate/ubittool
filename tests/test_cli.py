@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""Tests for..."""
+"""Tests for cli.py."""
 try:
     from unittest import mock
 except ImportError:
@@ -14,14 +14,11 @@ from ubitflashtool import cli, cmds
 
 @pytest.fixture
 def check_no_board_connected():
-    """Sample pytest fixture.
-
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
+    """Check that there is no mbed board that PyOCD can connect to."""
     try:
         cmds._read_continuous_memory(address=0x00, count=16)
     except Exception:
-        # Good: If no board is found exception is raised
+        # Good: Exception raised if no board is found
         pass
     else:
         raise Exception('Found an Mbed device connected, please unplug.')
@@ -122,3 +119,14 @@ def test_read_code_path_no_board(check_no_board_connected):
     assert result.exit_code == 1
     assert 'MicroPython code will be written to: thisfile.py' in result.output
     assert 'Error: Did not find any connected boards.' in result.output
+
+
+@mock.patch('ubitflashtool.gui.open_gui', autospec=True)
+def test_gui(mock_open_gui, check_no_board_connected):
+    """Test the gui command."""
+    runner = CliRunner()
+
+    result = runner.invoke(cli.gui)
+
+    assert result.exit_code == 0
+    assert mock_open_gui.call_count == 1

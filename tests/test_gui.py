@@ -1,16 +1,18 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """Tests for GUI."""
-import sys
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+try:
+    import tkinter
+except ImportError:
+    import Tkinter as tkinter
 
 import pytest
 
-from ubitflashtool.gui import UBitFlashToolWindow
-
-if sys.version_info.major == 3:
-    from tkinter import TclError
-elif sys.version_info.major == 2:
-    from Tkinter import TclError
+from ubitflashtool.gui import UBitFlashToolWindow, open_gui
 
 
 @pytest.fixture()
@@ -22,7 +24,7 @@ def gui_window():
     if app:
         try:
             app.winfo_exists()
-        except TclError:
+        except tkinter.TclError:
             # App destroyed, nothing left to do
             pass
         else:
@@ -43,7 +45,7 @@ def test_menu_bar_presence(gui_window):
         for x in range(menu_len):
             try:
                 label = menu.entrycget(x, 'label')
-            except TclError:
+            except tkinter.TclError:
                 pass
             else:
                 labels.append(label)
@@ -83,3 +85,12 @@ def test_menu_bar_presence(gui_window):
            'Compare Flash present in nrf menu'
     assert 'Compare UICR Customer (Intel Hex)' == nrf_labels[4], \
            'Compare UICR in nrf menu'
+
+
+@mock.patch('ubitflashtool.gui.UBitFlashToolWindow', autospec=True)
+def test_open(mock_window):
+    """Test the app instance is created and main loop invoked."""
+    open_gui()
+
+    assert mock_window.return_value.lift.call_count == 1
+    assert mock_window.return_value.mainloop.call_count == 1
