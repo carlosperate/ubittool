@@ -107,8 +107,11 @@ def linter():
 def test():
     """Run PyTests with the coverage plugin."""
     _set_cwd()
-    return _run_cli_cmd([sys.executable, '-m', 'pytest', '-v',
-                         '--cov=ubitflashtool', 'tests/'])
+    return_code = _run_cli_cmd([
+        sys.executable, '-m', 'pytest', '-v', '--cov=ubitflashtool', 'tests/'
+    ])
+    if return_code != 0:
+        sys.exit(return_code)
 
 
 @make.command()
@@ -131,11 +134,14 @@ def build(ctx):
     print('------------------------')
     rtn_code = _run_cli_cmd(['pyinstaller', 'package/pyinstaller-cli.spec'])
     if rtn_code != 0:
-        sys.exit(1)
+        sys.exit(rtn_code)
     print('------------------------')
     print('Building GUI executable:')
     print('------------------------')
-    return _run_cli_cmd(['pyinstaller', 'package/pyinstaller-gui.spec'])
+    rtn_code = _run_cli_cmd(['pyinstaller', 'package/pyinstaller-gui.spec'])
+    if rtn_code != 0:
+        sys.exit(rtn_code)
+    return 0
 
 
 @make.command()
@@ -167,7 +173,8 @@ def clean():
 def main():
     """Script entry point, launches click."""
     make(prog_name='python make.py')
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
