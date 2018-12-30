@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """Tests for cli.py."""
+import os
 try:
     from unittest import mock
 except ImportError:
@@ -69,21 +70,22 @@ def test_file_checker_no_path(mock_exit, mock_echo):
 
 @mock.patch('ubitflashtool.cli.read_python_code', autospec=True)
 def test_read_code(mock_read_python_code, check_no_board_connected):
-    """."""
-    mock_read_python_code.return_value = 'Python code here'
+    """Test the read-code command without a file option."""
+    python_code = 'Python code here'
+    mock_read_python_code.return_value = python_code
     runner = CliRunner()
 
     result = runner.invoke(cli.read_code)
 
     assert 'MicroPython code will be output to console.' in result.output
     assert 'Printing the MicroPython code' in result.output
-    assert 'Python code here' in result.output
+    assert python_code in result.output
     assert 'Finished successfully' in result.output
     assert result.exit_code == 0
 
 
 def test_read_code_no_board(check_no_board_connected):
-    """."""
+    """Test the read-code command when no board is connected."""
     runner = CliRunner()
 
     result = runner.invoke(cli.read_code)
@@ -95,7 +97,7 @@ def test_read_code_no_board(check_no_board_connected):
 
 @mock.patch('ubitflashtool.cli.read_python_code', autospec=True)
 def test_read_code_path(mock_read_python_code, check_no_board_connected):
-    """."""
+    """Test the read-code command with a file option."""
     mock_read_python_code.return_value = 'Python code here'
     runner = CliRunner()
 
@@ -111,14 +113,91 @@ def test_read_code_path(mock_read_python_code, check_no_board_connected):
 
 
 def test_read_code_path_no_board(check_no_board_connected):
-    """."""
+    """Test read-code command with a file option and no board connected."""
+    file_name = 'thisfile.py'
     runner = CliRunner()
 
-    result = runner.invoke(cli.read_code, ['-f', 'thisfile.py'])
+    results = [runner.invoke(cli.read_code, ['--file_path', file_name]),
+               runner.invoke(cli.read_code, ['-f', file_name])]
+
+    for result in results:
+        assert result.exit_code == 1, 'Exit code 1'
+        assert 'MicroPython code will be written to: {}'.format(file_name) \
+            in result.output, 'Message written to file'
+        assert 'Error: Did not find any connected boards.' in result.output, \
+            'Message error, board not found'
+    # File not mocked, so checking command hasn't created it
+    assert not os.path.isfile(file_name), 'File does not exist'
+
+
+@mock.patch('ubitflashtool.cli.read_full_flash_hex', autospec=True)
+def test_read_flash(mock_read_full_flash_hex, check_no_board_connected):
+    """Test the read-flash command without a file option."""
+    flash_hex_content = 'Intel Hex lines here'
+    mock_read_full_flash_hex.return_value = flash_hex_content
+    runner = CliRunner()
+
+    result = runner.invoke(cli.read_flash)
+
+    assert 'micro:bit flash hex will be output to console.' in result.output
+    assert 'Printing the flash contents' in result.output
+    assert flash_hex_content in result.output
+    assert 'Finished successfully' in result.output
+    assert result.exit_code == 0
+
+
+def test_read_flash_no_board(check_no_board_connected):
+    """Test the read-flash command when no board is connected."""
+    runner = CliRunner()
+
+    result = runner.invoke(cli.read_flash)
 
     assert result.exit_code == 1
-    assert 'MicroPython code will be written to: thisfile.py' in result.output
+    assert 'micro:bit flash hex will be output to console.' in result.output
     assert 'Error: Did not find any connected boards.' in result.output
+
+
+@mock.patch('ubitflashtool.cli.read_full_flash_hex', autospec=True)
+def test_read_flash_path(mock_read_full_flash_hex, check_no_board_connected):
+    """Test the read-code command with a file option."""
+    flash_hex_content = 'Intel Hex lines here'
+    mock_read_full_flash_hex.return_value = flash_hex_content
+    file_name = 'thisfile.py'
+    runner = CliRunner()
+
+    with mock.patch('ubitflashtool.cli.open', mock.mock_open()) as m_open:
+        results = [runner.invoke(cli.read_flash, ['--file_path', file_name])]
+    with mock.patch('ubitflashtool.cli.open', mock.mock_open()) as m_open2:
+        results.append(runner.invoke(cli.read_flash, ['-f', file_name]))
+
+    m_open.assert_called_once_with(file_name, 'w')
+    m_open2.assert_called_once_with(file_name, 'w')
+    m_open().write.assert_called_once_with(flash_hex_content)
+    m_open2().write.assert_called_once_with(flash_hex_content)
+    for result in results:
+        assert 'micro:bit flash hex will be written to: {}'.format(file_name) \
+            in result.output
+        assert 'Saving the flash contents...' in result.output
+        assert 'Finished successfully' in result.output
+        assert result.exit_code == 0
+
+
+def test_read_flash_path_no_board(check_no_board_connected):
+    """Test read-flash command with a file option and no board connected."""
+    file_name = 'thisfile.py'
+    runner = CliRunner()
+
+    results = [runner.invoke(cli.read_flash, ['--file_path', file_name]),
+               runner.invoke(cli.read_flash, ['-f', file_name])]
+
+    for result in results:
+        assert result.exit_code == 1, 'Exit code 1'
+        assert 'micro:bit flash hex will be written to: {}'.format(file_name) \
+            in result.output, 'Message written to file'
+        assert 'Error: Did not find any connected boards.' in result.output, \
+            'Message error, board not found'
+    # File not mocked, so checking command hasn't created it
+    assert not os.path.isfile(file_name), 'File does not exist'
 
 
 @mock.patch('ubitflashtool.gui.open_gui', autospec=True)
@@ -128,5 +207,5 @@ def test_gui(mock_open_gui, check_no_board_connected):
 
     result = runner.invoke(cli.gui)
 
-    assert result.exit_code == 0
-    assert mock_open_gui.call_count == 1
+    assert result.exit_code == 0, 'Exit code 0'
+    assert mock_open_gui.call_count == 1, 'open_gui() function called'
