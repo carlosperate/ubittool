@@ -23,7 +23,7 @@ def test_bytes_to_intel_hex():
 
 
 def test_bytes_to_intel_hex_offset():
-    """Test the data to Intel Hex string conversion."""
+    """Test the data to Intel Hex string conversion with an offset."""
     data = [1, 2, 3, 4, 5]
     offset = 0x2000000
     expected_hex_str = '\n'.join([':020000040200F8',
@@ -49,11 +49,63 @@ def test_bytes_to_intel_hex_io_error(mock_string_io, mock_stderr):
 
 
 def test_bytes_to_intel_hex_invalid_data():
-    """Test the data to Intel Hex string conversion."""
+    """Test there is an error thrown if the input data is invalid."""
     data = [1, 2, 3, 4, '500']
 
     try:
         cmds._bytes_to_intel_hex(data=data)
+    except Exception:
+        # The exception that bubbles up from IntelHex is implementation detail
+        # from that library, so it could be anything
+        assert True, 'Exception raised'
+    else:
+        assert False, 'Exception NOT raised'
+
+
+def test_bytes_to_pretty_hex():
+    """Test the data to Intel Hex string conversion."""
+    data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    expected = '0000  01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10  ' \
+               '|................|\n'
+
+    result = cmds._bytes_to_pretty_hex(data=data)
+
+    assert expected == result
+
+
+def test_bytes_to_pretty_hex_offset():
+    """Test the data to Intel Hex string conversion with an offset."""
+    data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    offset = 0x2000001
+    expected = '2000000  -- 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ' \
+               '| ...............|\n' \
+               '2000010  10 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --  ' \
+               '|.               |\n'
+
+    result = cmds._bytes_to_pretty_hex(data=data, offset=offset)
+
+    assert expected == result
+
+
+@mock.patch('ubitflashtool.cmds.sys.stderr.write', autospec=True)
+@mock.patch('ubitflashtool.cmds.StringIO', autospec=True)
+def test_bytes_to_pretty_hex_io_error(mock_string_io, mock_stderr):
+    """Test the exception handling when an IOError is encountered."""
+    data = [1, 2, 3, 4, 5]
+    mock_string_io.return_value.write.side_effect = IOError()
+
+    result = cmds._bytes_to_pretty_hex(data=data)
+
+    assert result is None
+    assert mock_stderr.call_count == 1
+
+
+def test_bytes_to_pretty_hexinvalid_data():
+    """Test there is an error thrown if the input data is invalid."""
+    data = [1, 2, 3, 4, '500']
+
+    try:
+        cmds._bytes_to_pretty_hex(data=data)
     except Exception:
         # The exception that bubbles up from IntelHex is implementation detail
         # from that library, so it could be anything
