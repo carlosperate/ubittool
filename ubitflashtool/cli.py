@@ -12,7 +12,7 @@ from ubitflashtool.cmds import (read_full_flash_hex, read_python_code,
                                 compare_full_flash_hex)
 
 
-@click.group(help='ubitflashtool v{}.\n\n{}'.format(__version__, __doc__))
+@click.group(help='uBitFlashTool v{}.\n\n{}'.format(__version__, __doc__))
 def cli():
     """Click entry point."""
     pass
@@ -128,7 +128,7 @@ def gui():
 
 def main():
     """Command line interface entry point."""
-    cli(prog_name='uBitFlashTool')
+    cli(prog_name='ubitflashtool')
 
 
 if __name__ == '__main__':
