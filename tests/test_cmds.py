@@ -102,16 +102,68 @@ def test_bytes_to_pretty_hex_io_error(mock_string_io, mock_stderr):
 
 def test_bytes_to_pretty_hexinvalid_data():
     """Test there is an error thrown if the input data is invalid."""
-    data = [1, 2, 3, 4, '500']
-
     try:
-        cmds._bytes_to_pretty_hex(data=data)
+        cmds._bytes_to_pretty_hex(data=[1, 2, 3, 4, '500'])
     except Exception:
         # The exception that bubbles up from IntelHex is implementation detail
         # from that library, so it could be anything
         assert True, 'Exception raised'
     else:
         assert False, 'Exception NOT raised'
+
+
+@mock.patch('ubitflashtool.cmds.read_flash', autospec=True)
+@mock.patch('ubitflashtool.cmds._bytes_to_intel_hex', autospec=True)
+def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
+    """."""
+    python_code_hex = '\n'.join([
+        ':020000040003F7',
+        ':10E000004D509600232041646420796F7572205032',
+        ':10E010007974686F6E20636F646520686572652E21',
+        ':10E0200020452E672E0A66726F6D206D6963726FD0',
+        ':10E0300062697420696D706F7274202A0A7768694A',
+        ':10E040006C6520547275653A0A202020206469733B',
+        ':10E05000706C61792E7363726F6C6C282748656CE5',
+        ':10E060006C6F2C20576F726C642127290A202020A6',
+        ':10E0700020646973706C61792E73686F7728496DBD',
+        ':10E080006167652E4845415254290A20202020739B',
+        ':10E090006C656570283230303029000000000000C7',
+        ':10E0A000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF80',
+    ])
+    python_code = '\n'.join([
+        '# Add your Python code here. E.g.',
+        'from microbit import *',
+        'while True:',
+        '    display.scroll(\'Hello, World!\')',
+        '    display.show(Image.HEART)',
+        '    sleep(2000)',
+    ])
+    mock_bytes_to_intel_hex.return_value = python_code_hex
+
+    result = cmds.read_python_code()
+
+    assert result == python_code
+
+
+@mock.patch('ubitflashtool.cmds.read_flash', autospec=True)
+@mock.patch('ubitflashtool.cmds._bytes_to_intel_hex', autospec=True)
+def test_read_python_code_empty(mock_bytes_to_intel_hex, mock_read_flash):
+    """Check error thrown if failing to find Python code in flash."""
+    python_code_hex = '\n'.join([
+        ':020000040003F7',
+        ':10E00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF20',
+        ':10E01000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF10',
+        ':10E02000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00',
+        ':10E03000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0',
+    ])
+    mock_bytes_to_intel_hex.return_value = python_code_hex
+
+    try:
+        cmds.read_python_code()
+    except Exception:
+        assert True, 'Could not decode Python user code'
+    else:
+        assert False, 'Decoded Python user code without throwing exception'
 
 
 @mock.patch('ubitflashtool.cmds.Timer', autospec=True)
