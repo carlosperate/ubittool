@@ -108,7 +108,8 @@ def test():
     """Run PyTests with the coverage plugin."""
     _set_cwd()
     return_code = _run_cli_cmd([
-        sys.executable, '-m', 'pytest', '-v', '--cov=ubitflashtool', 'tests/'
+        sys.executable, '-m', 'pytest', '-v', '--cov-report', 'term-missing',
+        '--cov=ubitflashtool', 'tests/'
     ])
     if return_code != 0:
         sys.exit(return_code)
