@@ -14,10 +14,11 @@ from ubitflashtool.cmds import (read_python_code, read_micropython,
 
 if sys.version_info.major == 3:    # pragma: no cover
     # Tkinter imports
-    from tkinter import Tk, Text, Scrollbar, Menu, filedialog, Frame
+    from tkinter import (Tk, Text, Scrollbar, Menu, filedialog, Frame, Label,
+                         StringVar)
 elif sys.version_info.major == 2:
     # Tkinter imports
-    from Tkinter import Tk, Text, Scrollbar, Menu, Frame
+    from Tkinter import Tk, Text, Scrollbar, Menu, Frame, Label, StringVar
     import tkFileDialog as filedialog
     # open() with encodings
     from io import open
@@ -39,13 +40,21 @@ class ReadOnlyEditor(Text):
         self.delete = self.redirector.register(
                 'delete', lambda *args, **kw: 'break')
 
+    def clear(self):
+        """Clear the contents of the text area."""
+        self.delete(1.0, 'end')
+
     def replace(self, new_content):
         """Remove all editor content and inserts the new content.
 
         :param new_content: String to insert.
         """
-        self.delete(1.0, 'end')
+        self.clear()
         self.insert(1.0, new_content)
+
+    def add(self, new_content):
+        """Add content to the text area."""
+        self.insert('end', new_content)
 
 
 class StdoutRedirector(object):
@@ -128,12 +137,45 @@ class ConsoleOutput(ReadOnlyEditor):
         sys.stderr = sys.__stderr__
 
 
+class CmdLabel(Label):
+    """A text label to contain the name of the last command executed."""
+
+    def __init__(self, parent, default_text, *args, **kwargs):
+        """Constructor, sets the colours.
+
+        :param frame: A Frame() instance to set this text editor.
+        """
+        self.bg_colour = '#E5E5E5'
+        self.cmd_title = StringVar(value='Command: Select from the Menu')
+        parent.config(borderwidth=1, background=self.bg_colour)
+        Label.__init__(self, parent, background=self.bg_colour,
+                       textvariable=self.cmd_title)
+        self.set_text(default_text)
+        self.pack(side='left', fill='both')
+        parent.pack(fill='both', expand=1)
+
+    def set_text(self, new_text):
+        """Set the text of the command."""
+        self.cmd_title.set('Command: {}'.format(new_text))
+
+
 class UBitFlashToolWindow(Tk):
     """Main app window.
 
     Creates a TK window with a text viewer, console viewer, and menus for
     executing actions.
     """
+
+    CMD_OPEN = 'Open'
+    CMD_SAVE = 'Save As'
+    CMD_EXIT = 'Exit'
+    CMD_READ_CODE = 'Read MicroPython code'
+    CMD_READ_UPY = 'Read MicroPython runtime'
+    CMD_READ_FLASH_HEX = 'Read full flash contents (Intel Hex)'
+    CMD_READ_FLASH_PRETTY = 'Read full flash contents (Pretty Hex)'
+    CMD_READ_UICR = 'Read UICR Customer'
+    CMD_COMPARE_FLASH = 'Compare full flash contents (Intel Hex)'
+    CMD_COMPARE_UICR = 'Compare UICR Customer (Intel Hex)'
 
     def __init__(self, *args, **kwargs):
         """Initialise the window."""
@@ -144,6 +186,9 @@ class UBitFlashToolWindow(Tk):
         self.menu_bar = Menu(self)
         self.set_menu_bar(self.menu_bar)
         self.bind_shortcuts()
+
+        self.frame_title = Frame(self)
+        self.cmd_title = CmdLabel(self.frame_title, 'Select from the Menu')
 
         self.frame_viewer = Frame(self)
         self.text_viewer = TextViewer(self.frame_viewer)
@@ -164,35 +209,36 @@ class UBitFlashToolWindow(Tk):
         cmd_key = 'Command' if platform.system() == 'Darwin' else 'Ctrl'
         # Menu item File
         file_menu = Menu(menu, tearoff=0)
-        file_menu.add_command(label='Open', underline=0,
+        file_menu.add_command(label=self.CMD_OPEN,
                               command=self.file_open,
-                              accelerator='{}+O'.format(cmd_key))
-        file_menu.add_command(label='Save As', underline=0,
+                              accelerator='{}+O'.format(cmd_key), underline=1)
+        file_menu.add_command(label=self.CMD_SAVE,
                               command=self.file_save_as,
-                              accelerator='{}+S'.format(cmd_key))
+                              accelerator='{}+S'.format(cmd_key), underline=1)
         file_menu.add_separator()
-        file_menu.add_command(label='Exit',
-                              command=self.app_quit, accelerator='Alt+F4')
+        file_menu.add_command(label=self.CMD_EXIT,
+                              command=self.app_quit,
+                              accelerator='Alt+F4')
         menu.add_cascade(label='File', underline=0, menu=file_menu)
         # Menu item micro:bit
         ubit_menu = Menu(menu, tearoff=0)
-        ubit_menu.add_command(label='Read MicroPython code',
+        ubit_menu.add_command(label=self.CMD_READ_CODE,
                               command=self.read_python_code)
-        ubit_menu.add_command(label='Read MicroPython runtime',
+        ubit_menu.add_command(label=self.CMD_READ_UPY,
                               command=self.read_micropython)
         menu.add_cascade(label='micro:bit', underline=0, menu=ubit_menu)
         # Menu item nrf
         nrf_menu = Menu(menu, tearoff=0)
-        nrf_menu.add_command(label='Read full flash contents (Intel Hex)',
+        nrf_menu.add_command(label=self.CMD_READ_FLASH_HEX,
                              command=self.read_full_flash_intel)
-        nrf_menu.add_command(label='Read full flash contents (Pretty Hex)',
+        nrf_menu.add_command(label=self.CMD_READ_FLASH_PRETTY,
                              command=self.read_full_flash_pretty)
-        nrf_menu.add_command(label='Read UICR Customer',
+        nrf_menu.add_command(label=self.CMD_READ_UICR,
                              command=self.read_uicr_customer)
         nrf_menu.add_separator()
-        nrf_menu.add_command(label='Compare full flash contents (Intel Hex)',
+        nrf_menu.add_command(label=self.CMD_COMPARE_FLASH,
                              command=self.compare_full_flash_intel)
-        nrf_menu.add_command(label='Compare UICR Customer (Intel Hex)',
+        nrf_menu.add_command(label=self.CMD_COMPARE_UICR,
                              command=self.compare_uicr_customer_intel)
         menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
         # display the menu
@@ -207,11 +253,18 @@ class UBitFlashToolWindow(Tk):
         self.bind('<{}-S>'.format(cmd_key), self.file_save_as)
         self.bind('<{}-s>'.format(cmd_key), self.file_save_as)
 
+    def set_next_cmd(self, cmd_name):
+        """."""
+        self.text_viewer.clear()
+        self.console.clear()
+        self.cmd_title.set_text(cmd_name)
+
     def read_python_code(self):
         """Read the Python user code from the micro:bit flash.
 
         Displays it as text code in the read-only text viewer.
         """
+        self.set_next_cmd(self.CMD_READ_CODE)
         python_code = read_python_code()
         self.text_viewer.replace(python_code)
 
@@ -220,6 +273,7 @@ class UBitFlashToolWindow(Tk):
 
         Displays it as Intel Hex in the read-only text viewer.
         """
+        self.set_next_cmd(self.CMD_READ_UPY)
         hex_str = read_micropython()
         self.text_viewer.replace(hex_str)
 
@@ -228,6 +282,7 @@ class UBitFlashToolWindow(Tk):
 
         Displays it as Intel Hex in the read-only text viewer.
         """
+        self.set_next_cmd(self.CMD_READ_FLASH_HEX)
         hex_str = read_full_flash_hex(decode_hex=False)
         self.text_viewer.replace(hex_str)
 
@@ -237,6 +292,7 @@ class UBitFlashToolWindow(Tk):
         Displays it as a pretty hex and ASCII string in the read-only text
         viewer.
         """
+        self.set_next_cmd(self.CMD_READ_FLASH_PRETTY)
         hex_str = read_full_flash_hex(decode_hex=True)
         self.text_viewer.replace(hex_str)
 
@@ -245,6 +301,7 @@ class UBitFlashToolWindow(Tk):
 
         Displays it as Intel Hex in the read-only text viewer.
         """
+        self.set_next_cmd(self.CMD_READ_UICR)
         uicr_hex_str = read_uicr_customer(decode_hex=True)
         self.text_viewer.replace(uicr_hex_str)
 
@@ -254,6 +311,7 @@ class UBitFlashToolWindow(Tk):
         Ask the user to select a hex file, compares it with flash contents and
         opens the default web browser to display the comparison results.
         """
+        self.set_next_cmd(self.CMD_COMPARE_FLASH)
         file_path = filedialog.askopenfilename()
         if file_path:
             self.text_viewer.replace('Reading flash contents...')
@@ -267,6 +325,7 @@ class UBitFlashToolWindow(Tk):
         contents and opens the default web browser to display the comparison
         results.
         """
+        self.set_next_cmd(self.CMD_COMPARE_UICR)
         file_path = filedialog.askopenfilename()
         if file_path:
             self.text_viewer.replace('Reading User UICR contents...')
@@ -277,6 +336,7 @@ class UBitFlashToolWindow(Tk):
         """Open a file picker and load a file into the text viewer."""
         file_path = filedialog.askopenfilename()
         if file_path:
+            self.set_next_cmd(self.CMD_OPEN)
             with open(file_path, encoding='utf-8') as f:
                 file_contents = f.read()
             # Set current text to file contents
