@@ -12,19 +12,20 @@ from ubitflashtool.cmds import (read_python_code, read_micropython,
                                 read_full_flash_hex, read_uicr_customer,
                                 compare_full_flash_hex, compare_uicr_customer)
 
+
 if sys.version_info.major == 3:    # pragma: no cover
     # Tkinter imports
-    from tkinter import (Tk, Text, Scrollbar, Menu, filedialog, Frame, Label,
-                         StringVar)
+    import tkinter as tk
+    from tkinter import filedialog as tkFileDialog
 elif sys.version_info.major == 2:
     # Tkinter imports
-    from Tkinter import Tk, Text, Scrollbar, Menu, Frame, Label, StringVar
-    import tkFileDialog as filedialog
+    import Tkinter as tk
+    import tkFileDialog
     # open() with encodings
     from io import open
 
 
-class ReadOnlyEditor(Text):
+class ReadOnlyEditor(tk.Text):
     """Implement a read only mode text editor class.
 
     Done by replacing the bindings for the insert and delete events. From:
@@ -33,7 +34,7 @@ class ReadOnlyEditor(Text):
 
     def __init__(self, *args, **kwargs):
         """Init the class and set the insert and delete event bindings."""
-        Text.__init__(self, *args, **kwargs)
+        tk.Text.__init__(self, *args, **kwargs)
         self.redirector = WidgetRedirector(self)
         self.insert = self.redirector.register(
                 'insert', lambda *args, **kw: 'break')
@@ -89,7 +90,7 @@ class TextViewer(ReadOnlyEditor):
 
         :param frame: A Frame() instance to set the text editor.
         """
-        self.scrollbar = Scrollbar(parent, orient='vertical')
+        self.scrollbar = tk.Scrollbar(parent, orient='vertical')
         ReadOnlyEditor.__init__(
             self, parent, yscrollcommand=self.scrollbar.set, *args, **kwargs)
         self.pack(side='left', fill='both', expand=1)
@@ -107,7 +108,7 @@ class ConsoleOutput(ReadOnlyEditor):
 
         :param frame: A Frame() instance to set this text editor.
         """
-        self.scrollbar = Scrollbar(parent, orient='vertical')
+        self.scrollbar = tk.Scrollbar(parent, orient='vertical')
         ReadOnlyEditor.__init__(
                 self, parent, yscrollcommand=self.scrollbar.set,
                 background="#222", foreground="#DDD", *args, **kwargs)
@@ -137,7 +138,7 @@ class ConsoleOutput(ReadOnlyEditor):
         sys.stderr = sys.__stderr__
 
 
-class CmdLabel(Label):
+class CmdLabel(tk.Label):
     """A text label to contain the name of the last command executed."""
 
     def __init__(self, parent, default_text, *args, **kwargs):
@@ -146,10 +147,10 @@ class CmdLabel(Label):
         :param frame: A Frame() instance to set this text editor.
         """
         self.bg_colour = '#E5E5E5'
-        self.cmd_title = StringVar(value='Command: Select from the Menu')
+        self.cmd_title = tk.StringVar(value='Command: Select from the Menu')
         parent.config(borderwidth=1, background=self.bg_colour)
-        Label.__init__(self, parent, background=self.bg_colour,
-                       textvariable=self.cmd_title)
+        tk.Label.__init__(self, parent, background=self.bg_colour,
+                          textvariable=self.cmd_title)
         self.set_text(default_text)
         self.pack(side='left', fill='both')
         parent.pack(fill='both', expand=1)
@@ -159,7 +160,7 @@ class CmdLabel(Label):
         self.cmd_title.set('Command: {}'.format(new_text))
 
 
-class UBitFlashToolWindow(Tk):
+class UBitFlashToolWindow(tk.Tk):
     """Main app window.
 
     Creates a TK window with a text viewer, console viewer, and menus for
@@ -179,22 +180,22 @@ class UBitFlashToolWindow(Tk):
 
     def __init__(self, *args, **kwargs):
         """Initialise the window."""
-        Tk.__init__(self, *args, **kwargs)
+        tk.Tk.__init__(self, *args, **kwargs)
         self.title('uBitFlashTool v{}'.format(__version__))
         self.geometry('{}x{}'.format(600, 480))
 
-        self.menu_bar = Menu(self)
+        self.menu_bar = tk.Menu(self)
         self.set_menu_bar(self.menu_bar)
         self.bind_shortcuts()
 
-        self.frame_title = Frame(self)
+        self.frame_title = tk.Frame(self)
         self.cmd_title = CmdLabel(self.frame_title, 'Select from the Menu')
 
-        self.frame_viewer = Frame(self)
+        self.frame_viewer = tk.Frame(self)
         self.text_viewer = TextViewer(self.frame_viewer)
         self.text_viewer.focus()
 
-        self.frame_console = Frame(self)
+        self.frame_console = tk.Frame(self)
         self.console = ConsoleOutput(self.frame_console)
 
         # instead of closing the window, execute a function
@@ -208,7 +209,7 @@ class UBitFlashToolWindow(Tk):
         # In macOS we use the command key instead of option
         cmd_key = 'Command' if platform.system() == 'Darwin' else 'Ctrl'
         # Menu item File
-        file_menu = Menu(menu, tearoff=0)
+        file_menu = tk.Menu(menu, tearoff=0)
         file_menu.add_command(label=self.CMD_OPEN,
                               command=self.file_open,
                               accelerator='{}+O'.format(cmd_key), underline=1)
@@ -221,14 +222,14 @@ class UBitFlashToolWindow(Tk):
                               accelerator='Alt+F4')
         menu.add_cascade(label='File', underline=0, menu=file_menu)
         # Menu item micro:bit
-        ubit_menu = Menu(menu, tearoff=0)
+        ubit_menu = tk.Menu(menu, tearoff=0)
         ubit_menu.add_command(label=self.CMD_READ_CODE,
                               command=self.read_python_code)
         ubit_menu.add_command(label=self.CMD_READ_UPY,
                               command=self.read_micropython)
         menu.add_cascade(label='micro:bit', underline=0, menu=ubit_menu)
         # Menu item nrf
-        nrf_menu = Menu(menu, tearoff=0)
+        nrf_menu = tk.Menu(menu, tearoff=0)
         nrf_menu.add_command(label=self.CMD_READ_FLASH_HEX,
                              command=self.read_full_flash_intel)
         nrf_menu.add_command(label=self.CMD_READ_FLASH_PRETTY,
@@ -254,7 +255,7 @@ class UBitFlashToolWindow(Tk):
         self.bind('<{}-s>'.format(cmd_key), self.file_save_as)
 
     def set_next_cmd(self, cmd_name):
-        """."""
+        """Prepare the window for the next command to be executed."""
         self.text_viewer.clear()
         self.console.clear()
         self.cmd_title.set_text(cmd_name)
@@ -312,7 +313,7 @@ class UBitFlashToolWindow(Tk):
         opens the default web browser to display the comparison results.
         """
         self.set_next_cmd(self.CMD_COMPARE_FLASH)
-        file_path = filedialog.askopenfilename()
+        file_path = tkFileDialog.askopenfilename()
         if file_path:
             self.text_viewer.replace('Reading flash contents...')
             compare_full_flash_hex(file_path)
@@ -326,7 +327,7 @@ class UBitFlashToolWindow(Tk):
         results.
         """
         self.set_next_cmd(self.CMD_COMPARE_UICR)
-        file_path = filedialog.askopenfilename()
+        file_path = tkFileDialog.askopenfilename()
         if file_path:
             self.text_viewer.replace('Reading User UICR contents...')
             compare_uicr_customer(file_path)
@@ -334,7 +335,7 @@ class UBitFlashToolWindow(Tk):
 
     def file_open(self, event=None):
         """Open a file picker and load a file into the text viewer."""
-        file_path = filedialog.askopenfilename()
+        file_path = tkFileDialog.askopenfilename()
         if file_path:
             self.set_next_cmd(self.CMD_OPEN)
             with open(file_path, encoding='utf-8') as f:
@@ -344,7 +345,7 @@ class UBitFlashToolWindow(Tk):
 
     def file_save_as(self, event=None):
         """Save the text from the text viewer into a file."""
-        file_path = filedialog.asksaveasfilename(filetypes=(
+        file_path = tkFileDialog.asksaveasfilename(filetypes=(
                 ('Python files', '*.py *.pyw'), ('All files', '*.*')))
         if file_path:
             with open(file_path, 'wb') as f:
