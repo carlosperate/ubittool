@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """Tests for GUI."""
+import sys
 try:
     from unittest import mock
 except ImportError:
@@ -30,6 +31,26 @@ def gui_window():
         else:
             app.update()
             app.destroy()
+
+
+def test_window_console(capsys):
+    """Test the std our and err go to the console widget."""
+    std_out_content = 'This is content in the std out\n'
+    std_err_content = 'And this goes to the std err\n'
+
+    with capsys.disabled():
+        app = UBitFlashToolWindow()
+        app.wait_visibility()
+
+        sys.stdout.write(std_out_content)
+        sys.stderr.write(std_err_content)
+        console_widget_content = app.console.get(1.0, 'end')
+
+        app.update()
+        app.destroy()
+
+    assert std_out_content in console_widget_content
+    assert std_err_content in console_widget_content
 
 
 def test_menu_bar_presence(gui_window):
@@ -87,8 +108,83 @@ def test_menu_bar_presence(gui_window):
            'Compare UICR in nrf menu'
 
 
+@mock.patch('ubitflashtool.gui.read_python_code', autospec=True)
+def test_read_python_code(mock_read_python_code, gui_window):
+    """Tests the READ_CODE command."""
+    python_code = 'The Python code from the flash'
+    mock_read_python_code.return_value = python_code
+
+    gui_window.read_python_code()
+
+    editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
+    assert python_code == editor_content
+    assert mock_read_python_code.call_count == 1
+    assert gui_window.cmd_title.cmd_title.get() == \
+        'Command: {}'.format(gui_window.CMD_READ_CODE)
+
+
+@mock.patch('ubitflashtool.gui.read_micropython', autospec=True)
+def test_read_micropython(mock_read_micropython, gui_window):
+    """Tests the READ_UPY command."""
+    upy_hex = 'The MicroPython runtime in Intel Hex format data'
+    mock_read_micropython.return_value = upy_hex
+
+    gui_window.read_micropython()
+
+    editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
+    assert upy_hex == editor_content
+    assert mock_read_micropython.call_count == 1
+    assert gui_window.cmd_title.cmd_title.get() == \
+        'Command: {}'.format(gui_window.CMD_READ_UPY)
+
+
+@mock.patch('ubitflashtool.gui.read_full_flash_hex', autospec=True)
+def test_read_full_flash_intel(mock_read_full_flash_hex, gui_window):
+    """Tests the READ_FLASH_HEX command."""
+    flash_data = 'The full flash in Intel Hex format data'
+    mock_read_full_flash_hex.return_value = flash_data
+
+    gui_window.read_full_flash_intel()
+
+    editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
+    assert flash_data == editor_content
+    assert mock_read_full_flash_hex.call_count == 1
+    assert gui_window.cmd_title.cmd_title.get() == \
+        'Command: {}'.format(gui_window.CMD_READ_FLASH_HEX)
+
+
+@mock.patch('ubitflashtool.gui.read_full_flash_hex', autospec=True)
+def test_read_full_flash_pretty(mock_read_full_flash_hex, gui_window):
+    """Tests the READ_FLASH_PRETTY command."""
+    flash_data = 'The full flash in pretty format data'
+    mock_read_full_flash_hex.return_value = flash_data
+
+    gui_window.read_full_flash_pretty()
+
+    editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
+    assert flash_data == editor_content
+    assert mock_read_full_flash_hex.call_count == 1
+    assert gui_window.cmd_title.cmd_title.get() == \
+        'Command: {}'.format(gui_window.CMD_READ_FLASH_PRETTY)
+
+
+@mock.patch('ubitflashtool.gui.read_uicr_customer', autospec=True)
+def test_read_uicr_customer(mock_read_uicr, gui_window):
+    """Tests the READ_UICR command."""
+    uicr_data = 'The UICR data'
+    mock_read_uicr.return_value = uicr_data
+
+    gui_window.read_uicr_customer()
+
+    editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
+    assert uicr_data == editor_content
+    assert mock_read_uicr.call_count == 1
+    assert gui_window.cmd_title.cmd_title.get() == \
+        'Command: {}'.format(gui_window.CMD_READ_UICR)
+
+
 @mock.patch('ubitflashtool.gui.UBitFlashToolWindow', autospec=True)
-def test_open(mock_window):
+def test_open_gui(mock_window):
     """Test the app instance is created and main loop invoked."""
     open_gui()
 

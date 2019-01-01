@@ -270,7 +270,7 @@ class UBitFlashToolWindow(tk.Tk):
         self.text_viewer.replace(python_code)
 
     def read_micropython(self):
-        """Read the Python user code from the micro:bit flash.
+        """Read the MicroPython interpreter from the micro:bit flash.
 
         Displays it as Intel Hex in the read-only text viewer.
         """
