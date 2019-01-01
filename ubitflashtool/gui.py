@@ -205,39 +205,41 @@ class UBitFlashToolWindow(tk.Tk):
         # In macOS we use the command key instead of option
         cmd_key = 'Command' if platform.system() == 'Darwin' else 'Ctrl'
         # Menu item File
-        file_menu = tk.Menu(menu, tearoff=0)
-        file_menu.add_command(label=self.CMD_OPEN,
-                              command=self.file_open,
-                              accelerator='{}+O'.format(cmd_key), underline=1)
-        file_menu.add_command(label=self.CMD_SAVE,
-                              command=self.file_save_as,
-                              accelerator='{}+S'.format(cmd_key), underline=1)
-        file_menu.add_separator()
-        file_menu.add_command(label=self.CMD_EXIT,
-                              command=self.app_quit,
-                              accelerator='Alt+F4')
-        menu.add_cascade(label='File', underline=0, menu=file_menu)
+        self.file_menu = tk.Menu(menu, tearoff=0)
+        self.file_menu.add_command(label=self.CMD_OPEN,
+                                   command=self.file_open,
+                                   accelerator='{}+O'.format(cmd_key),
+                                   underline=1)
+        self.file_menu.add_command(label=self.CMD_SAVE,
+                                   command=self.file_save_as,
+                                   accelerator='{}+S'.format(cmd_key),
+                                   underline=1)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label=self.CMD_EXIT,
+                                   command=self.app_quit,
+                                   accelerator='Alt+F4')
+        menu.add_cascade(label='File', underline=0, menu=self.file_menu)
         # Menu item micro:bit
-        ubit_menu = tk.Menu(menu, tearoff=0)
-        ubit_menu.add_command(label=self.CMD_READ_CODE,
-                              command=self.read_python_code)
-        ubit_menu.add_command(label=self.CMD_READ_UPY,
-                              command=self.read_micropython)
-        menu.add_cascade(label='micro:bit', underline=0, menu=ubit_menu)
+        self.ubit_menu = tk.Menu(menu, tearoff=0)
+        self.ubit_menu.add_command(label=self.CMD_READ_CODE,
+                                   command=self.read_python_code)
+        self.ubit_menu.add_command(label=self.CMD_READ_UPY,
+                                   command=self.read_micropython)
+        menu.add_cascade(label='micro:bit', underline=0, menu=self.ubit_menu)
         # Menu item nrf
-        nrf_menu = tk.Menu(menu, tearoff=0)
-        nrf_menu.add_command(label=self.CMD_READ_FLASH_HEX,
-                             command=self.read_full_flash_intel)
-        nrf_menu.add_command(label=self.CMD_READ_FLASH_PRETTY,
-                             command=self.read_full_flash_pretty)
-        nrf_menu.add_command(label=self.CMD_READ_UICR,
-                             command=self.read_uicr_customer)
-        nrf_menu.add_separator()
-        nrf_menu.add_command(label=self.CMD_COMPARE_FLASH,
-                             command=self.compare_full_flash_intel)
-        nrf_menu.add_command(label=self.CMD_COMPARE_UICR,
-                             command=self.compare_uicr_customer_intel)
-        menu.add_cascade(label='nrf', underline=0, menu=nrf_menu)
+        self.nrf_menu = tk.Menu(menu, tearoff=0)
+        self.nrf_menu.add_command(label=self.CMD_READ_FLASH_HEX,
+                                  command=self.read_full_flash_intel)
+        self.nrf_menu.add_command(label=self.CMD_READ_FLASH_PRETTY,
+                                  command=self.read_full_flash_pretty)
+        self.nrf_menu.add_command(label=self.CMD_READ_UICR,
+                                  command=self.read_uicr_customer)
+        self.nrf_menu.add_separator()
+        self.nrf_menu.add_command(label=self.CMD_COMPARE_FLASH,
+                                  command=self.compare_full_flash_intel)
+        self.nrf_menu.add_command(label=self.CMD_COMPARE_UICR,
+                                  command=self.compare_uicr_customer_intel)
+        menu.add_cascade(label='nrf', underline=0, menu=self.nrf_menu)
         # display the menu
         self.config(menu=menu)
 

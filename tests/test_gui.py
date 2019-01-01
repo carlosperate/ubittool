@@ -114,7 +114,7 @@ def test_read_python_code(mock_read_python_code, gui_window):
     python_code = 'The Python code from the flash'
     mock_read_python_code.return_value = python_code
 
-    gui_window.read_python_code()
+    gui_window.ubit_menu.invoke(0)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert python_code == editor_content
@@ -129,7 +129,7 @@ def test_read_micropython(mock_read_micropython, gui_window):
     upy_hex = 'The MicroPython runtime in Intel Hex format data'
     mock_read_micropython.return_value = upy_hex
 
-    gui_window.read_micropython()
+    gui_window.ubit_menu.invoke(1)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert upy_hex == editor_content
@@ -144,7 +144,7 @@ def test_read_full_flash_intel(mock_read_full_flash_hex, gui_window):
     flash_data = 'The full flash in Intel Hex format data'
     mock_read_full_flash_hex.return_value = flash_data
 
-    gui_window.read_full_flash_intel()
+    gui_window.nrf_menu.invoke(0)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert flash_data == editor_content
@@ -159,7 +159,7 @@ def test_read_full_flash_pretty(mock_read_full_flash_hex, gui_window):
     flash_data = 'The full flash in pretty format data'
     mock_read_full_flash_hex.return_value = flash_data
 
-    gui_window.read_full_flash_pretty()
+    gui_window.nrf_menu.invoke(1)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert flash_data == editor_content
@@ -174,7 +174,7 @@ def test_read_uicr_customer(mock_read_uicr, gui_window):
     uicr_data = 'The UICR data'
     mock_read_uicr.return_value = uicr_data
 
-    gui_window.read_uicr_customer()
+    gui_window.nrf_menu.invoke(2)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert uicr_data == editor_content
