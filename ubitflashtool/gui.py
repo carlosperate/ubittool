@@ -53,10 +53,6 @@ class ReadOnlyEditor(tk.Text):
         self.clear()
         self.insert(1.0, new_content)
 
-    def add(self, new_content):
-        """Add content to the text area."""
-        self.insert('end', new_content)
-
 
 class StdoutRedirector(object):
     """A class to redirect stdout to a text widget."""
@@ -77,7 +73,7 @@ class StdoutRedirector(object):
             self.text_area.tag_add(
                     self.tag, start_position, self.text_area.index('insert'))
 
-    def flush(self):
+    def flush(self):    # pragma: no cover
         """All flushed immediately on each write call."""
         pass
 

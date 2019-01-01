@@ -190,3 +190,21 @@ def test_open_gui(mock_window):
 
     assert mock_window.return_value.lift.call_count == 1
     assert mock_window.return_value.mainloop.call_count == 1
+
+
+@mock.patch('ubitflashtool.gui.ConsoleOutput.deactivate', autospec=True)
+def test_quit(mock_deactivate):
+    """Test that when the window is closed it deactivates the console."""
+    app = UBitFlashToolWindow()
+    app.wait_visibility()
+
+    app.app_quit()
+
+    assert mock_deactivate.call_count == 1
+    try:
+        app.winfo_exists()
+    except tkinter.TclError:
+        # App destroyed, nothing left to do
+        assert True, 'Window was already destroyed'
+    else:
+        assert False, 'Window is not destroyed'
