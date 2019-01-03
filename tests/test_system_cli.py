@@ -15,8 +15,6 @@ import pytest
 
 from ubitflashtool import cli, cmds, __version__
 
-PYTHON = sys.executable
-
 
 def _run_cli_cmd(cmd_list):
     """Run a shell command and return the output.
@@ -34,11 +32,11 @@ def _ubitflashtool_cmd(cmd_list):
 
     :param cmd_list: List of cli argument to add to ubitflashtool invocation.
     """
-    module = [PYTHON, '-m', 'ubitflashtool']
+    module = [sys.executable, '-m', 'ubitflashtool']
     module.extend(cmd_list)
     cmd = ['ubitflashtool']
     cmd.extend(cmd_list)
-    script = [PYTHON, 'ubitflashtool/cli.py']
+    script = [sys.executable, 'ubitflashtool/cli.py']
     script.extend(cmd_list)
     return [
         _run_cli_cmd(module),
