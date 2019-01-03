@@ -148,8 +148,8 @@ class CmdLabel(tk.Label):
         tk.Label.__init__(self, parent, background=self.bg_colour,
                           textvariable=self.cmd_title)
         self.set_text(default_text)
-        self.pack(side='left', fill='both')
-        parent.pack(fill='both', expand=1)
+        self.pack(side='left', fill='x')
+        parent.pack(fill='x', expand=False)
 
     def set_text(self, new_text):
         """Set the text of the command."""
