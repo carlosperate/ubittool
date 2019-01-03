@@ -97,10 +97,10 @@ def read_flash_hex(decode_hex=False, **kwargs):
     flash_data = programmer.read_flash(**kwargs)
     if decode_hex:
         return _bytes_to_pretty_hex(
-            flash_data, offsett=programmer.MICROBIT_FLASH_START)
+            flash_data, offset=programmer.MICROBIT_FLASH_START)
     else:
         return _bytes_to_intel_hex(
-            flash_data, offsett=programmer.MICROBIT_FLASH_START)
+            flash_data, offset=programmer.MICROBIT_FLASH_START)
 
 
 def read_uicr_customer_hex(decode_hex=False):
@@ -112,10 +112,10 @@ def read_uicr_customer_hex(decode_hex=False):
                                      count=programmer.UICR_CUSTOMER_SIZE_BYTES)
     if decode_hex:
         return _bytes_to_pretty_hex(
-            uicr_data, offsett=programmer.UICR_CUSTOMER_START)
+            uicr_data, offset=programmer.UICR_CUSTOMER_START)
     else:
         return _bytes_to_intel_hex(
-            uicr_data, offsett=programmer.UICR_CUSTOMER_START)
+            uicr_data, offset=programmer.UICR_CUSTOMER_START)
 
 
 def read_micropython():
@@ -128,7 +128,7 @@ def read_micropython():
         count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
         decode_hex=False)
     return _bytes_to_intel_hex(
-        flash_data, offsett=programmer.MICROPYTHON_START)
+        flash_data, offset=programmer.MICROPYTHON_START)
 
 
 def read_python_code():
