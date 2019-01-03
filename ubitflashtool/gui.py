@@ -9,7 +9,7 @@ from idlelib.WidgetRedirector import WidgetRedirector
 
 from ubitflashtool import __version__
 from ubitflashtool.cmds import (read_python_code, read_micropython,
-                                read_full_flash_hex, read_uicr_customer,
+                                read_flash_hex, read_uicr_customer_hex,
                                 compare_full_flash_hex, compare_uicr_customer)
 
 
@@ -282,7 +282,7 @@ class UBitFlashToolWindow(tk.Tk):
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_FLASH_HEX)
-        hex_str = read_full_flash_hex(decode_hex=False)
+        hex_str = read_flash_hex(decode_hex=False)
         self.text_viewer.replace(hex_str)
 
     def read_full_flash_pretty(self):
@@ -292,7 +292,7 @@ class UBitFlashToolWindow(tk.Tk):
         viewer.
         """
         self.set_next_cmd(self.CMD_READ_FLASH_PRETTY)
-        hex_str = read_full_flash_hex(decode_hex=True)
+        hex_str = read_flash_hex(decode_hex=True)
         self.text_viewer.replace(hex_str)
 
     def read_uicr_customer(self):
@@ -301,7 +301,7 @@ class UBitFlashToolWindow(tk.Tk):
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_UICR)
-        uicr_hex_str = read_uicr_customer(decode_hex=True)
+        uicr_hex_str = read_uicr_customer_hex(decode_hex=True)
         self.text_viewer.replace(uicr_hex_str)
 
     def compare_full_flash_intel(self):

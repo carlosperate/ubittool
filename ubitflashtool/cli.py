@@ -8,7 +8,7 @@ import sys
 import click
 
 from ubitflashtool import __version__
-from ubitflashtool.cmds import (read_full_flash_hex, read_python_code,
+from ubitflashtool.cmds import (read_flash_hex, read_python_code,
                                 compare_full_flash_hex)
 
 
@@ -72,7 +72,7 @@ def read_flash(file_path=None):
 
     click.echo('Reading the micro:bit flash contents...')
     try:
-        flash_data = read_full_flash_hex()
+        flash_data = read_flash_hex()
     except Exception as e:
         click.echo(click.style('Error: {}', fg='red').format(e), err=True)
         sys.exit(1)

@@ -21,108 +21,14 @@ from difflib import HtmlDiff
 from cStringIO import StringIO
 from traceback import format_exc
 
-from pyOCD.board import MbedBoard
 from intelhex import IntelHex
 from uflash import extract_script
+
+from ubitflashtool import programmer
 
 if sys.version_info.major == 2:
     # open() with encodings
     from io import open
-
-
-# nRF51 256 KBs of flash starts at address 0
-MICROBIT_FLASH_START = 0x00000000
-MICROBIT_FLASH_SIZE_BYTES = 256 * 1024
-MICROBIT_FLASH_END = MICROBIT_FLASH_START + MICROBIT_FLASH_SIZE_BYTES
-
-# Assumes code attached to fixed location instead of using the filesystem
-PYTHON_CODE_OFFSET = 0x3E000
-PYTHON_CODE_START = MICROBIT_FLASH_START + PYTHON_CODE_OFFSET
-PYTHON_CODE_END = MICROBIT_FLASH_END
-
-# MicroPython will contain unnecessary empty space between end of interpreter
-# and begginning of code at a fixed location, assumes no file system used
-MICROPYTHON_OFFSET = 0x0
-MICROPYTHON_START = MICROBIT_FLASH_START + MICROPYTHON_OFFSET
-MICROPYTHON_END = PYTHON_CODE_START
-
-# nRF51 User Information Configuration Registers
-UICR_START = 0x10001000
-UICR_SIZE_BYTES = 0x100
-UICR_END = UICR_START + UICR_SIZE_BYTES
-
-# UICR reserved data for customer
-UICR_CUSTOMER_OFFSET = 0x80
-UICR_CUSTOMER_SIZE_BYTES = 32 * 4
-UICR_CUSTOMER_START = UICR_START + UICR_CUSTOMER_OFFSET
-UICR_CUSTOMER_END = UICR_CUSTOMER_START + UICR_CUSTOMER_SIZE_BYTES
-
-
-#
-# Memory read operations
-#
-def _read_continuous_memory(address=0x0, count=4):
-    """Read any continuous memory area from the micro:bit.
-
-    Reads the contents of any micro:bit continuous memory area, starting from
-    the 'address' argument for as many bytes as indicated by 'count'.
-    There is no input sanitation in this function and is the responsibility of
-    the caller to input values within range of the target board or deal with
-    any exceptions raised by PyOCD.
-
-    :param address: Integer indicating the start address to read.
-    :param count: Integer, how many bytes to read.
-    :return: A list of integers, each representing a byte of data.
-    """
-    # TODO: Implement a time out, figure out possible exceptions
-    board = MbedBoard.chooseBoard(blocking=False)
-    if not board:
-        raise Exception('Did not find any connected boards.')
-    target = board.target
-    target.resume()
-    target.halt()
-    # TODO: Figure out what type of exceptions this can throw as well
-    read_data = target.readBlockMemoryUnaligned8(address, count)
-    board.uninit()
-    return read_data
-
-
-def read_flash(address=MICROBIT_FLASH_START, count=4):
-    """Read the contents of the micro:bit flash memory.
-
-    Start from the 'address' argument for as many bytes as indicated by the
-    'count' argument.
-
-    :param address: Integer indicating the start address to read.
-    :param count: Integer indicating how many bytes to read.
-    :return: A list of integers, each representing a byte of data.
-    """
-    last_byte = address + count
-    if not (MICROBIT_FLASH_START <= address < MICROBIT_FLASH_END) or \
-            last_byte > MICROBIT_FLASH_END:
-        raise ValueError('Cannot read a flash location out of boundaries.\n'
-                         'Reading from {} to {},\nlimits from {} to {}'.format(
-                             address, last_byte,
-                             MICROBIT_FLASH_START, MICROBIT_FLASH_END))
-    return _read_continuous_memory(address=address, count=count)
-
-
-def read_uicr(address=UICR_START, count=4):
-    """Read the contents of the micro:bit UICR memory.
-
-    Start from the 'address' argument for as many bytes as indicated by the
-    'count' argument.
-
-    :param address: Integer indicating the start address to read.
-    :param count: Integer indicating how many bytes to read.
-    :return: A list of integers, each representing a byte of data.
-    """
-    last_byte = address + count
-    if not (UICR_START <= address < UICR_END) or (address + count) > UICR_END:
-        raise ValueError('Cannot read a UICR location out of boundaries.\n'
-                         'Reading from {} to {},\nlimits from {} to {}'.format(
-                             address, last_byte, UICR_START, UICR_END))
-    return _read_continuous_memory(address=address, count=count)
 
 
 #
@@ -173,23 +79,10 @@ def _bytes_to_pretty_hex(data, offset=0x0000):
 
 
 #
-# Commands
+# Reading data commands
 #
-def read_uicr_customer(decode_hex=False):
-    """Read the UICR Customer data.
-
-    :return: String with the nicely decoded UIR Customer area data.
-    """
-    uicr_data = read_uicr(address=UICR_CUSTOMER_START,
-                          count=UICR_CUSTOMER_SIZE_BYTES)
-    if decode_hex:
-        return _bytes_to_pretty_hex(uicr_data, UICR_CUSTOMER_START)
-    else:
-        return _bytes_to_intel_hex(uicr_data, UICR_CUSTOMER_START)
-
-
-def read_flash_hex(address=MICROBIT_FLASH_START, count=4, decode_hex=False):
-    """Read flash memory and return as a hex string.
+def read_flash_hex(decode_hex=False, **kwargs):
+    """Read data from the flash memory and return as a hex string.
 
     Read as a number of bytes of the micro:bit flash from the given address.
     Can return it in Intel Hex format or a pretty formatted and decoded hex
@@ -201,23 +94,28 @@ def read_flash_hex(address=MICROBIT_FLASH_START, count=4, decode_hex=False):
             Hex format.
     :return: String with the hex formatted as indicated.
     """
-    flash_data = read_flash(address=address, count=count)
+    flash_data = programmer.read_flash(**kwargs)
     if decode_hex:
-        return _bytes_to_pretty_hex(flash_data, address)
+        return _bytes_to_pretty_hex(
+            flash_data, offsett=programmer.MICROBIT_FLASH_START)
     else:
-        return _bytes_to_intel_hex(flash_data, address)
+        return _bytes_to_intel_hex(
+            flash_data, offsett=programmer.MICROBIT_FLASH_START)
 
 
-def read_full_flash_hex(decode_hex=False):
-    """Shortcut to read all flash without exposing the internal addresses.
+def read_uicr_customer_hex(decode_hex=False):
+    """Read the UICR Customer data.
 
-    :param decode_hex: True selects nice decided format, False selects Intel
-            Hex format.
-    :return: String with the hex formatted as indicated.
+    :return: String with the nicely decoded UIR Customer area data.
     """
-    return read_flash_hex(address=MICROBIT_FLASH_START,
-                          count=MICROBIT_FLASH_SIZE_BYTES,
-                          decode_hex=decode_hex)
+    uicr_data = programmer.read_uicr(address=programmer.UICR_CUSTOMER_START,
+                                     count=programmer.UICR_CUSTOMER_SIZE_BYTES)
+    if decode_hex:
+        return _bytes_to_pretty_hex(
+            uicr_data, offsett=programmer.UICR_CUSTOMER_START)
+    else:
+        return _bytes_to_intel_hex(
+            uicr_data, offsett=programmer.UICR_CUSTOMER_START)
 
 
 def read_micropython():
@@ -225,9 +123,12 @@ def read_micropython():
 
     :return: String with Intel Hex format for the MicroPython runtime.
     """
-    return read_flash_hex(address=MICROPYTHON_START,
-                          count=MICROPYTHON_END - MICROPYTHON_START,
-                          decode_hex=False)
+    flash_data = programmer.read_flash(
+        address=programmer.MICROPYTHON_START,
+        count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
+        decode_hex=False)
+    return _bytes_to_intel_hex(
+        flash_data, offsett=programmer.MICROPYTHON_START)
 
 
 def read_python_code():
@@ -235,9 +136,11 @@ def read_python_code():
 
     :return: String with the MicroPython code.
     """
-    flash_data = read_flash(address=PYTHON_CODE_START,
-                            count=(PYTHON_CODE_END - PYTHON_CODE_START))
-    py_code_hex = _bytes_to_intel_hex(flash_data, offset=PYTHON_CODE_START)
+    flash_data = programmer.read_flash(
+        address=programmer.PYTHON_CODE_START,
+        count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START))
+    py_code_hex = _bytes_to_intel_hex(
+        flash_data, offset=programmer.PYTHON_CODE_START)
     try:
         python_code = extract_script(py_code_hex)
     except Exception as e:
@@ -247,7 +150,7 @@ def read_python_code():
 
 
 #
-# Hex comparison
+# Hex comparison commands
 #
 def _open_temp_html(html_str):
     """Create a temporary html file, open it in a browser and delete it.
@@ -330,7 +233,7 @@ def compare_full_flash_hex(hex_file_path):
     """
     with open(hex_file_path, encoding='utf-8') as f:
         file_hex_str = f.readlines()
-    flash_hex_str = read_full_flash_hex(decode_hex=False)
+    flash_hex_str = read_flash_hex(decode_hex=False)
 
     html_code = _gen_diff_html('micro:bit', flash_hex_str.splitlines(),
                                'Hex file', file_hex_str)
@@ -347,7 +250,7 @@ def compare_uicr_customer(hex_file_path):
     """
     with open(hex_file_path, encoding='utf-8') as f:
         file_hex_str = f.readlines()
-    flash_hex_str = read_uicr_customer(decode_hex=False)
+    flash_hex_str = read_uicr_customer_hex(decode_hex=False)
 
     html_code = _gen_diff_html('micro:bit', flash_hex_str.splitlines(),
                                'Hex file', file_hex_str)

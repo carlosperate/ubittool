@@ -112,7 +112,7 @@ def test_bytes_to_pretty_hexinvalid_data():
         assert False, 'Exception NOT raised'
 
 
-@mock.patch('ubitflashtool.cmds.read_flash', autospec=True)
+@mock.patch('ubitflashtool.cmds.programmer.read_flash', autospec=True)
 @mock.patch('ubitflashtool.cmds._bytes_to_intel_hex', autospec=True)
 def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     """."""
@@ -145,7 +145,7 @@ def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     assert result == python_code
 
 
-@mock.patch('ubitflashtool.cmds.read_flash', autospec=True)
+@mock.patch('ubitflashtool.cmds.programmer.read_flash', autospec=True)
 @mock.patch('ubitflashtool.cmds._bytes_to_intel_hex', autospec=True)
 def test_read_python_code_empty(mock_bytes_to_intel_hex, mock_read_flash):
     """Check error thrown if failing to find Python code in flash."""
@@ -205,31 +205,31 @@ def test_gen_diff_html(mock_diff):
     assert html.count(to_lines) == 1
 
 
-@mock.patch('ubitflashtool.cmds.read_full_flash_hex', autospec=True)
+@mock.patch('ubitflashtool.cmds.read_flash_hex', autospec=True)
 @mock.patch('ubitflashtool.cmds._gen_diff_html', autospec=True)
 @mock.patch('ubitflashtool.cmds._open_temp_html', autospec=True)
 def test_compare_full_flash_hex(
-        mock_open_temp_html, mock_gen_diff_html, mock_read_full_flash_hex):
+        mock_open_temp_html, mock_gen_diff_html, mock_read_flash_hex):
     """Check that file contents."""
     file_hex_path = os.path.join('path', 'to', 'file.hex')
     file_hex_content = 'This is the hex file content'
     flash_hex_content = 'This is the flash hex content'
-    mock_read_full_flash_hex.return_value = flash_hex_content
+    mock_read_flash_hex.return_value = flash_hex_content
 
     with mock.patch('ubitflashtool.cmds.open', mock.mock_open(
             read_data=file_hex_content)) as m_open:
         cmds.compare_full_flash_hex(file_hex_path)
 
     m_open.assert_called_once_with(file_hex_path, encoding='utf-8')
-    assert mock_read_full_flash_hex.call_count == 1
-    assert mock_read_full_flash_hex.call_args[1] == {'decode_hex': False}
+    assert mock_read_flash_hex.call_count == 1
+    assert mock_read_flash_hex.call_args[1] == {'decode_hex': False}
     assert mock_gen_diff_html.call_count == 1
     assert mock_gen_diff_html.call_args[0] == (
             'micro:bit', [flash_hex_content], 'Hex file', [file_hex_content])
     assert mock_open_temp_html.call_count == 1
 
 
-@mock.patch('ubitflashtool.cmds.read_uicr_customer', autospec=True)
+@mock.patch('ubitflashtool.cmds.read_uicr_customer_hex', autospec=True)
 @mock.patch('ubitflashtool.cmds._gen_diff_html', autospec=True)
 @mock.patch('ubitflashtool.cmds._open_temp_html', autospec=True)
 def test_compare_uicr_customer(

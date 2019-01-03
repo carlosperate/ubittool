@@ -138,37 +138,37 @@ def test_read_micropython(mock_read_micropython, gui_window):
         'Command: {}'.format(gui_window.CMD_READ_UPY)
 
 
-@mock.patch('ubitflashtool.gui.read_full_flash_hex', autospec=True)
-def test_read_full_flash_intel(mock_read_full_flash_hex, gui_window):
+@mock.patch('ubitflashtool.gui.read_flash_hex', autospec=True)
+def test_read_full_flash_intel(mock_read_flash_hex, gui_window):
     """Tests the READ_FLASH_HEX command."""
     flash_data = 'The full flash in Intel Hex format data'
-    mock_read_full_flash_hex.return_value = flash_data
+    mock_read_flash_hex.return_value = flash_data
 
     gui_window.nrf_menu.invoke(0)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert flash_data == editor_content
-    assert mock_read_full_flash_hex.call_count == 1
+    assert mock_read_flash_hex.call_count == 1
     assert gui_window.cmd_title.cmd_title.get() == \
         'Command: {}'.format(gui_window.CMD_READ_FLASH_HEX)
 
 
-@mock.patch('ubitflashtool.gui.read_full_flash_hex', autospec=True)
-def test_read_full_flash_pretty(mock_read_full_flash_hex, gui_window):
+@mock.patch('ubitflashtool.gui.read_flash_hex', autospec=True)
+def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     """Tests the READ_FLASH_PRETTY command."""
     flash_data = 'The full flash in pretty format data'
-    mock_read_full_flash_hex.return_value = flash_data
+    mock_read_flash_hex.return_value = flash_data
 
     gui_window.nrf_menu.invoke(1)
 
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert flash_data == editor_content
-    assert mock_read_full_flash_hex.call_count == 1
+    assert mock_read_flash_hex.call_count == 1
     assert gui_window.cmd_title.cmd_title.get() == \
         'Command: {}'.format(gui_window.CMD_READ_FLASH_PRETTY)
 
 
-@mock.patch('ubitflashtool.gui.read_uicr_customer', autospec=True)
+@mock.patch('ubitflashtool.gui.read_uicr_customer_hex', autospec=True)
 def test_read_uicr_customer(mock_read_uicr, gui_window):
     """Tests the READ_UICR command."""
     uicr_data = 'The UICR data'
@@ -192,15 +192,18 @@ def test_open_gui(mock_window):
     assert mock_window.return_value.mainloop.call_count == 1
 
 
-@mock.patch('ubitflashtool.gui.ConsoleOutput.deactivate', autospec=True)
-def test_quit(mock_deactivate):
+def test_quit():
     """Test that when the window is closed it deactivates the console."""
     app = UBitFlashToolWindow()
     app.wait_visibility()
 
+    assert sys.stdout != sys.__stdout__
+    assert sys.stderr != sys.__stderr__
+
     app.app_quit()
 
-    assert mock_deactivate.call_count == 1
+    assert sys.stdout == sys.__stdout__
+    assert sys.stderr == sys.__stderr__
     try:
         app.winfo_exists()
     except tkinter.TclError:

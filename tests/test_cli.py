@@ -129,11 +129,11 @@ def test_read_code_path_no_board(check_no_board_connected):
     assert not os.path.isfile(file_name), 'File does not exist'
 
 
-@mock.patch('ubitflashtool.cli.read_full_flash_hex', autospec=True)
-def test_read_flash(mock_read_full_flash_hex, check_no_board_connected):
+@mock.patch('ubitflashtool.cli.read_flash_hex', autospec=True)
+def test_read_flash(mock_read_flash_hex, check_no_board_connected):
     """Test the read-flash command without a file option."""
     flash_hex_content = 'Intel Hex lines here'
-    mock_read_full_flash_hex.return_value = flash_hex_content
+    mock_read_flash_hex.return_value = flash_hex_content
     runner = CliRunner()
 
     result = runner.invoke(cli.read_flash)
@@ -156,11 +156,11 @@ def test_read_flash_no_board(check_no_board_connected):
     assert 'Error: Did not find any connected boards.' in result.output
 
 
-@mock.patch('ubitflashtool.cli.read_full_flash_hex', autospec=True)
-def test_read_flash_path(mock_read_full_flash_hex, check_no_board_connected):
+@mock.patch('ubitflashtool.cli.read_flash_hex', autospec=True)
+def test_read_flash_path(mock_read_flash_hex, check_no_board_connected):
     """Test the read-code command with a file option."""
     flash_hex_content = 'Intel Hex lines here'
-    mock_read_full_flash_hex.return_value = flash_hex_content
+    mock_read_flash_hex.return_value = flash_hex_content
     file_name = 'thisfile.py'
     runner = CliRunner()
 
