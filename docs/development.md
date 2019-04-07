@@ -1,9 +1,10 @@
 ---
 layout: page
-title: Set Up Development Environment
+title: Development
+nav_order: 2
 ---
 
-# Install
+# Set Up Development Environment
 
 Install the development dependencies using pipenv:
 
@@ -12,7 +13,7 @@ pip install pipenv
 pipenv install --editable . --dev
 ```
 
-## make.py
+# make.py
 
 Rather than having a Makefile, which can be difficult to get running on
 Windows, there is a make.py file that can execute the types of commands that
@@ -41,7 +42,7 @@ Commands:
   test    Run PyTests with the coverage plugin.
 ```
 
-### Check
+## Check
 
 Run all the checkers (`linter` and `test`):
 
@@ -49,7 +50,7 @@ Run all the checkers (`linter` and `test`):
 python make.py check
 ```
 
-### Build
+## Build
 
 Builds the CLI and GUI executables using PyInstaller:
 

@@ -1,6 +1,7 @@
 ---
 layout: page
 homepage: true
+nav_order: 1
 ---
 
 # Intro
