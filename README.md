@@ -6,7 +6,7 @@
 
 Utility to extract a MicroPython program and/or interpreter from a microbit.
 
-Install in a virtual environment:
+Install in a Python 2.7 virtual environment:
 
 ```
 pip install .

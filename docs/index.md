@@ -10,28 +10,48 @@ These docs are still WIP.
 
 # Install
 
-Install in a virtual environment:
+Install in a Python 2.7 virtual environment:
 
 ```
 pip install .
 ```
 
-# Run
-
-To run:
+Although pipenv is recommended:
 
 ```
-ubitflashtool -s extracted_script.py
+pip install pipenv
+pipenv install .
+```
+
+# Run
+
+To see the available commands:
+```
+ubitflashtool --help
+```
+
+Or from this directory:
+
+```
+python -m ubitflashtool --help
+```
+
+To retrieve the user Python code:
+```
+ubitflashtool read-code -f extracted_script.py
+```
+
+To read the entire flash contents:
+```
+ubitflashtool read-flash
+```
+
+To compare the flash contents with a hex file:
+```
+ubitflashtool compare-flash
 ```
 
 To run the GUI:
-
 ```
-ubitflashtool --gui
-```
-
-or from this directory:
-
-```
-python -m ubitflashtool --gui
+ubitflashtool gui
 ```
