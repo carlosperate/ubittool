@@ -17,8 +17,11 @@ PyInstaller = ">=3.3"
 setuptools_scm = "*"
 # Linting
 flake8 = "*"
-flake8-docstrings = "*"
+# Requires Python 3.5+
+# flake8-bugbear = "*"
+# black = "*"
 flake8-builtins = "*"
+flake8-docstrings = "*"
 # Tests
 pytest = "*"
 pytest-cov = "*"
