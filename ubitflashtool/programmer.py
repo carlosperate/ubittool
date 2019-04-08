@@ -3,7 +3,7 @@
 """Functions to read data from the micro:bit using PyOCD."""
 from __future__ import absolute_import, print_function
 
-from pyOCD.board import MbedBoard
+from pyocd.core.helpers import ConnectHelper
 
 
 # nRF51 256 KBs of flash starts at address 0
@@ -45,16 +45,20 @@ def _read_continuous_memory(address=0x0, count=4):
     :param count: Integer, how many bytes to read.
     :return: A list of integers, each representing a byte of data.
     """
-    # TODO: Implement a time out, figure out possible exceptions
-    board = MbedBoard.chooseBoard(blocking=False)
-    if not board:
-        raise Exception('Did not find any connected boards.')
-    target = board.target
-    target.resume()
-    target.halt()
-    # TODO: Figure out what type of exceptions this can throw as well
-    read_data = target.readBlockMemoryUnaligned8(address, count)
-    board.uninit()
+    read_data = None
+    try:
+        with ConnectHelper.session_with_chosen_probe(
+            blocking=False,
+            auto_unlock=False,
+            halt_on_connect=True,
+            resume_on_disconnect=True,
+        ) as session:
+            board = session.board
+            target = board.target
+            read_data = target.read_memory_block8(address, count)
+    except Exception as e:
+        raise Exception('{}\nDid not find any connected boards.'.format(
+            str(e)))
     return read_data
 
 

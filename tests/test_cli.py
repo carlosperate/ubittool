@@ -91,7 +91,7 @@ def test_read_code_no_board(check_no_board_connected):
 
     assert result.exit_code != 0
     assert 'MicroPython code will be output to console.' in result.output
-    assert 'Error: Did not find any connected boards.' in result.output
+    assert 'Did not find any connected boards.' in result.output
 
 
 @mock.patch('ubitflashtool.cli.read_python_code', autospec=True)
@@ -123,7 +123,7 @@ def test_read_code_path_no_board(check_no_board_connected):
         assert result.exit_code != 0, 'Exit code non-zero'
         assert 'MicroPython code will be written to: {}'.format(file_name) \
             in result.output, 'Message written to file'
-        assert 'Error: Did not find any connected boards.' in result.output, \
+        assert 'Did not find any connected boards.' in result.output, \
             'Message error, board not found'
     # File not mocked, so checking command hasn't created it
     assert not os.path.isfile(file_name), 'File does not exist'
@@ -153,7 +153,7 @@ def test_read_flash_no_board(check_no_board_connected):
 
     assert result.exit_code != 0
     assert 'micro:bit flash hex will be output to console.' in result.output
-    assert 'Error: Did not find any connected boards.' in result.output
+    assert 'Did not find any connected boards.' in result.output
 
 
 @mock.patch('ubitflashtool.cli.read_flash_hex', autospec=True)
@@ -193,7 +193,7 @@ def test_read_flash_path_no_board(check_no_board_connected):
         assert result.exit_code != 0, 'Exit code non-zero'
         assert 'micro:bit flash hex will be written to: {}'.format(file_name) \
             in result.output, 'Message written to file'
-        assert 'Error: Did not find any connected boards.' in result.output, \
+        assert 'Did not find any connected boards.' in result.output, \
             'Message error, board not found'
     # File not mocked, so checking command hasn't created it
     assert not os.path.isfile(file_name), 'File does not exist'
@@ -235,7 +235,7 @@ def test_compare_flash_no_board(mock_isfile, check_no_board_connected):
     assert m_open.call_count == len(results)
     for result in results:
         assert result.exit_code != 0, 'Exit code non-zero'
-        assert 'Error: Did not find any connected boards.' in result.output
+        assert 'Did not find any connected boards.' in result.output
 
 
 def test_compare_flash_invalid_file():

@@ -71,4 +71,4 @@ def test_read_code(check_no_board_connected):
     outputs = _ubitflashtool_cmd(['read-code'])
     for output in outputs:
         assert 'Executing: Extract the MicroPython code' in output
-        assert 'Error: Did not find any connected boards.' in output
+        assert 'Did not find any connected boards.' in output
