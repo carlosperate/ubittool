@@ -1,15 +1,9 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for GUI."""
 import sys
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-try:
-    import tkinter
-except ImportError:
-    import Tkinter as tkinter
+from unittest import mock
+import tkinter
 
 import pytest
 

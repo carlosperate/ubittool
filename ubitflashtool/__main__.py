@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Entry point for the program, checks to run GUI or CLI."""
 from ubitflashtool.cli import main as cli

@@ -1,7 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """CLI and GUI utility to read content from the micro:bit."""
-from __future__ import print_function, absolute_import
 import os
 import sys
 

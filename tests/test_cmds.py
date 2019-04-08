@@ -1,11 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for cmds.py module."""
 import os
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from ubitflashtool import cmds
 

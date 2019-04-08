@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Commands to carry out all the actions for ubitflashtool control.
@@ -11,24 +11,19 @@ areas of Flash (full flash, MicroPython, Python code) and UICR (to read the
 customer data), and format the output into Intel Hex, a nicely decoded string
 format, or human readable text (for the Python code).
 """
-from __future__ import print_function, absolute_import
 import os
 import sys
 import tempfile
 import webbrowser
+from io import StringIO
 from threading import Timer
 from difflib import HtmlDiff
-from cStringIO import StringIO
 from traceback import format_exc
 
 from intelhex import IntelHex
 from uflash import extract_script
 
 from ubitflashtool import programmer
-
-if sys.version_info.major == 2:
-    # open() with encodings
-    from io import open
 
 
 #

@@ -1,51 +1,73 @@
-# Travis can building for OS X 10.11 El Capitan
+# Tests multiple Python versions in Linux and build in macOS 
 matrix:
   include:
+    - os: linux
+      dist: xenial
+      sudo: false
+      language: python
+      python: 3.5
+    - os: linux
+      dist: xenial
+      sudo: false
+      language: python
+      python: 3.6
+    - os: linux
+      dist: xenial
+      sudo: false
+      language: python
+      python: 3.7
+    # OS X 10.11 El Capitan
     - os: osx
       osx_image: xcode7.3
       sudo: required
       language: generic
+      env: PY_VER=3.5.2
 
 before_install:
-  # OS and Python info
+  # OS info
   - uname -a
-  - sudo -H python --version
-  - sudo -H python -c "import struct; print(struct.calcsize('P') * 8)"
-  - sudo -H python -c "import sys; print(sys.executable)"
-
-  # Install pip
-  - curl -O https://bootstrap.pypa.io/get-pip.py && sudo -H python get-pip.py && rm get-pip.py
-  - sudo -H pip --version
-  - sudo -H pip freeze
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sw_vers; fi
+  # macOS needs python3 to be installed
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv install --list; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv install $PY_VER; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv global $PY_VER; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ln -s `pyenv which python` /usr/local/bin/python3 ; fi
+  # Python info
+  - python3 --version
+  - python3 -c "import struct; print(struct.calcsize('P') * 8)"
+  - python3 -c "import sys; print(sys.executable)"
+  - python3 -m pip --version
+  - python3 -m pip freeze
 
 install:
   # Install and check installed packages
-  - sudo -H pip install pipenv
-  - sudo -H pipenv install --dev .
-  - sudo -H pipenv run pip freeze
+  - python3 -m pip install pipenv
+  - python3 -m pipenv install --dev .
+  - python3 -m pipenv run pip freeze
 
-  # Build the two versions of ubitflashtool using PyInstaller
-  - sudo -H pipenv run python make.py build
+  # Build the two versions of ubitflashtool in macOS using PyInstaller
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py build; fi
 
-  # Collect the outputs
-  - sudo -H mv dist artifacts
-  - ls -l artifacts
-  - sudo -H chmod +x ./artifacts/ubitflashtool-cli
-  - cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..
+  # Collect the build outputs in macoOS
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H mv dist artifacts; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ls -l artifacts; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H chmod +x ./artifacts/ubitflashtool-cli; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..; fi
 
   # Prepare codecov coverage
-  - pip install codecov
+  - python3 -m pip install codecov
 
 script:
-  # If running tests on Linux we'll need to preprend the pipenv command with "xvfb-run"
-  - sudo -H pipenv run python make.py check
-  # Lastly, run cli app as a simple test to check ubitflashtool is not broken
-  - ./artifacts/ubitflashtool-cli --help
+  # Running the tests. Linux needs frame buffer, so run with "xvfb-run".
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then xvfb-run python3 -m pipenv run python make.py check; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py check; fi
+  # Lastly, run cli app as a simple test to check ubitflashtool build is not broken
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./artifacts/ubitflashtool-cli --help; fi
 
 after_script:
   # Upload built executables to a temporary service
-  - curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip
-  - curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip ; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli ; fi
   # - curl -F "file=@./artifacts/ubitflashtool-gui.zip" "https://file.io/?expires=3"
   # - curl -F "file=@./artifacts/ubitflashtool-cli" "https://file.io/?expires=3"
 
