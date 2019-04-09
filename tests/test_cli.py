@@ -1,11 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for cli.py."""
 import os
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from click.testing import CliRunner
 import pytest

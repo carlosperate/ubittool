@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Run simple system tests on the CLI program.
 
@@ -7,7 +7,6 @@ Here we only do a simple command line invocation to ensure we can access the
 app via terminal, and we trust that the library click implements all the
 commands as it is a fully tested package.
 """
-from __future__ import print_function
 import subprocess
 import sys
 
@@ -61,14 +60,14 @@ def test_help():
     """Check the help option works."""
     outputs = _ubitflashtool_cmd(['--help'])
     for output in outputs:
-        assert 'Usage: ubitflashtool [OPTIONS] COMMAND [ARGS]...' in output
-        assert 'uBitFlashTool v{}'.format(__version__) in output
-        assert cli.__doc__ in output
+        assert b'Usage: ubitflashtool [OPTIONS] COMMAND [ARGS]...' in output
+        assert str.encode('uBitFlashTool v{}'.format(__version__)) in output
+        assert str.encode(cli.__doc__) in output
 
 
 def test_read_code(check_no_board_connected):
     """Check the read-code command returns an error when no board connected."""
     outputs = _ubitflashtool_cmd(['read-code'])
     for output in outputs:
-        assert 'Executing: Extract the MicroPython code' in output
-        assert 'Did not find any connected boards.' in output
+        assert b'Executing: Extract the MicroPython code' in output
+        assert b'Did not find any connected boards.' in output

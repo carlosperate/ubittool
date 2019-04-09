@@ -1,28 +1,20 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """A GUI to display the content from performing the uBitFlashTool actions."""
-from __future__ import absolute_import, print_function
 import sys
 import logging
 import platform
-from idlelib.WidgetRedirector import WidgetRedirector
+import tkinter as tk
+from tkinter import filedialog as tkFileDialog
+try:
+    from idlelib.WidgetRedirector import WidgetRedirector
+except ImportError:
+    from idlelib.redirector import WidgetRedirector
 
 from ubitflashtool import __version__
 from ubitflashtool.cmds import (read_python_code, read_micropython,
                                 read_flash_hex, read_uicr_customer_hex,
                                 compare_full_flash_hex, compare_uicr_customer)
-
-
-if sys.version_info.major == 3:    # pragma: no cover
-    # Tkinter imports
-    import tkinter as tk
-    from tkinter import filedialog as tkFileDialog
-elif sys.version_info.major == 2:
-    # Tkinter imports
-    import Tkinter as tk
-    import tkFileDialog
-    # open() with encodings
-    from io import open
 
 
 class ReadOnlyEditor(tk.Text):

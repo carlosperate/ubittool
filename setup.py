@@ -7,9 +7,8 @@ from setuptools import setup
 from ubitflashtool import __version__
 
 
-# Stop if not using Python 2
-if sys.version_info.major != 2:
-    print("Due to dependencies, this package is Python 2 only.")
+if sys.version_info.major != 3 or sys.version_info.minor < 5:
+    print('This package only supports Python 3.5+')
     sys.exit(1)
 
 # Open the readme and requirements file
@@ -40,11 +39,14 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Education',
         'Topic :: Software Development :: Embedded Systems',
     ],
+    python_requires='>=3.5, <4',
     entry_points={
         'console_scripts': ['ubitflashtool=ubitflashtool.__main__:main'],
     }
