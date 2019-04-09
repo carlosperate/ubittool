@@ -61,7 +61,7 @@ script:
   # Running the tests. Linux needs frame buffer, so run with "xvfb-run".
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then xvfb-run python3 -m pipenv run python make.py check; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py check; fi
-  # Lastly, run cli app as a simple test to check ubitflashtool build is not broken
+  # Run cli app as a simple test to check ubitflashtool build is not broken
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./artifacts/ubitflashtool-cli --help; fi
 
 after_script:

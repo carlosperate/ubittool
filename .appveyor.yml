@@ -1,10 +1,8 @@
 environment:
   matrix:
-    - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "3.6.8"
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "32"
-      # Needed for tkinter to find its libraries and run when testing
-      TCL_LIBRARY: "C:\\Python36\\tcl\\tcl8.6"
 
 platform: x86
 
@@ -16,12 +14,12 @@ init:
   - cmd: wmic OS get OSArchitecture
 
   # As AppVeyor has multiple python installs, check which one used by default
-  - cmd: ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%
   - cmd: python --version
   - cmd: python -c "import struct; print(struct.calcsize('P') * 8)"
   - cmd: python -c "import sys; print(sys.executable)"
 
   # Set the relevant Python and pip location to the path
+  - cmd: ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%
   - cmd: set PATH=%PYTHON%;%PYTHON%\scripts;%PATH%
   - cmd: ECHO Path - %PATH%
 
@@ -35,27 +33,22 @@ init:
   - cmd: pip freeze
 
 install:
-  # Install globally (pyinstaller v3.2 has VC++ redistributable dependencies)
-  - cmd: pip install pyinstaller==3.1.1
-  - cmd: python setup.py install
-  - cmd: pip freeze
-
-  # Build using PyInstaller, rename dist folder
-  - cmd: python make.py build
-  - ps: Rename-Item -path .\dist artifacts
-  - cmd: dir artifacts
-
   # Install with Pipenv so that we can run the tests
   - cmd: pip install pipenv
   - cmd: pipenv install --dev .
   - cmd: pipenv run pip freeze
+
+  # Build and rename dist folder
+  - cmd: pipenv run python make.py build
+  - ps: Rename-Item -path .\dist artifacts
+  - cmd: dir artifacts
 
   # Prepare codecov coverage
   - cmd: pip install codecov
 
 test_script:
   - cmd: pipenv run python make.py check
-  # Lastly, run cli app as a simple test to check ubitflashtool is not broken
+  # Run cli app as a simple test to check ubitflashtool build is not broken
   - cmd: .\artifacts\ubitflashtool-cli.exe --help
 
 after_test:
