@@ -29,7 +29,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sw_vers; fi
   # macOS needs python3 to be installed
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv install --list; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv install $PY_VER; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then CONFIGURE_OPTS=--enable-shared pyenv install $PY_VER; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv global $PY_VER; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ln -s `pyenv which python` /usr/local/bin/python3 ; fi
   # Python info
