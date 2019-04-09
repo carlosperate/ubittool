@@ -43,6 +43,7 @@ install:
   # Install and check installed packages
   - python3 -m pip install pipenv
   - python3 -m pipenv install --dev .
+  - python3 -m pipenv run python --version
   - python3 -m pipenv run pip freeze
 
   # Build the two versions of ubitflashtool in macOS using PyInstaller

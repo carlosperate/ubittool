@@ -7,8 +7,8 @@ from setuptools import setup
 from ubitflashtool import __version__
 
 
-if sys.version_info.major != 3:
-    print('This package only supports Python 3.')
+if sys.version_info.major != 3 or sys.version_info.minor < 5:
+    print('This package only supports Python 3.5+')
     sys.exit(1)
 
 # Open the readme and requirements file

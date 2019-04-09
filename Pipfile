@@ -30,4 +30,5 @@ mock = {version = "*",markers = "python_version < '3.4'"}
 ubitflashtool = {editable = true,path = "."}
 
 [requires]
+# Pipfile doesn't not support minimum versions, so we will enforce it setup.py
 python_version = "3"

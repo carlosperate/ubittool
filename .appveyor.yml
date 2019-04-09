@@ -36,6 +36,7 @@ install:
   # Install with Pipenv so that we can run the tests
   - cmd: pip install pipenv
   - cmd: pipenv install --dev .
+  - cmd: pipenv run python --version
   - cmd: pipenv run pip freeze
 
   # Build and rename dist folder
