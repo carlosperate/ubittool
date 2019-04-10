@@ -56,7 +56,7 @@ def _read_continuous_memory(address=0x0, count=4):
             read_data = target.read_memory_block8(address, count)
     except Exception as e:
         raise Exception(
-            '{}\nDid not find any connected boards.'.format(str(e))
+            "{}\nDid not find any connected boards.".format(str(e))
         )
     return read_data
 
@@ -77,8 +77,8 @@ def read_flash(address=MICROBIT_FLASH_START, count=MICROBIT_FLASH_SIZE_BYTES):
         or last_byte > MICROBIT_FLASH_END
     ):
         raise ValueError(
-            'Cannot read a flash location out of boundaries.\n'
-            'Reading from {} to {},\nlimits from {} to {}'.format(
+            "Cannot read a flash location out of boundaries.\n"
+            "Reading from {} to {},\nlimits from {} to {}".format(
                 address, last_byte, MICROBIT_FLASH_START, MICROBIT_FLASH_END
             )
         )
@@ -98,8 +98,8 @@ def read_uicr(address=UICR_START, count=UICR_SIZE_BYTES):
     last_byte = address + count
     if not (UICR_START <= address < UICR_END) or (address + count) > UICR_END:
         raise ValueError(
-            'Cannot read a UICR location out of boundaries.\n'
-            'Reading from {} to {},\nlimits from {} to {}'.format(
+            "Cannot read a UICR location out of boundaries.\n"
+            "Reading from {} to {},\nlimits from {} to {}".format(
                 address, last_byte, UICR_START, UICR_END
             )
         )

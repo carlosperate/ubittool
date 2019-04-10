@@ -31,11 +31,11 @@ def _ubitflashtool_cmd(cmd_list):
 
     :param cmd_list: List of cli argument to add to ubitflashtool invocation.
     """
-    module = [sys.executable, '-m', 'ubitflashtool']
+    module = [sys.executable, "-m", "ubitflashtool"]
     module.extend(cmd_list)
-    cmd = ['ubitflashtool']
+    cmd = ["ubitflashtool"]
     cmd.extend(cmd_list)
-    script = [sys.executable, 'ubitflashtool/cli.py']
+    script = [sys.executable, "ubitflashtool/cli.py"]
     script.extend(cmd_list)
     return [_run_cli_cmd(module), _run_cli_cmd(cmd), _run_cli_cmd(script)]
 
@@ -49,21 +49,21 @@ def check_no_board_connected():
         # Good: Exception raised if no board is found
         pass
     else:
-        raise Exception('Found an Mbed device connected, please unplug.')
+        raise Exception("Found an Mbed device connected, please unplug.")
 
 
 def test_help():
     """Check the help option works."""
-    outputs = _ubitflashtool_cmd(['--help'])
+    outputs = _ubitflashtool_cmd(["--help"])
     for output in outputs:
-        assert b'Usage: ubitflashtool [OPTIONS] COMMAND [ARGS]...' in output
-        assert str.encode('uBitFlashTool v{}'.format(__version__)) in output
+        assert b"Usage: ubitflashtool [OPTIONS] COMMAND [ARGS]..." in output
+        assert str.encode("uBitFlashTool v{}".format(__version__)) in output
         assert str.encode(cli.__doc__) in output
 
 
 def test_read_code(check_no_board_connected):
     """Check the read-code command returns an error when no board connected."""
-    outputs = _ubitflashtool_cmd(['read-code'])
+    outputs = _ubitflashtool_cmd(["read-code"])
     for output in outputs:
-        assert b'Executing: Extract the MicroPython code' in output
-        assert b'Did not find any connected boards.' in output
+        assert b"Executing: Extract the MicroPython code" in output
+        assert b"Did not find any connected boards." in output
