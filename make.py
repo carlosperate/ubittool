@@ -96,11 +96,36 @@ def linter():
     print('Running linter:')
     print('---------------')
     return_code = _run_cli_cmd(['flake8', 'ubitflashtool/', 'tests/'])
-    if return_code == 0:
-        print('All good :)')
-        return return_code
-    else:
+    if return_code != 0:
         sys.exit(return_code)
+    print('All good :)')
+    return return_code
+
+
+@make.command()
+def style():
+    """Run Flake8 linter with all its plugins."""
+    _set_cwd()
+    print('----------------------')
+    print('Running Style Checker:')
+    print('----------------------')
+    try:
+        import black
+    except ImportError:
+        print('Black Python module not found, style check skipped.')
+        return 0
+    black_cmd = [
+        'black',
+        '.',
+        '--target-version', 'py35',
+        '--line-length', '79',
+        '--check',
+        '--diff',
+    ]
+    return_code = _run_cli_cmd(black_cmd)
+    if return_code != 0:
+        sys.exit(return_code)
+    return return_code
 
 
 @make.command()
@@ -112,15 +137,17 @@ def test():
     ])
     if return_code != 0:
         sys.exit(return_code)
+    return 0
 
 
 @make.command()
 @click.pass_context
 def check(ctx):
     """Run all the checkers and tests."""
-    commands = [linter, test]
+    commands = [linter, test, style]
     for cmd in commands:
         ctx.invoke(cmd)
+    return 0
 
 
 @make.command()

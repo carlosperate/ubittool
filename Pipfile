@@ -19,7 +19,7 @@ setuptools_scm = "*"
 flake8 = "*"
 # Requires Python 3.5+
 # flake8-bugbear = "*"
-# black = "*"
+black = {version = "==19.3b0",markers = "python_version >= '3.6'"}
 flake8-builtins = "*"
 flake8-docstrings = "*"
 # Tests
