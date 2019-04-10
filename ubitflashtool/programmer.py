@@ -55,8 +55,9 @@ def _read_continuous_memory(address=0x0, count=4):
             target = board.target
             read_data = target.read_memory_block8(address, count)
     except Exception as e:
-        raise Exception('{}\nDid not find any connected boards.'.format(
-            str(e)))
+        raise Exception(
+            "{}\nDid not find any connected boards.".format(str(e))
+        )
     return read_data
 
 
@@ -71,12 +72,16 @@ def read_flash(address=MICROBIT_FLASH_START, count=MICROBIT_FLASH_SIZE_BYTES):
     :return: A list of integers, each representing a byte of data.
     """
     last_byte = address + count
-    if not (MICROBIT_FLASH_START <= address < MICROBIT_FLASH_END) or \
-            last_byte > MICROBIT_FLASH_END:
-        raise ValueError('Cannot read a flash location out of boundaries.\n'
-                         'Reading from {} to {},\nlimits from {} to {}'.format(
-                             address, last_byte,
-                             MICROBIT_FLASH_START, MICROBIT_FLASH_END))
+    if (
+        not (MICROBIT_FLASH_START <= address < MICROBIT_FLASH_END)
+        or last_byte > MICROBIT_FLASH_END
+    ):
+        raise ValueError(
+            "Cannot read a flash location out of boundaries.\n"
+            "Reading from {} to {},\nlimits from {} to {}".format(
+                address, last_byte, MICROBIT_FLASH_START, MICROBIT_FLASH_END
+            )
+        )
     return _read_continuous_memory(address=address, count=count)
 
 
@@ -92,7 +97,10 @@ def read_uicr(address=UICR_START, count=UICR_SIZE_BYTES):
     """
     last_byte = address + count
     if not (UICR_START <= address < UICR_END) or (address + count) > UICR_END:
-        raise ValueError('Cannot read a UICR location out of boundaries.\n'
-                         'Reading from {} to {},\nlimits from {} to {}'.format(
-                             address, last_byte, UICR_START, UICR_END))
+        raise ValueError(
+            "Cannot read a UICR location out of boundaries.\n"
+            "Reading from {} to {},\nlimits from {} to {}".format(
+                address, last_byte, UICR_START, UICR_END
+            )
+        )
     return _read_continuous_memory(address=address, count=count)

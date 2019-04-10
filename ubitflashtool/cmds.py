@@ -41,9 +41,9 @@ def _bytes_to_intel_hex(data, offset=0x0000):
 
     fake_file = StringIO()
     try:
-        i_hex.tofile(fake_file, format='hex')
+        i_hex.tofile(fake_file, format="hex")
     except IOError as e:
-        sys.stderr.write('ERROR: File write: {}\n{}'.format(fake_file, str(e)))
+        sys.stderr.write("ERROR: File write: {}\n{}".format(fake_file, str(e)))
         return
 
     intel_hex_str = fake_file.getvalue()
@@ -65,7 +65,7 @@ def _bytes_to_pretty_hex(data, offset=0x0000):
     try:
         i_hex.dump(tofile=fake_file, width=16, withpadding=False)
     except IOError as e:
-        sys.stderr.write('ERROR: File write: {}\n{}'.format(fake_file, str(e)))
+        sys.stderr.write("ERROR: File write: {}\n{}".format(fake_file, str(e)))
         return
 
     pretty_hex_str = fake_file.getvalue()
@@ -92,10 +92,12 @@ def read_flash_hex(decode_hex=False, **kwargs):
     flash_data = programmer.read_flash(**kwargs)
     if decode_hex:
         return _bytes_to_pretty_hex(
-            flash_data, offset=programmer.MICROBIT_FLASH_START)
+            flash_data, offset=programmer.MICROBIT_FLASH_START
+        )
     else:
         return _bytes_to_intel_hex(
-            flash_data, offset=programmer.MICROBIT_FLASH_START)
+            flash_data, offset=programmer.MICROBIT_FLASH_START
+        )
 
 
 def read_uicr_customer_hex(decode_hex=False):
@@ -103,14 +105,18 @@ def read_uicr_customer_hex(decode_hex=False):
 
     :return: String with the nicely decoded UIR Customer area data.
     """
-    uicr_data = programmer.read_uicr(address=programmer.UICR_CUSTOMER_START,
-                                     count=programmer.UICR_CUSTOMER_SIZE_BYTES)
+    uicr_data = programmer.read_uicr(
+        address=programmer.UICR_CUSTOMER_START,
+        count=programmer.UICR_CUSTOMER_SIZE_BYTES,
+    )
     if decode_hex:
         return _bytes_to_pretty_hex(
-            uicr_data, offset=programmer.UICR_CUSTOMER_START)
+            uicr_data, offset=programmer.UICR_CUSTOMER_START
+        )
     else:
         return _bytes_to_intel_hex(
-            uicr_data, offset=programmer.UICR_CUSTOMER_START)
+            uicr_data, offset=programmer.UICR_CUSTOMER_START
+        )
 
 
 def read_micropython():
@@ -121,9 +127,9 @@ def read_micropython():
     flash_data = programmer.read_flash(
         address=programmer.MICROPYTHON_START,
         count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
-        decode_hex=False)
-    return _bytes_to_intel_hex(
-        flash_data, offset=programmer.MICROPYTHON_START)
+        decode_hex=False,
+    )
+    return _bytes_to_intel_hex(flash_data, offset=programmer.MICROPYTHON_START)
 
 
 def read_python_code():
@@ -133,14 +139,16 @@ def read_python_code():
     """
     flash_data = programmer.read_flash(
         address=programmer.PYTHON_CODE_START,
-        count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START))
+        count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START),
+    )
     py_code_hex = _bytes_to_intel_hex(
-        flash_data, offset=programmer.PYTHON_CODE_START)
+        flash_data, offset=programmer.PYTHON_CODE_START
+    )
     try:
         python_code = extract_script(py_code_hex)
     except Exception as e:
         sys.stderr.write(format_exc(e))
-        raise Exception('Could not decode the MicroPython code from flash')
+        raise Exception("Could not decode the MicroPython code from flash")
     return python_code
 
 
@@ -152,12 +160,12 @@ def _open_temp_html(html_str):
 
     :param html_str: String to write to the temporary file.
     """
-    fd, path = tempfile.mkstemp(suffix='.html')
+    fd, path = tempfile.mkstemp(suffix=".html")
     try:
-        with os.fdopen(fd, 'w') as tmp:
+        with os.fdopen(fd, "w") as tmp:
             # do stuff with temp file
             tmp.write(html_str)
-        webbrowser.open('file://{}'.format(os.path.realpath(path)))
+        webbrowser.open("file://{}".format(os.path.realpath(path)))
     finally:
         # It can take a bit of time for the browser to open the file,
         # so wait some time before deleting it
@@ -212,9 +220,10 @@ def _gen_diff_html(from_title, from_lines, to_title, to_lines):
     </html>"""
     differ = HtmlDiff()
     filled_template = html_template.format(
-            from_title=from_title,
-            to_title=to_title,
-            diff_table=differ.make_table(from_lines, to_lines))
+        from_title=from_title,
+        to_title=to_title,
+        diff_table=differ.make_table(from_lines, to_lines),
+    )
     return filled_template
 
 
@@ -226,12 +235,13 @@ def compare_full_flash_hex(hex_file_path):
 
     :param hex_file_path: File path to the hex file to compare against.
     """
-    with open(hex_file_path, encoding='utf-8') as f:
+    with open(hex_file_path, encoding="utf-8") as f:
         file_hex_str = f.readlines()
     flash_hex_str = read_flash_hex(decode_hex=False)
 
-    html_code = _gen_diff_html('micro:bit', flash_hex_str.splitlines(),
-                               'Hex file', file_hex_str)
+    html_code = _gen_diff_html(
+        "micro:bit", flash_hex_str.splitlines(), "Hex file", file_hex_str
+    )
     _open_temp_html(html_code)
 
 
@@ -243,10 +253,11 @@ def compare_uicr_customer(hex_file_path):
 
     :param hex_file_path: File path to the hex file to compare against.
     """
-    with open(hex_file_path, encoding='utf-8') as f:
+    with open(hex_file_path, encoding="utf-8") as f:
         file_hex_str = f.readlines()
     flash_hex_str = read_uicr_customer_hex(decode_hex=False)
 
-    html_code = _gen_diff_html('micro:bit', flash_hex_str.splitlines(),
-                               'Hex file', file_hex_str)
+    html_code = _gen_diff_html(
+        "micro:bit", flash_hex_str.splitlines(), "Hex file", file_hex_str
+    )
     _open_temp_html(html_code)
