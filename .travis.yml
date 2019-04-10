@@ -68,10 +68,15 @@ script:
 
 after_script:
   # Upload built executables to a temporary service
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip ; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli ; fi
+  # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip ; fi
+  # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli ; fi
   # - curl -F "file=@./artifacts/ubitflashtool-gui.zip" "https://file.io/?expires=3"
   # - curl -F "file=@./artifacts/ubitflashtool-cli" "https://file.io/?expires=3"
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl https://github.com/timvisee/ffsend/releases/download/v0.2.44/ffsend-v0.2.44-macos -L -o ffsend; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H chmod +x ./ffsend; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@1.1; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubitflashtool-gui.zip; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubitflashtool-cli; fi
 
   # Upload test coverage report
   - codecov
