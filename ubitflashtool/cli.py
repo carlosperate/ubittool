@@ -7,8 +7,11 @@ import sys
 import click
 
 from ubitflashtool import __version__
-from ubitflashtool.cmds import (read_flash_hex, read_python_code,
-                                compare_full_flash_hex)
+from ubitflashtool.cmds import (
+    read_flash_hex,
+    read_python_code,
+    compare_full_flash_hex,
+)
 
 
 @click.group(help='uBitFlashTool v{}.\n\n{}'.format(__version__, __doc__))
@@ -24,8 +27,12 @@ def _file_checker(subject, file_path):
     """
     if file_path:
         if os.path.exists(file_path):
-            click.echo(click.style('Abort: The {} file already exists.',
-                                   fg='red').format(file_path), err=True)
+            click.echo(
+                click.style(
+                    'Abort: The {} file already exists.', fg='red'
+                ).format(file_path),
+                err=True,
+            )
             sys.exit(1)
         else:
             click.echo('{} will be written to: {}'.format(subject, file_path))
@@ -34,8 +41,13 @@ def _file_checker(subject, file_path):
 
 
 @cli.command()
-@click.option('-f', '--file_path', 'file_path', type=click.Path(),
-              help='Path to the output file to write the MicroPython code.')
+@click.option(
+    '-f',
+    '--file_path',
+    'file_path',
+    type=click.Path(),
+    help='Path to the output file to write the MicroPython code.',
+)
 def read_code(file_path=None):
     """Extract the MicroPython code to a file or print it."""
     click.echo('Executing: {}\n'.format(read_code.__doc__))
@@ -62,8 +74,13 @@ def read_code(file_path=None):
 
 
 @cli.command()
-@click.option('-f', '--file_path', 'file_path', type=click.Path(),
-              help='Path to the output file to write micro:bit flash content.')
+@click.option(
+    '-f',
+    '--file_path',
+    'file_path',
+    type=click.Path(),
+    help='Path to the output file to write micro:bit flash content.',
+)
 def read_flash(file_path=None):
     """Read the micro:bit flash contents into a hex file or console."""
     click.echo('Executing: {}\n'.format(read_flash.__doc__))
@@ -90,9 +107,14 @@ def read_flash(file_path=None):
 
 
 @cli.command()
-@click.option('-f', '--file_path', 'file_path',
-              type=click.Path(), required=True,
-              help='Path to to the hex file to compare against the micro:bit.')
+@click.option(
+    '-f',
+    '--file_path',
+    'file_path',
+    type=click.Path(),
+    required=True,
+    help='Path to to the hex file to compare against the micro:bit.',
+)
 def compare_flash(file_path):
     """Compare the micro:bit flash contents with a hex file.
 
@@ -101,8 +123,9 @@ def compare_flash(file_path):
     """
     click.echo('Executing: Compare the micro:bit flash with a hex file.\n')
     if not file_path or not os.path.isfile(file_path):
-        click.echo(click.style('Abort: File does not exists', fg='red'),
-                   err=True)
+        click.echo(
+            click.style('Abort: File does not exists', fg='red'), err=True
+        )
         sys.exit(1)
 
     click.echo('Reading the micro:bit flash contents...')
@@ -122,6 +145,7 @@ def gui():
     # GUI depends on tkinter, which could be packaged separately from Python
     # for users that only want the CLI we can still use all the other commands
     from ubitflashtool.gui import open_gui
+
     open_gui()
 
 

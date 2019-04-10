@@ -6,15 +6,21 @@ import logging
 import platform
 import tkinter as tk
 from tkinter import filedialog as tkFileDialog
+
 try:
     from idlelib.WidgetRedirector import WidgetRedirector
 except ImportError:
     from idlelib.redirector import WidgetRedirector
 
 from ubitflashtool import __version__
-from ubitflashtool.cmds import (read_python_code, read_micropython,
-                                read_flash_hex, read_uicr_customer_hex,
-                                compare_full_flash_hex, compare_uicr_customer)
+from ubitflashtool.cmds import (
+    read_python_code,
+    read_micropython,
+    read_flash_hex,
+    read_uicr_customer_hex,
+    compare_full_flash_hex,
+    compare_uicr_customer,
+)
 
 
 class ReadOnlyEditor(tk.Text):
@@ -29,9 +35,11 @@ class ReadOnlyEditor(tk.Text):
         tk.Text.__init__(self, *args, **kwargs)
         self.redirector = WidgetRedirector(self)
         self.insert = self.redirector.register(
-                'insert', lambda *args, **kw: 'break')
+            'insert', lambda *args, **kw: 'break'
+        )
         self.delete = self.redirector.register(
-                'delete', lambda *args, **kw: 'break')
+            'delete', lambda *args, **kw: 'break'
+        )
 
     def clear(self):
         """Clear the contents of the text area."""
@@ -63,9 +71,10 @@ class StdoutRedirector(object):
         self.text_area.insert('end', string)
         if self.text_color:
             self.text_area.tag_add(
-                    self.tag, start_position, self.text_area.index('insert'))
+                self.tag, start_position, self.text_area.index('insert')
+            )
 
-    def flush(self):    # pragma: no cover
+    def flush(self):  # pragma: no cover
         """All flushed immediately on each write call."""
         pass
 
@@ -80,7 +89,8 @@ class TextViewer(ReadOnlyEditor):
         """
         self.scrollbar = tk.Scrollbar(parent, orient='vertical')
         ReadOnlyEditor.__init__(
-            self, parent, yscrollcommand=self.scrollbar.set, *args, **kwargs)
+            self, parent, yscrollcommand=self.scrollbar.set, *args, **kwargs
+        )
         self.pack(side='left', fill='both', expand=1)
         self.config(wrap='char', width=1)
         self.scrollbar.pack(side='right', fill='y')
@@ -98,8 +108,14 @@ class ConsoleOutput(ReadOnlyEditor):
         """
         self.scrollbar = tk.Scrollbar(parent, orient='vertical')
         ReadOnlyEditor.__init__(
-                self, parent, yscrollcommand=self.scrollbar.set,
-                background="#222", foreground="#DDD", *args, **kwargs)
+            self,
+            parent,
+            yscrollcommand=self.scrollbar.set,
+            background="#222",
+            foreground="#DDD",
+            *args,
+            **kwargs,
+        )
         self.pack(side='left', fill='both', expand=1)
         self.config(wrap='char', width=1)
         self.scrollbar.pack(side='right', fill='y')
@@ -137,8 +153,12 @@ class CmdLabel(tk.Label):
         self.bg_colour = '#E5E5E5'
         self.cmd_title = tk.StringVar(value='Command: Select from the Menu')
         parent.config(borderwidth=1, background=self.bg_colour)
-        tk.Label.__init__(self, parent, background=self.bg_colour,
-                          textvariable=self.cmd_title)
+        tk.Label.__init__(
+            self,
+            parent,
+            background=self.bg_colour,
+            textvariable=self.cmd_title,
+        )
         self.set_text(default_text)
         self.pack(side='left', fill='x')
         parent.pack(fill='x', expand=False)
@@ -198,39 +218,52 @@ class UBitFlashToolWindow(tk.Tk):
         cmd_key = 'Command' if platform.system() == 'Darwin' else 'Ctrl'
         # Menu item File
         self.file_menu = tk.Menu(menu, tearoff=0)
-        self.file_menu.add_command(label=self.CMD_OPEN,
-                                   command=self.file_open,
-                                   accelerator='{}+O'.format(cmd_key),
-                                   underline=1)
-        self.file_menu.add_command(label=self.CMD_SAVE,
-                                   command=self.file_save_as,
-                                   accelerator='{}+S'.format(cmd_key),
-                                   underline=1)
+        self.file_menu.add_command(
+            label=self.CMD_OPEN,
+            command=self.file_open,
+            accelerator='{}+O'.format(cmd_key),
+            underline=1,
+        )
+        self.file_menu.add_command(
+            label=self.CMD_SAVE,
+            command=self.file_save_as,
+            accelerator='{}+S'.format(cmd_key),
+            underline=1,
+        )
         self.file_menu.add_separator()
-        self.file_menu.add_command(label=self.CMD_EXIT,
-                                   command=self.app_quit,
-                                   accelerator='Alt+F4')
+        self.file_menu.add_command(
+            label=self.CMD_EXIT, command=self.app_quit, accelerator='Alt+F4'
+        )
         menu.add_cascade(label='File', underline=0, menu=self.file_menu)
         # Menu item micro:bit
         self.ubit_menu = tk.Menu(menu, tearoff=0)
-        self.ubit_menu.add_command(label=self.CMD_READ_CODE,
-                                   command=self.read_python_code)
-        self.ubit_menu.add_command(label=self.CMD_READ_UPY,
-                                   command=self.read_micropython)
+        self.ubit_menu.add_command(
+            label=self.CMD_READ_CODE, command=self.read_python_code
+        )
+        self.ubit_menu.add_command(
+            label=self.CMD_READ_UPY, command=self.read_micropython
+        )
         menu.add_cascade(label='micro:bit', underline=0, menu=self.ubit_menu)
         # Menu item nrf
         self.nrf_menu = tk.Menu(menu, tearoff=0)
-        self.nrf_menu.add_command(label=self.CMD_READ_FLASH_HEX,
-                                  command=self.read_full_flash_intel)
-        self.nrf_menu.add_command(label=self.CMD_READ_FLASH_PRETTY,
-                                  command=self.read_full_flash_pretty)
-        self.nrf_menu.add_command(label=self.CMD_READ_UICR,
-                                  command=self.read_uicr_customer)
+        self.nrf_menu.add_command(
+            label=self.CMD_READ_FLASH_HEX, command=self.read_full_flash_intel
+        )
+        self.nrf_menu.add_command(
+            label=self.CMD_READ_FLASH_PRETTY,
+            command=self.read_full_flash_pretty,
+        )
+        self.nrf_menu.add_command(
+            label=self.CMD_READ_UICR, command=self.read_uicr_customer
+        )
         self.nrf_menu.add_separator()
-        self.nrf_menu.add_command(label=self.CMD_COMPARE_FLASH,
-                                  command=self.compare_full_flash_intel)
-        self.nrf_menu.add_command(label=self.CMD_COMPARE_UICR,
-                                  command=self.compare_uicr_customer_intel)
+        self.nrf_menu.add_command(
+            label=self.CMD_COMPARE_FLASH, command=self.compare_full_flash_intel
+        )
+        self.nrf_menu.add_command(
+            label=self.CMD_COMPARE_UICR,
+            command=self.compare_uicr_customer_intel,
+        )
         menu.add_cascade(label='nrf', underline=0, menu=self.nrf_menu)
         # display the menu
         self.config(menu=menu)
@@ -335,8 +368,9 @@ class UBitFlashToolWindow(tk.Tk):
 
     def file_save_as(self, event=None):
         """Save the text from the text viewer into a file."""
-        file_path = tkFileDialog.asksaveasfilename(filetypes=(
-                ('Python files', '*.py *.pyw'), ('All files', '*.*')))
+        file_path = tkFileDialog.asksaveasfilename(
+            filetypes=(('Python files', '*.py *.pyw'), ('All files', '*.*'))
+        )
         if file_path:
             with open(file_path, 'wb') as f:
                 text = self.text_viewer.get(1.0, 'end-1c')

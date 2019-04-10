@@ -22,7 +22,7 @@ setup(
     name='ubitflashtool',
     version=__version__,
     description='A module and utility to read the memory contents of the '
-                'BBC micro:bit.',
+    'BBC micro:bit.',
     long_description=readme,
     author='Carlos Pereira Atencio',
     author_email='carlosperate@embeddedlog.com',
@@ -48,6 +48,6 @@ setup(
     ],
     python_requires='>=3.5, <4',
     entry_points={
-        'console_scripts': ['ubitflashtool=ubitflashtool.__main__:main'],
-    }
+        'console_scripts': ['ubitflashtool=ubitflashtool.__main__:main']
+    },
 )

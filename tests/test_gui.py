@@ -71,8 +71,9 @@ def test_menu_bar_presence(gui_window):
 
     top_labels = get_labels(menu_bar)
     assert 'File' == top_labels[file_index], 'File present in window menu'
-    assert 'micro:bit' == top_labels[microbit_index], \
-           'micro:bit present in window menu'
+    assert (
+        'micro:bit' == top_labels[microbit_index]
+    ), 'micro:bit present in window menu'
     assert 'nrf' == top_labels[nrf_index], 'nrf present in window menu'
 
     file_labels = get_labels(menu_bar.winfo_children()[file_index])
@@ -83,23 +84,30 @@ def test_menu_bar_presence(gui_window):
 
     microbit_labels = get_labels(menu_bar.winfo_children()[microbit_index])
     assert len(microbit_labels) == 2, 'micro:bit menu has 3 items'
-    assert 'Read MicroPython code' == microbit_labels[0], \
-           'Read Code present in micro:bit menu'
-    assert 'Read MicroPython runtime' == microbit_labels[1], \
-           'Read Runtime present in micro:bit menu'
+    assert (
+        'Read MicroPython code' == microbit_labels[0]
+    ), 'Read Code present in micro:bit menu'
+    assert (
+        'Read MicroPython runtime' == microbit_labels[1]
+    ), 'Read Runtime present in micro:bit menu'
 
     nrf_labels = get_labels(menu_bar.winfo_children()[nrf_index])
     assert len(nrf_labels) == 5, 'nrf menu has 5 items'
-    assert 'Read full flash contents (Intel Hex)' == nrf_labels[0], \
-           'Read Flash Hex present in nrf menu'
-    assert 'Read full flash contents (Pretty Hex)' == nrf_labels[1], \
-           'Read Flash Pretty present in nrf menu'
-    assert 'Read UICR Customer' == nrf_labels[2], \
-           'Read UICR present in nrf menu'
-    assert 'Compare full flash contents (Intel Hex)' == nrf_labels[3], \
-           'Compare Flash present in nrf menu'
-    assert 'Compare UICR Customer (Intel Hex)' == nrf_labels[4], \
-           'Compare UICR in nrf menu'
+    assert (
+        'Read full flash contents (Intel Hex)' == nrf_labels[0]
+    ), 'Read Flash Hex present in nrf menu'
+    assert (
+        'Read full flash contents (Pretty Hex)' == nrf_labels[1]
+    ), 'Read Flash Pretty present in nrf menu'
+    assert (
+        'Read UICR Customer' == nrf_labels[2]
+    ), 'Read UICR present in nrf menu'
+    assert (
+        'Compare full flash contents (Intel Hex)' == nrf_labels[3]
+    ), 'Compare Flash present in nrf menu'
+    assert (
+        'Compare UICR Customer (Intel Hex)' == nrf_labels[4]
+    ), 'Compare UICR in nrf menu'
 
 
 @mock.patch('ubitflashtool.gui.read_python_code', autospec=True)
@@ -113,8 +121,9 @@ def test_read_python_code(mock_read_python_code, gui_window):
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert python_code == editor_content
     assert mock_read_python_code.call_count == 1
-    assert gui_window.cmd_title.cmd_title.get() == \
-        'Command: {}'.format(gui_window.CMD_READ_CODE)
+    assert gui_window.cmd_title.cmd_title.get() == 'Command: {}'.format(
+        gui_window.CMD_READ_CODE
+    )
 
 
 @mock.patch('ubitflashtool.gui.read_micropython', autospec=True)
@@ -128,8 +137,9 @@ def test_read_micropython(mock_read_micropython, gui_window):
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert upy_hex == editor_content
     assert mock_read_micropython.call_count == 1
-    assert gui_window.cmd_title.cmd_title.get() == \
-        'Command: {}'.format(gui_window.CMD_READ_UPY)
+    assert gui_window.cmd_title.cmd_title.get() == 'Command: {}'.format(
+        gui_window.CMD_READ_UPY
+    )
 
 
 @mock.patch('ubitflashtool.gui.read_flash_hex', autospec=True)
@@ -143,8 +153,9 @@ def test_read_full_flash_intel(mock_read_flash_hex, gui_window):
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert flash_data == editor_content
     assert mock_read_flash_hex.call_count == 1
-    assert gui_window.cmd_title.cmd_title.get() == \
-        'Command: {}'.format(gui_window.CMD_READ_FLASH_HEX)
+    assert gui_window.cmd_title.cmd_title.get() == 'Command: {}'.format(
+        gui_window.CMD_READ_FLASH_HEX
+    )
 
 
 @mock.patch('ubitflashtool.gui.read_flash_hex', autospec=True)
@@ -158,8 +169,9 @@ def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert flash_data == editor_content
     assert mock_read_flash_hex.call_count == 1
-    assert gui_window.cmd_title.cmd_title.get() == \
-        'Command: {}'.format(gui_window.CMD_READ_FLASH_PRETTY)
+    assert gui_window.cmd_title.cmd_title.get() == 'Command: {}'.format(
+        gui_window.CMD_READ_FLASH_PRETTY
+    )
 
 
 @mock.patch('ubitflashtool.gui.read_uicr_customer_hex', autospec=True)
@@ -173,8 +185,9 @@ def test_read_uicr_customer(mock_read_uicr, gui_window):
     editor_content = gui_window.text_viewer.get(1.0, 'end-1c')
     assert uicr_data == editor_content
     assert mock_read_uicr.call_count == 1
-    assert gui_window.cmd_title.cmd_title.get() == \
-        'Command: {}'.format(gui_window.CMD_READ_UICR)
+    assert gui_window.cmd_title.cmd_title.get() == 'Command: {}'.format(
+        gui_window.CMD_READ_UICR
+    )
 
 
 @mock.patch('ubitflashtool.gui.UBitFlashToolWindow', autospec=True)

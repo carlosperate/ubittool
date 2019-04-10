@@ -37,11 +37,7 @@ def _ubitflashtool_cmd(cmd_list):
     cmd.extend(cmd_list)
     script = [sys.executable, 'ubitflashtool/cli.py']
     script.extend(cmd_list)
-    return [
-        _run_cli_cmd(module),
-        _run_cli_cmd(cmd),
-        _run_cli_cmd(script),
-    ]
+    return [_run_cli_cmd(module), _run_cli_cmd(cmd), _run_cli_cmd(script)]
 
 
 @pytest.fixture

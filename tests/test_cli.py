@@ -48,8 +48,10 @@ def test_file_checker_existing_path(mock_exit, mock_echo, mock_exists):
 
     mock_exists.assert_called_once_with('file/path.py')
     assert mock_echo.call_count == 1
-    assert 'Abort: The file/path.py file already exists.' in \
-        mock_echo.call_args[0][0]
+    assert (
+        'Abort: The file/path.py file already exists.'
+        in mock_echo.call_args[0][0]
+    )
     mock_exit.assert_called_once_with(1)
 
 
@@ -113,15 +115,20 @@ def test_read_code_path_no_board(check_no_board_connected):
     file_name = 'thisfile.py'
     runner = CliRunner()
 
-    results = [runner.invoke(cli.read_code, ['--file_path', file_name]),
-               runner.invoke(cli.read_code, ['-f', file_name])]
+    results = [
+        runner.invoke(cli.read_code, ['--file_path', file_name]),
+        runner.invoke(cli.read_code, ['-f', file_name]),
+    ]
 
     for result in results:
         assert result.exit_code != 0, 'Exit code non-zero'
-        assert 'MicroPython code will be written to: {}'.format(file_name) \
-            in result.output, 'Message written to file'
-        assert 'Did not find any connected boards.' in result.output, \
-            'Message error, board not found'
+        assert (
+            'MicroPython code will be written to: {}'.format(file_name)
+            in result.output
+        ), 'Message written to file'
+        assert (
+            'Did not find any connected boards.' in result.output
+        ), 'Message error, board not found'
     # File not mocked, so checking command hasn't created it
     assert not os.path.isfile(file_name), 'File does not exist'
 
@@ -171,8 +178,10 @@ def test_read_flash_path(mock_read_flash_hex, check_no_board_connected):
     m_open().write.assert_called_once_with(flash_hex_content)
     m_open2().write.assert_called_once_with(flash_hex_content)
     for result in results:
-        assert 'micro:bit flash hex will be written to: {}'.format(file_name) \
+        assert (
+            'micro:bit flash hex will be written to: {}'.format(file_name)
             in result.output
+        )
         assert 'Saving the flash contents...' in result.output
         assert 'Finished successfully' in result.output
         assert result.exit_code == 0
@@ -183,15 +192,20 @@ def test_read_flash_path_no_board(check_no_board_connected):
     file_name = 'thisfile.py'
     runner = CliRunner()
 
-    results = [runner.invoke(cli.read_flash, ['--file_path', file_name]),
-               runner.invoke(cli.read_flash, ['-f', file_name])]
+    results = [
+        runner.invoke(cli.read_flash, ['--file_path', file_name]),
+        runner.invoke(cli.read_flash, ['-f', file_name]),
+    ]
 
     for result in results:
         assert result.exit_code != 0, 'Exit code non-zero'
-        assert 'micro:bit flash hex will be written to: {}'.format(file_name) \
-            in result.output, 'Message written to file'
-        assert 'Did not find any connected boards.' in result.output, \
-            'Message error, board not found'
+        assert (
+            'micro:bit flash hex will be written to: {}'.format(file_name)
+            in result.output
+        ), 'Message written to file'
+        assert (
+            'Did not find any connected boards.' in result.output
+        ), 'Message error, board not found'
     # File not mocked, so checking command hasn't created it
     assert not os.path.isfile(file_name), 'File does not exist'
 
@@ -204,8 +218,10 @@ def test_compare_flash(mock_compare, mock_isfile, check_no_board_connected):
     mock_isfile.return_value = True
     runner = CliRunner()
 
-    results = [runner.invoke(cli.compare_flash, ['-f', file_name]),
-               runner.invoke(cli.compare_flash, ['--file_path', file_name])]
+    results = [
+        runner.invoke(cli.compare_flash, ['-f', file_name]),
+        runner.invoke(cli.compare_flash, ['--file_path', file_name]),
+    ]
 
     assert mock_compare.call_count == len(results)
     for result in results:
@@ -222,11 +238,12 @@ def test_compare_flash_no_board(mock_isfile, check_no_board_connected):
     mock_isfile.return_value = True
     runner = CliRunner()
 
-    with mock.patch('ubitflashtool.cmds.open', mock.mock_open(
-            read_data=file_content)) as m_open:
+    with mock.patch(
+        'ubitflashtool.cmds.open', mock.mock_open(read_data=file_content)
+    ) as m_open:
         results = [
             runner.invoke(cli.compare_flash, ['-f', file_name]),
-            runner.invoke(cli.compare_flash, ['--file_path', file_name])
+            runner.invoke(cli.compare_flash, ['--file_path', file_name]),
         ]
 
     assert m_open.call_count == len(results)
@@ -240,8 +257,10 @@ def test_compare_flash_invalid_file():
     file_name = 'random_file_does_not_exist.hex'
     runner = CliRunner()
 
-    results = [runner.invoke(cli.compare_flash, ['--file_path', file_name]),
-               runner.invoke(cli.compare_flash, ['-f', file_name])]
+    results = [
+        runner.invoke(cli.compare_flash, ['--file_path', file_name]),
+        runner.invoke(cli.compare_flash, ['-f', file_name]),
+    ]
 
     for result in results:
         assert result.exit_code != 0, 'Exit code non-zero'

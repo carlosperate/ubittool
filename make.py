@@ -117,8 +117,10 @@ def style():
     black_cmd = [
         'black',
         '.',
-        '--target-version', 'py35',
-        '--line-length', '79',
+        '--target-version',
+        'py35',
+        '--line-length',
+        '79',
         '--check',
         '--diff',
     ]
@@ -132,9 +134,9 @@ def style():
 def test():
     """Run PyTests with the coverage plugin."""
     _set_cwd()
-    return_code = _run_cli_cmd([
-        sys.executable, '-m', 'pytest', '-v', '--cov=ubitflashtool', 'tests/'
-    ])
+    return_code = _run_cli_cmd(
+        [sys.executable, '-m', 'pytest', '-v', '--cov=ubitflashtool', 'tests/']
+    )
     if return_code != 0:
         sys.exit(return_code)
     return 0
@@ -182,11 +184,9 @@ def clean():
         '.pytest_cache',
         'build',
         'dist',
-        'ubitflashtool.egg-info'
+        'ubitflashtool.egg-info',
     ]
-    files_to_remove = [
-        '.coverage',
-    ]
+    files_to_remove = ['.coverage']
     for folder in folders_to_remove:
         _rm_dir(folder)
     for f in files_to_remove:
