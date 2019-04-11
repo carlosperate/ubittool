@@ -217,4 +217,4 @@ def test_quit():
         # App destroyed, nothing left to do
         assert True, "Window was already destroyed"
     else:
-        assert False, "Window is not destroyed"
+        raise AssertionError("Window is not destroyed")

@@ -56,7 +56,7 @@ def test_bytes_to_intel_hex_invalid_data():
         # from that library, so it could be anything
         assert True, "Exception raised"
     else:
-        assert False, "Exception NOT raised"
+        raise AssertionError("Exception NOT raised")
 
 
 def test_bytes_to_pretty_hex():
@@ -110,7 +110,7 @@ def test_bytes_to_pretty_hexinvalid_data():
         # from that library, so it could be anything
         assert True, "Exception raised"
     else:
-        assert False, "Exception NOT raised"
+        raise AssertionError("Exception NOT raised")
 
 
 @mock.patch("ubitflashtool.cmds.programmer.read_flash", autospec=True)
@@ -170,7 +170,9 @@ def test_read_python_code_empty(mock_bytes_to_intel_hex, mock_read_flash):
     except Exception:
         assert True, "Could not decode Python user code"
     else:
-        assert False, "Decoded Python user code without throwing exception"
+        raise AssertionError(
+            "Decoded Python user code without throwing exception"
+        )
 
 
 @mock.patch("ubitflashtool.cmds.Timer", autospec=True)
