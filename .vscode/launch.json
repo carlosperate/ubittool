@@ -1,0 +1,108 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": true,
+      "pythonPath": "${config:python.pythonPath}",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": ["RedirectOutput"]
+    },
+    {
+      "name": "Python: Terminal (integrated)",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": true,
+      "pythonPath": "${config:python.pythonPath}",
+      "program": "${file}",
+      "cwd": "",
+      "console": "integratedTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Python: Terminal (external)",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": true,
+      "pythonPath": "${config:python.pythonPath}",
+      "program": "${file}",
+      "cwd": "",
+      "console": "externalTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Python: uBit CLI",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "pythonPath": "${config:python.pythonPath}",
+      "program": "${workspaceFolder}/ubitflashtool/cli.py",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Python: uBit GUI",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "pythonPath": "${config:python.pythonPath}",
+      "program": "${workspaceFolder}/ubitflashtool/gui.py",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Python: uBit CLI module",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "pythonPath": "${config:python.pythonPath}",
+      "module": "ubitflashtool",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Python: uBit GUI module",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "pythonPath": "${config:python.pythonPath}",
+      "module": "ubitflashtool",
+      "args": ["gui"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}
