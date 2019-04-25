@@ -6,6 +6,7 @@ import logging
 import platform
 import tkinter as tk
 from tkinter import filedialog as tkFileDialog
+from tkinter.scrolledtext import ScrolledText as tkScrolledText
 
 try:
     from idlelib.WidgetRedirector import WidgetRedirector
@@ -23,8 +24,8 @@ from ubitflashtool.cmds import (
 )
 
 
-class ReadOnlyEditor(tk.Text):
-    """Implement a read only mode text editor class.
+class ReadOnlyEditor(tkScrolledText):
+    """Implement a read only mode text editor class with scroll bar.
 
     Done by replacing the bindings for the insert and delete events. From:
     http://stackoverflow.com/questions/3842155/is-there-a-way-to-make-the-tkinter-text-widget-read-only
@@ -32,7 +33,7 @@ class ReadOnlyEditor(tk.Text):
 
     def __init__(self, *args, **kwargs):
         """Init the class and set the insert and delete event bindings."""
-        tk.Text.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.redirector = WidgetRedirector(self)
         self.insert = self.redirector.register(
             "insert", lambda *args, **kw: "break"
@@ -87,14 +88,9 @@ class TextViewer(ReadOnlyEditor):
 
         :param frame: A Frame() instance to set the text editor.
         """
-        self.scrollbar = tk.Scrollbar(parent, orient="vertical")
-        ReadOnlyEditor.__init__(
-            self, parent, yscrollcommand=self.scrollbar.set, *args, **kwargs
-        )
+        super().__init__(parent, *args, **kwargs)
         self.pack(side="left", fill="both", expand=1)
         self.config(wrap="char", width=1)
-        self.scrollbar.pack(side="right", fill="y")
-        self.scrollbar.config(command=self.yview)
         parent.pack(fill="both", expand=1)
 
 
@@ -106,20 +102,11 @@ class ConsoleOutput(ReadOnlyEditor):
 
         :param frame: A Frame() instance to set this text editor.
         """
-        self.scrollbar = tk.Scrollbar(parent, orient="vertical")
-        ReadOnlyEditor.__init__(
-            self,
-            parent,
-            yscrollcommand=self.scrollbar.set,
-            background="#222",
-            foreground="#DDD",
-            *args,
-            **kwargs,
+        super().__init__(
+            parent, background="#222", foreground="#DDD", *args, **kwargs
         )
         self.pack(side="left", fill="both", expand=1)
         self.config(wrap="char", width=1)
-        self.scrollbar.pack(side="right", fill="y")
-        self.scrollbar.config(command=self.yview)
         parent.pack(fill="both", expand=1)
         self.activate()
 
@@ -153,11 +140,8 @@ class CmdLabel(tk.Label):
         self.bg_colour = "#E5E5E5"
         self.cmd_title = tk.StringVar(value="Command: Select from the Menu")
         parent.config(borderwidth=1, background=self.bg_colour)
-        tk.Label.__init__(
-            self,
-            parent,
-            background=self.bg_colour,
-            textvariable=self.cmd_title,
+        super().__init__(
+            parent, background=self.bg_colour, textvariable=self.cmd_title
         )
         self.set_text(default_text)
         self.pack(side="left", fill="x")
@@ -188,7 +172,7 @@ class UBitFlashToolWindow(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         """Initialise the window."""
-        tk.Tk.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.title("uBitFlashTool v{}".format(__version__))
         self.geometry("{}x{}".format(600, 480))
 
