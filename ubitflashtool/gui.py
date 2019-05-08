@@ -83,31 +83,26 @@ class StdoutRedirector(object):
 class TextViewer(ReadOnlyEditor):
     """A read-only text editor for viewing text."""
 
-    def __init__(self, parent, *args, **kwargs):
-        """Construct the editor into a parent frame.
+    def __init__(self, *args, **kwargs):
+        """Construct the editor widget.
 
         :param frame: A Frame() instance to set the text editor.
         """
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.pack(side="left", fill="both", expand=1)
         self.config(wrap="char", width=1)
-        parent.pack(fill="both", expand=1)
 
 
 class ConsoleOutput(ReadOnlyEditor):
     """A read-only editor to display std out and err streams."""
 
-    def __init__(self, parent, *args, **kwargs):
-        """Construct the read-only editor into a parent frame.
+    def __init__(self, *args, **kwargs):
+        """Construct the read-only editor widget.
 
         :param frame: A Frame() instance to set this text editor.
         """
-        super().__init__(
-            parent, background="#222", foreground="#DDD", *args, **kwargs
-        )
-        self.pack(side="left", fill="both", expand=1)
+        super().__init__(background="#222", foreground="#DDD", *args, **kwargs)
         self.config(wrap="char", width=1)
-        parent.pack(fill="both", expand=1)
         self.activate()
 
     def activate(self):
@@ -183,12 +178,21 @@ class UBitFlashToolWindow(tk.Tk):
         self.frame_title = tk.Frame(self)
         self.cmd_title = CmdLabel(self.frame_title, "Select from the Menu")
 
-        self.frame_viewer = tk.Frame(self)
-        self.text_viewer = TextViewer(self.frame_viewer)
-        self.text_viewer.focus()
+        self.paned_window = tk.PanedWindow(
+            orient=tk.VERTICAL,
+            sashrelief="groove",
+            sashpad=0,
+            sashwidth=5,
+            showhandle=True,
+            handlesize=10,
+        )
+        self.paned_window.pack(fill=tk.BOTH, expand=1)
 
-        self.frame_console = tk.Frame(self)
-        self.console = ConsoleOutput(self.frame_console)
+        self.text_viewer = TextViewer()
+        self.paned_window.add(self.text_viewer)
+
+        self.console = ConsoleOutput()
+        self.paned_window.add(self.console)
 
         # instead of closing the window, execute a function
         self.protocol("WM_DELETE_WINDOW", self.app_quit)
