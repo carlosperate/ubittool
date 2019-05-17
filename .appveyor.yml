@@ -49,13 +49,13 @@ install:
 
 test_script:
   - cmd: pipenv run python make.py check
-  # Run cli app as a simple test to check ubitflashtool build is not broken
-  - cmd: .\artifacts\ubitflashtool-cli.exe --help
+  # Run cli app as a simple test to check ubittool build is not broken
+  - cmd: .\artifacts\ubittool-cli.exe --help
 
 after_test:
   # Create AppVeyor artifact to be uploaded
-  - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-gui.exe
-  - ps: Push-AppveyorArtifact .\artifacts\ubitflashtool-cli.exe
+  - ps: Push-AppveyorArtifact .\artifacts\ubittool-gui.exe
+  - ps: Push-AppveyorArtifact .\artifacts\ubittool-cli.exe
 
   # Upload test coverage report
   - cmd: codecov

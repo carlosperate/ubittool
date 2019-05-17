@@ -6,15 +6,15 @@ import sys
 
 import click
 
-from ubitflashtool import __version__
-from ubitflashtool.cmds import (
+from ubittool import __version__
+from ubittool.cmds import (
     read_flash_hex,
     read_python_code,
     compare_full_flash_hex,
 )
 
 
-@click.group(help="uBitFlashTool v{}.\n\n{}".format(__version__, __doc__))
+@click.group(help="uBitTool v{}.\n\n{}".format(__version__, __doc__))
 def cli():
     """Click entry point."""
     pass
@@ -144,14 +144,14 @@ def gui():
     """Launch the GUI version of this app (has more options)."""
     # GUI depends on tkinter, which could be packaged separately from Python
     # for users that only want the CLI we can still use all the other commands
-    from ubitflashtool.gui import open_gui
+    from ubittool.gui import open_gui
 
     open_gui()
 
 
 def main():
     """Command line interface entry point."""
-    cli(prog_name="ubitflashtool")
+    cli(prog_name="ubit")
 
 
 if __name__ == "__main__":

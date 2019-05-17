@@ -8,7 +8,7 @@ IntelHex = ">=2.2.1"
 uflash = ">=1.1.0,<1.2.1"
 pyOCD = "==0.19.0"
 click = ">=7.0,<8.0"
-ubitflashtool = {path = "."}
+ubittool = {path = "."}
 
 [dev-packages]
 PyInstaller = ">=3.3"
@@ -26,7 +26,7 @@ pytest = "*"
 pytest-cov = "*"
 mock = {version = "*",markers = "python_version < '3.4'"}
 # Install package in editable mode
-ubitflashtool = {editable = true,path = "."}
+ubittool = {editable = true,path = "."}
 
 [requires]
 # Pipfile doesn't not support minimum versions, so we will enforce it setup.py

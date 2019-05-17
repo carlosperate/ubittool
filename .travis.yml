@@ -1,4 +1,4 @@
-# Tests multiple Python versions in Linux and build in macOS 
+# Tests multiple Python versions in Linux and build in macOS
 matrix:
   include:
     - os: linux
@@ -47,14 +47,14 @@ install:
   - python3 -m pipenv run python --version
   - python3 -m pipenv run pip freeze
 
-  # Build the two versions of ubitflashtool in macOS using PyInstaller
+  # Build the two versions of ubittool in macOS using PyInstaller
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py build; fi
 
   # Collect the build outputs in macoOS
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H mv dist artifacts; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ls -l artifacts; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H chmod +x ./artifacts/ubitflashtool-cli; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd artifacts && sudo -H zip --symlinks -r ubitflashtool-gui.zip ubitflashtool-gui.app && cd ..; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H chmod +x ./artifacts/ubittool-cli; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd artifacts && sudo -H zip --symlinks -r ubittool-gui.zip ubittool-gui.app && cd ..; fi
 
   # Prepare codecov coverage
   - python3 -m pip install codecov
@@ -63,20 +63,20 @@ script:
   # Running the tests. Linux needs frame buffer, so run with "xvfb-run".
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then xvfb-run python3 -m pipenv run python make.py check; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py check; fi
-  # Run cli app as a simple test to check ubitflashtool build is not broken
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./artifacts/ubitflashtool-cli --help; fi
+  # Run cli app as a simple test to check uBitTool build is not broken
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./artifacts/ubittool-cli --help; fi
 
 after_script:
   # Upload built executables to a temporary service
-  # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-gui.zip https://transfer.sh/ubitflashtool-gui.zip ; fi
-  # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubitflashtool-cli https://transfer.sh/ubitflashtool-cli ; fi
-  # - curl -F "file=@./artifacts/ubitflashtool-gui.zip" "https://file.io/?expires=3"
-  # - curl -F "file=@./artifacts/ubitflashtool-cli" "https://file.io/?expires=3"
+  # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubittool-gui.zip https://transfer.sh/ubittool-gui.zip ; fi
+  # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubittool-cli https://transfer.sh/ubittool-cli ; fi
+  # - curl -F "file=@./artifacts/ubittool-gui.zip" "https://file.io/?expires=3"
+  # - curl -F "file=@./artifacts/ubittool-cli" "https://file.io/?expires=3"
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl https://github.com/timvisee/ffsend/releases/download/v0.2.44/ffsend-v0.2.44-macos -L -o ffsend; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H chmod +x ./ffsend; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@1.1; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubitflashtool-gui.zip; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubitflashtool-cli; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubittool-gui.zip; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubittool-cli; fi
 
   # Upload test coverage report
   - codecov

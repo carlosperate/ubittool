@@ -95,7 +95,7 @@ def linter():
     print("---------------")
     print("Running linter:")
     print("---------------")
-    return_code = _run_cli_cmd(["flake8", "ubitflashtool/", "tests/"])
+    return_code = _run_cli_cmd(["flake8", "ubittool/", "tests/"])
     if return_code != 0:
         sys.exit(return_code)
     print("All good :)")
@@ -135,7 +135,7 @@ def test():
     """Run PyTests with the coverage plugin."""
     _set_cwd()
     return_code = _run_cli_cmd(
-        [sys.executable, "-m", "pytest", "-v", "--cov=ubitflashtool", "tests/"]
+        [sys.executable, "-m", "pytest", "-v", "--cov=ubittool", "tests/"]
     )
     if return_code != 0:
         sys.exit(return_code)
@@ -180,12 +180,7 @@ def clean():
     print("---------")
     print("Cleaning:")
     print("---------")
-    folders_to_remove = [
-        ".pytest_cache",
-        "build",
-        "dist",
-        "ubitflashtool.egg-info",
-    ]
+    folders_to_remove = [".pytest_cache", "build", "dist", "ubittool.egg-info"]
     files_to_remove = [".coverage"]
     for folder in folders_to_remove:
         _rm_dir(folder)

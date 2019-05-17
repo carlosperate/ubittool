@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 
-a = Analysis(['../ubitflashtool/gui.py'],
+a = Analysis(['../ubittool/gui.py'],
              pathex=['../'],
              binaries=None,
              datas=None,
@@ -21,7 +21,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='ubitflashtool-gui',
+          name='ubittool-gui',
           strip=False,
           upx=True,
           # False hides the cli window, useful ON to debug
@@ -29,6 +29,6 @@ exe = EXE(pyz,
           debug=False)
 
 app = BUNDLE(exe,
-             name='ubitflashtool-gui.app',
+             name='ubittool-gui.app',
              bundle_identifier=None,
              info_plist={'NSHighResolutionCapable': 'True'})

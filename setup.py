@@ -4,7 +4,7 @@
 import sys
 from setuptools import setup
 
-from ubitflashtool import __version__
+from ubittool import __version__
 
 
 if sys.version_info.major != 3 or sys.version_info.minor < 5:
@@ -19,18 +19,18 @@ with open("requirements.txt") as f:
 
 
 setup(
-    name="ubitflashtool",
+    name="uBitTool",
     version=__version__,
     description="A module and utility to read the memory contents of the "
     "BBC micro:bit.",
     long_description=readme,
     author="Carlos Pereira Atencio",
     author_email="carlosperate@embeddedlog.com",
-    url="https://github.com/carlosperate/ubitflashtool",
+    url="https://github.com/carlosperate/ubittool",
     install_requires=requires,
-    packages=["ubitflashtool"],
+    packages=["ubittool"],
     license="MIT license",
-    keywords=["microbit", "micro:bit", "bbcmicrobit", "ubitflashtool"],
+    keywords=["microbit", "micro:bit", "bbcmicrobit", "ubittool"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -47,7 +47,5 @@ setup(
         "Topic :: Software Development :: Embedded Systems",
     ],
     python_requires=">=3.5, <4",
-    entry_points={
-        "console_scripts": ["ubitflashtool=ubitflashtool.__main__:main"]
-    },
+    entry_points={"console_scripts": ["ubit=ubittool.__main__:main"]},
 )

@@ -8,7 +8,6 @@ nav_order: 1
 
 These docs are still WIP.
 
-
 # Install
 
 Install in a Python 2.7 virtual environment:
@@ -27,32 +26,37 @@ pipenv install .
 # Run
 
 To see the available commands:
+
 ```
-ubitflashtool --help
+ubit --help
 ```
 
 Or from this directory:
 
 ```
-python -m ubitflashtool --help
+python -m ubit --help
 ```
 
 To retrieve the user Python code:
+
 ```
-ubitflashtool read-code -f extracted_script.py
+ubit read-code -f extracted_script.py
 ```
 
 To read the entire flash contents:
+
 ```
-ubitflashtool read-flash
+ubit read-flash
 ```
 
 To compare the flash contents with a hex file:
+
 ```
-ubitflashtool compare-flash
+ubit compare-flash
 ```
 
 To run the GUI:
+
 ```
-ubitflashtool gui
+ubit gui
 ```

@@ -7,11 +7,11 @@ kramdown:
   # Interprets line breaks literally
   hard_wrap: false
 
-name: ubitflashtool
+name: uBitTool
 
 project:
   version: 0.4.0
-  download_url: https://github.com/carlosperate/ubitflashtool/releases
+  download_url: https://github.com/carlosperate/ubittool/releases
 
 license:
   software: MIT License
@@ -22,12 +22,12 @@ license:
 links:
   header:
     - title: GitHub
-      url: https://github.com/carlosperate/ubitflashtool/
+      url: https://github.com/carlosperate/ubittool/
   footer:
     - title: GitHub
-      url: https://github.com/carlosperate/ubitflashtool/
+      url: https://github.com/carlosperate/ubittool/
     - title: Issues
-      url: https://github.com/carlosperate/ubitflashtool/issues/
+      url: https://github.com/carlosperate/ubittool/issues/
 
 ui:
   header:
@@ -39,7 +39,7 @@ ui:
 social:
   github:
     user: carlosperate
-    repo: ubitflashtool
+    repo: ubittool
   twitter:
     enabled: true
     via:

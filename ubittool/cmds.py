@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Commands to carry out all the actions for ubitflashtool control.
+Commands to carry out all the actions for uBitTool control.
 
 This module internal functions can read any memory location from the micro:bit
 via PyOCD, which uses the CMSIS interface provided by DAPLink.
@@ -23,7 +23,7 @@ from traceback import format_exc
 from intelhex import IntelHex
 from uflash import extract_script
 
-from ubitflashtool import programmer
+from ubittool import programmer
 
 
 #

@@ -12,7 +12,7 @@ import sys
 
 import pytest
 
-from ubitflashtool import cli, cmds, __version__
+from ubittool import cli, cmds, __version__
 
 
 def _run_cli_cmd(cmd_list):
@@ -26,16 +26,16 @@ def _run_cli_cmd(cmd_list):
         return e.output
 
 
-def _ubitflashtool_cmd(cmd_list):
-    """Invoke the ubitflashtool app using different methods and return outputs.
+def _ubittool_cmd(cmd_list):
+    """Invoke the uBitTool app using different methods and return outputs.
 
-    :param cmd_list: List of cli argument to add to ubitflashtool invocation.
+    :param cmd_list: List of cli argument to add to ubittool invocation.
     """
-    module = [sys.executable, "-m", "ubitflashtool"]
+    module = [sys.executable, "-m", "ubittool"]
     module.extend(cmd_list)
-    cmd = ["ubitflashtool"]
+    cmd = ["ubit"]
     cmd.extend(cmd_list)
-    script = [sys.executable, "ubitflashtool/cli.py"]
+    script = [sys.executable, "ubittool/cli.py"]
     script.extend(cmd_list)
     return [_run_cli_cmd(module), _run_cli_cmd(cmd), _run_cli_cmd(script)]
 
@@ -54,16 +54,16 @@ def check_no_board_connected():
 
 def test_help():
     """Check the help option works."""
-    outputs = _ubitflashtool_cmd(["--help"])
+    outputs = _ubittool_cmd(["--help"])
     for output in outputs:
-        assert b"Usage: ubitflashtool [OPTIONS] COMMAND [ARGS]..." in output
-        assert str.encode("uBitFlashTool v{}".format(__version__)) in output
+        assert b"Usage: ubit [OPTIONS] COMMAND [ARGS]..." in output
+        assert str.encode("uBitTool v{}".format(__version__)) in output
         assert str.encode(cli.__doc__) in output
 
 
 def test_read_code(check_no_board_connected):
     """Check the read-code command returns an error when no board connected."""
-    outputs = _ubitflashtool_cmd(["read-code"])
+    outputs = _ubittool_cmd(["read-code"])
     for output in outputs:
         assert b"Executing: Extract the MicroPython code" in output
         assert b"Did not find any connected boards." in output

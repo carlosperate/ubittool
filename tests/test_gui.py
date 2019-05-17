@@ -7,13 +7,13 @@ import tkinter
 
 import pytest
 
-from ubitflashtool.gui import UBitFlashToolWindow, open_gui
+from ubittool.gui import UBitToolWindow, open_gui
 
 
 @pytest.fixture()
 def gui_window():
     """Fixture to create and destroy GUI window."""
-    app = UBitFlashToolWindow()
+    app = UBitToolWindow()
     app.wait_visibility()
     yield app
     if app:
@@ -33,7 +33,7 @@ def test_window_console(capsys):
     std_err_content = "And this goes to the std err\n"
 
     with capsys.disabled():
-        app = UBitFlashToolWindow()
+        app = UBitToolWindow()
         app.wait_visibility()
 
         sys.stdout.write(std_out_content)
@@ -110,7 +110,7 @@ def test_menu_bar_presence(gui_window):
     ), "Compare UICR in nrf menu"
 
 
-@mock.patch("ubitflashtool.gui.read_python_code", autospec=True)
+@mock.patch("ubittool.gui.read_python_code", autospec=True)
 def test_read_python_code(mock_read_python_code, gui_window):
     """Tests the READ_CODE command."""
     python_code = "The Python code from the flash"
@@ -126,7 +126,7 @@ def test_read_python_code(mock_read_python_code, gui_window):
     )
 
 
-@mock.patch("ubitflashtool.gui.read_micropython", autospec=True)
+@mock.patch("ubittool.gui.read_micropython", autospec=True)
 def test_read_micropython(mock_read_micropython, gui_window):
     """Tests the READ_UPY command."""
     upy_hex = "The MicroPython runtime in Intel Hex format data"
@@ -142,7 +142,7 @@ def test_read_micropython(mock_read_micropython, gui_window):
     )
 
 
-@mock.patch("ubitflashtool.gui.read_flash_hex", autospec=True)
+@mock.patch("ubittool.gui.read_flash_hex", autospec=True)
 def test_read_full_flash_intel(mock_read_flash_hex, gui_window):
     """Tests the READ_FLASH_HEX command."""
     flash_data = "The full flash in Intel Hex format data"
@@ -158,7 +158,7 @@ def test_read_full_flash_intel(mock_read_flash_hex, gui_window):
     )
 
 
-@mock.patch("ubitflashtool.gui.read_flash_hex", autospec=True)
+@mock.patch("ubittool.gui.read_flash_hex", autospec=True)
 def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     """Tests the READ_FLASH_PRETTY command."""
     flash_data = "The full flash in pretty format data"
@@ -174,7 +174,7 @@ def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     )
 
 
-@mock.patch("ubitflashtool.gui.read_uicr_customer_hex", autospec=True)
+@mock.patch("ubittool.gui.read_uicr_customer_hex", autospec=True)
 def test_read_uicr_customer(mock_read_uicr, gui_window):
     """Tests the READ_UICR command."""
     uicr_data = "The UICR data"
@@ -190,7 +190,7 @@ def test_read_uicr_customer(mock_read_uicr, gui_window):
     )
 
 
-@mock.patch("ubitflashtool.gui.UBitFlashToolWindow", autospec=True)
+@mock.patch("ubittool.gui.UBitToolWindow", autospec=True)
 def test_open_gui(mock_window):
     """Test the app instance is created and main loop invoked."""
     open_gui()
@@ -201,7 +201,7 @@ def test_open_gui(mock_window):
 
 def test_quit():
     """Test that when the window is closed it deactivates the console."""
-    app = UBitFlashToolWindow()
+    app = UBitToolWindow()
     app.wait_visibility()
 
     assert sys.stdout != sys.__stdout__

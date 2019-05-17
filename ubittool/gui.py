@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""A GUI to display the content from performing the uBitFlashTool actions."""
+"""A GUI to display the content from performing the uBitTool actions."""
 import sys
 import logging
 import platform
@@ -13,8 +13,8 @@ try:
 except ImportError:
     from idlelib.redirector import WidgetRedirector
 
-from ubitflashtool import __version__
-from ubitflashtool.cmds import (
+from ubittool import __version__
+from ubittool.cmds import (
     read_python_code,
     read_micropython,
     read_flash_hex,
@@ -147,7 +147,7 @@ class CmdLabel(tk.Label):
         self.cmd_title.set("Command: {}".format(new_text))
 
 
-class UBitFlashToolWindow(tk.Tk):
+class UBitToolWindow(tk.Tk):
     """Main app window.
 
     Creates a TK window with a text viewer, console viewer, and menus for
@@ -168,7 +168,7 @@ class UBitFlashToolWindow(tk.Tk):
     def __init__(self, *args, **kwargs):
         """Initialise the window."""
         super().__init__(*args, **kwargs)
-        self.title("uBitFlashTool v{}".format(__version__))
+        self.title("uBitTool v{}".format(__version__))
         self.geometry("{}x{}".format(600, 480))
 
         self.menu_bar = tk.Menu(self)
@@ -375,7 +375,7 @@ class UBitFlashToolWindow(tk.Tk):
 
 def open_gui():
     """Create the app window and launch it."""
-    app = UBitFlashToolWindow()
+    app = UBitToolWindow()
     app.lift()
     app.attributes("-topmost", True)
     app.after_idle(app.attributes, "-topmost", False)
