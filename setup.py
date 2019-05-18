@@ -19,7 +19,7 @@ with open("requirements.txt") as f:
 
 
 setup(
-    name="uBitTool",
+    name="ubittool",
     version=__version__,
     description="A module and utility to read the memory contents of the "
     "BBC micro:bit.",
@@ -34,11 +34,16 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
+        "Environment :: MacOS X",
+        "Environment :: Win32 (MS Windows)",
+        "Environment :: X11 Applications",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
+        "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: POSIX",
+        "Operating System :: MacOS",
         "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
