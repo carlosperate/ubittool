@@ -57,3 +57,19 @@ ubit = 'ubittool.__main__:main'
 [tool.black]
 line-length = 79
 target-version = ['py35']
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  # Above this line are defaults and below are project specific
+  | ignoreme
+)/
+'''
