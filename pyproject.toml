@@ -52,3 +52,8 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry.scripts]
 ubit = 'ubittool.__main__:main'
+
+
+[tool.black]
+line-length = 79
+target-version = ['py35']

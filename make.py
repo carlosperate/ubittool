@@ -114,16 +114,7 @@ def style():
     except ImportError:
         print("Black Python module not found, style check skipped.")
         return 0
-    black_cmd = [
-        "black",
-        ".",
-        "--target-version",
-        "py35",
-        "--line-length",
-        "79",
-        "--check",
-        "--diff",
-    ]
+    black_cmd = ["black", ".", "--check", "--diff"]
     return_code = _run_cli_cmd(black_cmd)
     if return_code != 0:
         sys.exit(return_code)

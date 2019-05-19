@@ -3,14 +3,6 @@
   "python.testing.pyTestEnabled": true,
   "python.testing.nosetestsEnabled": false,
   "python.formatting.provider": "black",
-  "python.formatting.blackArgs": [
-    "--target-version",
-    "py35",
-    "--line-length",
-    "79",
-    "--check",
-    "--diff"
-  ],
   "editor.formatOnSave": true,
   "python.linting.enabled": true,
   "python.linting.lintOnSave": true,
