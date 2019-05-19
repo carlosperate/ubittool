@@ -7,6 +7,7 @@ license = "MIT"
 homepage = "https://carlosperate.github.io/ubittool/"
 repository = "https://github.com/carlosperate/ubittool/"
 documentation =  "https://carlosperate.github.io/ubittool/"
+readme = "README.md"
 keywords = ["microbit", "micro:bit", "bbcmicrobit", "ubittool"]
 classifiers = [
     "Development Status :: 4 - Beta",
