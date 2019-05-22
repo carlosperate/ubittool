@@ -3,6 +3,7 @@
 [![codecov](https://codecov.io/gh/carlosperate/ubittool/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosperate/ubittool)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/byfv99vlf6rinxne?svg=true)](https://ci.appveyor.com/project/carlosperate/ubitextract)
 [![Travis build Status](https://travis-ci.org/carlosperate/ubittool.svg?branch=master)](https://travis-ci.org/carlosperate/ubittool)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ubittool.svg)](https://pypi.org/project/ubittool/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 Utility to extract a MicroPython program and/or interpreter from a microbit.
