@@ -165,6 +165,71 @@ def build(ctx):
 
 
 @make.command()
+def package():
+    """Build the Python Package."""
+    _set_cwd()
+    print("------------------------")
+    print("Building Python Package:")
+    print("------------------------")
+    rtn_code = _run_cli_cmd(["poetry", "build"])
+    if rtn_code != 0:
+        sys.exit(rtn_code)
+    return 0
+
+
+@make.command()
+@click.pass_context
+def publish_test(ctx):
+    """Publish the Python Package to the TestPyPI repository."""
+    ctx.invoke(clean)
+    ctx.invoke(package)
+    _set_cwd()
+    print("-----------------------------")
+    print("Publish package to test PyPI:")
+    print("-----------------------------")
+    rtn_code = _run_cli_cmd(
+        [
+            "poetry",
+            "config",
+            "repositories.testpypi",
+            "https://test.pypi.org/legacy/",
+        ]
+    )
+    if rtn_code != 0:
+        sys.exit(rtn_code)
+    rtn_code = _run_cli_cmd(["poetry", "publish", "-r", "testpypi"])
+    if rtn_code != 0:
+        sys.exit(rtn_code)
+    return 0
+
+
+@make.command()
+@click.pass_context
+def publish(ctx):
+    """Publish the Python Package to PyPI."""
+    ctx.invoke(clean)
+    ctx.invoke(package)
+    _set_cwd()
+    print("-----------------------------")
+    print("Publish package to test PyPI:")
+    print("-----------------------------")
+    rtn_code = _run_cli_cmd(
+        [
+            "poetry",
+            "config",
+            "repositories.testpypi",
+            "https://test.pypi.org/legacy/",
+        ]
+    )
+    if rtn_code != 0:
+        sys.exit(rtn_code)
+    rtn_code = _run_cli_cmd(["poetry", "publish"])
+    if rtn_code != 0:
+        sys.exit(rtn_code)
+    return 0
+
+
+@make.command()
 def clean():
     """Remove unnecessary files (like build outputs)."""
     _set_cwd()
