@@ -1,3 +1,8 @@
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+# Poetry settings
 [tool.poetry]
 name = "ubittool"
 version = "0.4.0"
@@ -38,23 +43,19 @@ PyInstaller = "^3.3"
 # Travis doesn't pick it up and PyOCD fails to install or run
 setuptools_scm = "*"
 # Linting
+black = {version = "19.3b0", python = "^3.6" }
 flake8 = "*"
 flake8-bugbear = {version = "*", python = "^3.5" }
-black = {version = "19.3b0", python = "^3.6" }
 flake8-builtins = "*"
 flake8-docstrings = "*"
 # Tests
 pytest = "*"
 pytest-cov = "*"
 
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-
 [tool.poetry.scripts]
 ubit = 'ubittool.__main__:main'
 
-
+# Black settings
 [tool.black]
 line-length = 79
 target-version = ['py35']
