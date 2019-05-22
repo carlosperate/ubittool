@@ -5,6 +5,7 @@
 [![Travis build Status](https://travis-ci.org/carlosperate/ubittool.svg?branch=master)](https://travis-ci.org/carlosperate/ubittool)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ubittool.svg)](https://pypi.org/project/ubittool/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![PyPI - License](https://img.shields.io/pypi/l/ubittool.svg)](LICENSE)
 
 Utility to extract a MicroPython program and/or interpreter from a microbit.
 
