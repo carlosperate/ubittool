@@ -1,4 +1,11 @@
-remote_theme: allejo/jekyll-docs-theme
+# General Jekyll options https://jekyllrb.com/docs/configuration/
+exclude: 
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+plugins:
+  - jekyll-remote-theme
+markdown: kramdown
 
 # Markdown settings: https://jekyllrb.com/docs/configuration/markdown/
 kramdown:
@@ -7,8 +14,12 @@ kramdown:
   # Interprets line breaks literally
   hard_wrap: false
 
-name: uBitTool
+# GH pages uses https://github.com/benbalter/jekyll-remote-theme
+remote_theme: allejo/jekyll-docs-theme
 
+# Below the lines are the jekyll-docs-theme settings:
+# https://projects.allejo.io/jekyll-docs-theme/
+name: uBitTool
 project:
   version: 0.5.0
   download_url: https://github.com/carlosperate/ubittool/releases
