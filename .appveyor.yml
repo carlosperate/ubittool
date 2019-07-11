@@ -35,7 +35,7 @@ init:
 install:
   # Install with Pipenv so that we can run the tests
   - cmd: pip install pipenv
-  - cmd: pipenv install --dev .
+  - cmd: pipenv install --dev . --ignore-pipfile
   - cmd: pipenv run python --version
   - cmd: pipenv run pip freeze
 
