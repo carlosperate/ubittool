@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Run make-like commands from a Python script instead of a MakeFile.
 
@@ -236,7 +236,13 @@ def clean():
     print("---------")
     print("Cleaning:")
     print("---------")
-    folders_to_remove = [".pytest_cache", "build", "dist", "ubittool.egg-info"]
+    folders_to_remove = [
+        ".pytest_cache",
+        "build",
+        "dist",
+        "ubittool.egg-info",
+        "pip-wheel-metadata",
+    ]
     files_to_remove = [".coverage"]
     for folder in folders_to_remove:
         _rm_dir(folder)
