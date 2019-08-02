@@ -4,16 +4,55 @@ title: Development
 nav_order: 2
 ---
 
-# Set Up Development Environment
+# Set Up A Development Environment
 
-Install the development dependencies using pipenv:
+## Installing from Source
+
+Originally this project used [pipenv](https://docs.pipenv.org/), however it is
+now transitioning to [poetry](https://poetry.eustace.io/).
+
+### Installing with Pipenv
+
+You can install pipenv simply doing:
 
 ```
-pip install pipenv
-pipenv install --editable . --dev
+pip install --user pipenv
 ```
 
-# make.py
+Then install the development dependencies using pipenv:
+
+```
+git clone https://github.com/carlosperate/ubittool.git
+cd ubittool
+pipenv install
+```
+
+Then to run uBitTool:
+
+```
+pipenv run ubit --help
+```
+
+### Installing with Poetry
+
+Install poetry using their installation instructions:
+https://poetry.eustace.io/docs/#installation
+
+Then:
+
+```
+git clone https://github.com/carlosperate/ubittool.git
+cd ubittool
+poetry install
+```
+
+Then to run uBitTool:
+
+```
+poetry run ubit --help
+```
+
+## make.py
 
 Rather than having a Makefile, which can be difficult to get running on
 Windows, there is a make.py file that can execute the types of commands that
@@ -23,7 +62,7 @@ To get an up-to-date overview of what commands are available you can run the
 `--help` flag:
 
 ```
-$ python make.py --help      
+$ python make.py --help
 Usage: python make.py [OPTIONS] COMMAND [ARGS]...
 
   Run make-like commands from a Python script instead of a MakeFile.
@@ -42,15 +81,18 @@ Commands:
   test    Run PyTests with the coverage plugin.
 ```
 
-## Check
+These docs will only cover the most important commands for development, but
+feel free to explore the other commands with the `--help` flag.
 
-Run all the checkers (`linter` and `test`):
+### Check
+
+Run all the checkers (`linter`, `test`, and `style`):
 
 ```
 python make.py check
 ```
 
-## Build
+### Build
 
 Builds the CLI and GUI executables using PyInstaller:
 
