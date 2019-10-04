@@ -16,4 +16,5 @@ WIP.
 
 ## Bugs
 
-Issue tracker: https://github.com/carlosperate/ubittool/issues
+Issue tracker:
+[https://github.com/carlosperate/ubittool/issues](https://github.com/carlosperate/ubittool/issues)

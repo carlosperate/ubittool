@@ -6,28 +6,33 @@ nav_order: 2
 
 # How To Install uBitTool
 
-There are two ways to install uBitTool:
+There are three ways to install uBitTool:
 
-- Download and run the executables
-- Install as a Python 3 package
+- Download the executables (no installation required, they are ready to run)
+- Install as a Python 3 package from PyPI
+- Install the Python 3 package from source
 
-### Executables
+## Executables
 
 WIP
 
-### Python Package
+## Python Package
 
 This application is provided as a Python 3 (>3.5) package.
 
-Using [pipx](https://github.com/pipxproject/pipx) is encouraged:
+Using [pipx](https://pipxproject.github.io/pipx/) is encouraged, as it will
+automatically create a virtual environment and add the resulting uBitTool
+executable to the system path. This way the command can be used from any
+terminal session without the need to manually activate a virtual environment.
+
+If you don't have pipx already installed, follow the
+[pipx installation instructions](https://pipxproject.github.io/pipx/installation/).
+
+Then:
 
 ```
 pipx install ubittool
 ```
-
-Pipx will automatically create a virtual environment, and add the uBitTool
-executable to the system path, so that the command can be used from any
-terminal session (no need to manually activate a virtual environment).
 
 Alternatively, crate a Python 3 (>3.5) virtual environment and install the `ubittool` package:
 
@@ -35,7 +40,7 @@ Alternatively, crate a Python 3 (>3.5) virtual environment and install the `ubit
 pip install ubittool
 ```
 
-#### Installing from source
+## Installing from source
 
-For information about how to instal uBitTool from source please consult the
-[Development](development.html) documentation.
+For information about how to install uBitTool from source please consult the
+[uBitTool Development documentation](development.html).

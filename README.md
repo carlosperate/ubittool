@@ -26,12 +26,12 @@ and its source can be found in `docs` directory.
 
 The easiest way to use uBitTool is via the application GUI.
 
-- Download one of the GUI executables for macOS or Windows from the
+- Download one of the latest GUI executables for macOS or Windows from the
   [GitHub Releases Page](https://github.com/carlosperate/ubittool/releases).
+- Plug-in your micro:bit to the computer via USB
 - Open the GUI executable file
-- Connect your micro:bit
-- On the menu click "nrf > Read Full Flash contents (Intel Hex)".
+- On the application menu click "nrf > Read Full Flash contents (Intel Hex)".
 - A full image of the micro:bit flash should now be displayed in the GUI :)
 
-For more information, and instructions for other platforms, please visit the
+For more information and instructions for other platforms please visit the
 [Documentation](https://carlosperate.github.io/ubittool/)).
