@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Development
+title: Set Up A Development Environment
 nav_order: 4
 ---
 
@@ -13,50 +13,66 @@ now transitioning to [poetry](https://poetry.eustace.io/).
 
 ### Installing with Pipenv
 
-You can install pipenv simply doing:
+You can install pipenv by simply doing:
 
 ```
-pip install --user pipenv
+$ pip install --user pipenv
 ```
 
-Then install the development dependencies using pipenv:
+Then clone the repository and install the development dependencies using
+`pipenv`:
 
 ```
-git clone https://github.com/carlosperate/ubittool.git
-cd ubittool
-pipenv install
+$ git clone https://github.com/carlosperate/ubittool.git
+$ cd ubittool
+$ pipenv install --dev
+```
+
+If you prefer to only install the dependencies necessary to run the tool and
+skip all the development dependencies you can replace the last command with:
+
+```
+$ pipenv install
 ```
 
 Then to run uBitTool:
 
 ```
-pipenv run ubit --help
+$ pipenv run ubit --help
 ```
 
 ### Installing with Poetry
 
-Install poetry using their installation instructions:
-https://poetry.eustace.io/docs/#installation
+Install poetry using their
+[installation instructions](https://poetry.eustace.io/docs/#installation).
 
-Then:
+Then clone the repository and install the development dependencies using
+`poetry`:
 
 ```
-git clone https://github.com/carlosperate/ubittool.git
-cd ubittool
-poetry install
+$ git clone https://github.com/carlosperate/ubittool.git
+$ cd ubittool
+$ poetry install
+```
+
+If you prefer to only install the dependencies necessary to run the tool and
+skip all the development dependencies you can replace the last command with:
+
+```
+$ poetry install --no-dev
 ```
 
 Then to run uBitTool:
 
 ```
-poetry run ubit --help
+$ poetry run ubit --help
 ```
 
 ## make.py
 
 Rather than having a Makefile, which can be difficult to get running on
-Windows, there is a make.py file that can execute the types of commands that
-would go on a Makefile.
+Windows, there is a make.py file that can execute the type of commands that
+would normally go in a Makefile.
 
 To get an up-to-date overview of what commands are available you can run the
 `--help` flag:
@@ -89,7 +105,7 @@ feel free to explore the other commands with the `--help` flag.
 Run all the checkers (`linter`, `test`, and `style`):
 
 ```
-python make.py check
+$ python make.py check
 ```
 
 ### Build
@@ -97,5 +113,5 @@ python make.py check
 Builds the CLI and GUI executables using PyInstaller:
 
 ```
-python make.py build
+$ python make.py build
 ```
