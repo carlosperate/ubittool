@@ -1,11 +1,12 @@
 # General Jekyll options https://jekyllrb.com/docs/configuration/
-exclude: 
+exclude:
   - README.md
   - Gemfile
   - Gemfile.lock
 plugins:
   - jekyll-remote-theme
-markdown: kramdown
+markdown:
+  - kramdown
 
 # Markdown settings: https://jekyllrb.com/docs/configuration/markdown/
 kramdown:
@@ -14,48 +15,4 @@ kramdown:
   # Interprets line breaks literally
   hard_wrap: false
 
-# GH pages uses https://github.com/benbalter/jekyll-remote-theme
-remote_theme: allejo/jekyll-docs-theme
-
-# Below the lines are the jekyll-docs-theme settings:
-# https://projects.allejo.io/jekyll-docs-theme/
-name: uBitTool
-project:
-  version: 0.5.0
-  download_url: https://github.com/carlosperate/ubittool/releases
-
-license:
-  software: MIT License
-  software_url: http://opensource.org/licenses/MIT
-  docs: CC BY 4.0
-  docs_url: https://creativecommons.org/licenses/by/4.0/
-
-links:
-  header:
-    - title: GitHub
-      url: https://github.com/carlosperate/ubittool/
-  footer:
-    - title: GitHub
-      url: https://github.com/carlosperate/ubittool/
-    - title: Issues
-      url: https://github.com/carlosperate/ubittool/issues/
-
-ui:
-  header:
-    color1: "#3883D2"
-    color2: "#330C58"
-    # https://trianglify.io
-    trianglify: true
-
-social:
-  github:
-    user: carlosperate
-    repo: ubittool
-  twitter:
-    enabled: true
-    via:
-    hash:
-    account: carlosperate
-  facebook:
-    enabled: false
-    profileUrl:
+remote_theme: carlosperate/jekyll-theme-rtd
