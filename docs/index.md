@@ -10,10 +10,10 @@ uBitTool is a command line and GUI application to interface with the micro:bit.
 
 It can:
 
-- Read the micro:bit nRF51 flash contents
+- Read the micro:bit flash contents
 - Extract user Python code from the micro:bit flash
-- Flash the micro:bit nRF51
-- Compare the contents of the micro:bit nRF51 flash against a local hex file
+- Flash the micro:bit
+- Compare the contents of the micro:bit flash against a local hex file
 
 These docs are still a WIP.
 
@@ -21,10 +21,11 @@ These docs are still a WIP.
 
 ### Basic Installation
 
-The easiest way to use uBitTool is to open the application GUI.
+The easiest way to use uBitTool is to download ane execute the application GUI.
 
-If you have downloaded the app via the GH releases, you can double click on
-the gui file for your platform.
+Downloaded the latest version of the app for your Operating System from the
+[GitHub releases page](https://github.com/carlosperate/ubittool/releases),
+you can then double click on the gui file.
 
 If you are using the command line application you can open the GUI with:
 
@@ -53,7 +54,7 @@ Commands:
   read-flash     Read the micro:bit flash contents into a hex file or...
 ```
 
-# Run
+## Run
 
 To see the available commands:
 
@@ -61,7 +62,7 @@ To see the available commands:
 ubit --help
 ```
 
-Or from this directory:
+Or from this directory if you have clone and installed the repository:
 
 ```
 python -m ubit --help
@@ -82,7 +83,7 @@ ubit read-flash
 To compare the flash contents with a hex file:
 
 ```
-ubit compare-flash
+ubit compare-flash file-to-compare-against.hex
 ```
 
 To run the GUI:
