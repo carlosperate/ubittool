@@ -11,16 +11,18 @@ click = ">=7.0,<8.0"
 ubittool = {path = "."}
 
 [dev-packages]
-PyInstaller = ">=3.3"
+# Installing from a git commit as there are issues with pip 19
+# PyInstaller = ">=3.3"
+pyinstaller = {git = "https://github.com/pyinstaller/pyinstaller.git",ref = "9dd34bdfbaeaa4e0459bd3051d1caf0c7d75073f"}
 # PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
 # Travis doesn't pick it up and PyOCD fails to install or run
 setuptools_scm = "*"
 # Linting
 flake8 = "*"
 flake8-bugbear = {version = "*",markers = "python_version >= '3.5'"}
-black = {version = "==19.3b0",markers = "python_version >= '3.6'"}
 flake8-builtins = "*"
 flake8-docstrings = "*"
+black = {version = "==19.3b0",markers = "python_version >= '3.6'"}
 # Tests
 pytest = "*"
 pytest-cov = "*"
