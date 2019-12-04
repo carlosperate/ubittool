@@ -15,7 +15,7 @@ There are three ways to install uBitTool:
 ## Executables
 
 The latest version of the executables can be downloaded from the
-[GitHub releases page](https://github.com/carlosperate/ubittool/releases).
+[GitHub Releases page](https://github.com/carlosperate/ubittool/releases).
 
 Only macOS and Windows executables are currently build. If you are using Linux
 you can follow any of the other installation methods.
@@ -29,6 +29,9 @@ applications your Operating System might show you a warning about this.
 
 ### macOS
 
+Download the latest version for `mac` from the
+[GitHub Releases page](https://github.com/carlosperate/ubittool/releases).
+
 If you double click on the executable in macOS you might see a warning like
 this one:
 ![Unsigned app warning](assets/img/mac-open-unsigned-warning.png)
@@ -39,9 +42,8 @@ The first time you open the application you will have follow these steps:
 - Select Open
   ![Open with right click](assets/img/mac-open-right-click.png)
 - A different warning window now offers more options
-- Click on "Open"
+- Click "Open" and the app will now work
   ![Unsigned app warning](assets/img/mac-open-right-click-warning.png)
-- And we are done!
 
 This is only required the first time, any subsequent double clicks will
 instantly open uBitTool without these warnings.
@@ -52,10 +54,18 @@ the Apple support website:
 
 ### Windows
 
-This part of the documentation has not yet been written.
+This part of the documentation is still under work and unfinished.
 
-If you'd like to [contribute](contributing.html) to the documentation PRs are
-welcomed!
+If you'd like to [contribute](contributing.html) to the documentation
+(screenshots would be great) PRs are welcomed!
+
+- Download the latest version for `win32` from the
+  [GitHub Releases page](https://github.com/carlosperate/ubittool/releases).
+- Double click on the .exe file
+- A warning will appear indicating that Windows "protected your PC"
+- Click on the "More info" link
+- A button should appear to "Run anyway"
+- Click the "Run anyway" button and the app should open
 
 ## Python Package
 
