@@ -24,7 +24,7 @@ These docs are still a WIP.
 The easiest way to use uBitTool is to download ane execute the application GUI.
 
 Downloaded the latest version of the app for your Operating System from the
-[GitHub releases page](https://github.com/carlosperate/ubittool/releases),
+[GitHub Releases page](https://github.com/carlosperate/ubittool/releases),
 you can then double click on the gui file.
 
 If you are using the command line application you can open the GUI with:

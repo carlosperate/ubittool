@@ -13,7 +13,7 @@ now transitioning to [poetry](https://poetry.eustace.io/).
 
 ### Installing with Pipenv
 
-You can install pipenv by simply doing:
+You can install `pipenv` by simply doing:
 
 ```
 $ pip install --user pipenv
@@ -25,14 +25,14 @@ Then clone the repository and install the development dependencies using
 ```
 $ git clone https://github.com/carlosperate/ubittool.git
 $ cd ubittool
-$ pipenv install --dev
+$ pipenv install --dev -e .
 ```
 
 If you prefer to only install the dependencies necessary to run the tool and
 skip all the development dependencies you can replace the last command with:
 
 ```
-$ pipenv install
+$ pipenv install .
 ```
 
 Then to run uBitTool:

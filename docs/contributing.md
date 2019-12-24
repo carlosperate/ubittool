@@ -8,7 +8,9 @@ nav_order: 5
 
 ## How To Contribute
 
-WIP.
+This part of the documentation has not yet been written.
+
+If you'd like to contribute to the documentation PRs are welcomed!
 
 ## Code Of Conduct
 
