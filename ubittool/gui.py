@@ -128,7 +128,7 @@ class CmdLabel(tk.Label):
     """A text label to contain the name of the last command executed."""
 
     def __init__(self, parent, default_text, *args, **kwargs):
-        """Constructor, sets the colours.
+        """Set the colours in the constructor.
 
         :param frame: A Frame() instance to set this text editor.
         """
