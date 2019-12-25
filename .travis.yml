@@ -17,6 +17,11 @@ matrix:
       sudo: false
       language: python
       python: 3.7
+    - os: linux
+      dist: xenial
+      sudo: false
+      language: python
+      python: 3.8
     # OS X 10.11 El Capitan
     - os: osx
       osx_image: xcode7.3
