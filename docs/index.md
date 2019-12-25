@@ -15,6 +15,8 @@ It can:
 - Flash the micro:bit
 - Compare the contents of the micro:bit flash against a local hex file
 
+![screenshots](assets/img/screenshots-grey.png)
+
 These docs are still a WIP.
 
 ## Basic Introduction

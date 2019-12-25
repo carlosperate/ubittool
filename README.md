@@ -11,10 +11,12 @@ uBitTool is a command line and GUI application to interface with the micro:bit.
 
 It can:
 
-- Read the micro:bit nRF51 flash contents
+- Read the micro:bit flash contents
 - Extract user Python code from the micro:bit flash
-- Flash the micro:bit nRF51
-- Compare the contents of the micro:bit nRF51 flash against a local hex file
+- Flash the micro:bit
+- Compare the contents of the micro:bit flash against a local hex file
+
+![screenshots](docs/assets/img/screenshots-white.png)
 
 ## Docs
 
