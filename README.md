@@ -18,7 +18,9 @@ It can:
 
 ![screenshots](docs/assets/img/screenshots-white.png)
 
-![terminal recording demo](docs/assets/img/terminal-recording.svg)
+<p align="center">
+  <img src="docs/assets/img/terminal-recording.svg" alt="terminal recording demo">
+</p>
 
 ## Docs
 

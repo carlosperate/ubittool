@@ -54,17 +54,16 @@ the Apple support website:
 
 ### Windows
 
-This part of the documentation is still under work and unfinished.
-
-If you'd like to [contribute](contributing.html) to the documentation
-(screenshots would be great) PRs are welcomed!
-
 - Download the latest version for `win32` from the
   [GitHub Releases page](https://github.com/carlosperate/ubittool/releases).
 - Double click on the .exe file
-- A warning will appear indicating that Windows "protected your PC"
+- A warning will appear indicating that "Windows protected your PC". This is
+  because the application is not signed, as explained in the into of the parent
+  section.
+  ![Unsigned app warning](assets/img/windows-open.png)
 - Click on the "More info" link
 - A button should appear to "Run anyway"
+  ![Unsigned app warning](assets/img/windows-open-more-info.png)
 - Click the "Run anyway" button and the app should open
 
 ## Python Package
