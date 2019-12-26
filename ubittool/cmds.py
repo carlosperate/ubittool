@@ -146,8 +146,8 @@ def read_python_code():
     )
     try:
         python_code = extract_script(py_code_hex)
-    except Exception as e:
-        sys.stderr.write(format_exc(e))
+    except Exception:
+        sys.stderr.write(format_exc())
         raise Exception("Could not decode the MicroPython code from flash")
     return python_code
 
