@@ -18,6 +18,8 @@ It can:
 
 ![screenshots](docs/assets/img/screenshots-white.png)
 
+![terminal recording demo](docs/assets/img/terminal-recording.svg)
+
 ## Docs
 
 The documentation is online at
@@ -36,4 +38,4 @@ The easiest way to use uBitTool is via the application GUI.
 - A full image of the micro:bit flash should now be displayed in the GUI :)
 
 For more information and instructions for other platforms please visit the
-[Documentation](https://carlosperate.github.io/ubittool/)).
+[Documentation](https://carlosperate.github.io/ubittool/).

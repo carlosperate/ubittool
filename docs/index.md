@@ -17,6 +17,8 @@ It can:
 
 ![screenshots](assets/img/screenshots-grey.png)
 
+![terminal recording demo](assets/img/terminal-recording.svg)
+
 These docs are still a WIP.
 
 ## Basic Introduction
