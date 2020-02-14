@@ -104,7 +104,7 @@ def linter():
 
 @make.command()
 def style():
-    """Run Flake8 linter with all its plugins."""
+    """Run Black as a linter without automatic formatting."""
     _set_cwd()
     print("----------------------")
     print("Running Style Checker:")
