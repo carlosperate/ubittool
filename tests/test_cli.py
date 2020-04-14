@@ -274,7 +274,7 @@ def test_compare_flash_no_file():
     result = runner.invoke(cli.compare_flash)
 
     assert result.exit_code != 0, "Exit code non-zero"
-    assert 'Error: Missing option "-f" / "--file_path".' in result.output
+    assert "Error: Missing option '-f' / '--file_path'." in result.output
 
 
 @mock.patch("ubittool.gui.open_gui", autospec=True)
