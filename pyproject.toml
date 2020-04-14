@@ -43,11 +43,11 @@ PyInstaller = "^3.6"
 # Travis doesn't pick it up and PyOCD fails to install or run
 setuptools_scm = "*"
 # Linting
-black = {version = "19.3b0", python = "^3.6" }
 flake8 = "*"
 flake8-bugbear = {version = "*", python = "^3.5" }
 flake8-builtins = "*"
 flake8-docstrings = "*"
+black = {version = "19.10b0", python = "^3.6" }
 # Tests
 pytest = "*"
 pytest-cov = "*"
