@@ -39,6 +39,9 @@ install:
   - cmd: pipenv run python --version
   - cmd: pipenv run pip freeze
 
+  # Temporarily downgrade setuptools https://github.com/pyinstaller/pyinstaller/issues/4672
+  - cmd: pipenv run pip install setuptools==44.1.0
+
   # Build and rename dist folder
   - cmd: pipenv run python make.py build
   - ps: Rename-Item -path .\dist artifacts

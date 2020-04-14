@@ -52,6 +52,9 @@ install:
   - python3 -m pipenv run python --version
   - python3 -m pipenv run pip freeze
 
+  # Temporarily downgrade setuptools https://github.com/pyinstaller/pyinstaller/issues/4672
+  - python3 -m pipenv run pip install setuptools==44.1.0
+
   # Build the two versions of ubittool in macOS using PyInstaller
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py build; fi
 
