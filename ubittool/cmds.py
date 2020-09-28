@@ -90,14 +90,8 @@ def read_flash_hex(decode_hex=False, **kwargs):
     :return: String with the hex formatted as indicated.
     """
     flash_data = programmer.read_flash(**kwargs)
-    if decode_hex:
-        return _bytes_to_pretty_hex(
-            flash_data, offset=programmer.MICROBIT_FLASH_START
-        )
-    else:
-        return _bytes_to_intel_hex(
-            flash_data, offset=programmer.MICROBIT_FLASH_START
-        )
+    to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
+    return to_hex(flash_data, offset=programmer.MICROBIT_FLASH_START)
 
 
 def read_uicr_customer_hex(decode_hex=False):
@@ -109,14 +103,8 @@ def read_uicr_customer_hex(decode_hex=False):
         address=programmer.UICR_CUSTOMER_START,
         count=programmer.UICR_CUSTOMER_SIZE_BYTES,
     )
-    if decode_hex:
-        return _bytes_to_pretty_hex(
-            uicr_data, offset=programmer.UICR_CUSTOMER_START
-        )
-    else:
-        return _bytes_to_intel_hex(
-            uicr_data, offset=programmer.UICR_CUSTOMER_START
-        )
+    to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
+    return to_hex(uicr_data, offset=programmer.MICROBIT_FLASH_START)
 
 
 def read_micropython():
@@ -147,7 +135,7 @@ def read_python_code():
     try:
         python_code = extract_script(py_code_hex)
     except Exception:
-        sys.stderr.write(format_exc())
+        sys.stderr.write(format_exc() + "\n" + "-" * 70 + "\n")
         raise Exception("Could not decode the MicroPython code from flash")
     return python_code
 
