@@ -24,6 +24,7 @@ def _file_checker(subject, file_path):
     """Check if a file exists and informs user about content output.
 
     :param subject: Very short file description, subject for printed sentences.
+    :param file_path: Path to the file to check.
     """
     if file_path:
         if os.path.exists(file_path):
@@ -73,7 +74,9 @@ def read_code(file_path=None):
     click.echo("\nFinished successfully!")
 
 
-@cli.command()
+@cli.command(
+    short_help="Read the micro:bit flash contents into a hex file or console."
+)
 @click.option(
     "-f",
     "--file_path",
@@ -130,13 +133,18 @@ def compare_flash(file_path):
 
     click.echo("Reading the micro:bit flash contents...")
     try:
-        compare_full_flash_hex(file_path)
+        exit_code = compare_full_flash_hex(file_path)
     except Exception as e:
         click.echo(click.style("Error: {}", fg="red").format(e), err=True)
         sys.exit(1)
-    click.echo("Diff output loaded in default browser.")
+    click.echo("Diff output loaded in the default browser.")
 
-    click.echo("\nFinished successfully!")
+    if exit_code:
+        click.echo("\nThere are some differences in the micro:bit flash!")
+        sys.exit(exit_code)
+    else:
+        click.echo("\nNo diffs between micro:bit flash and hex file :)")
+        click.echo("Finished successfully.")
 
 
 @cli.command()

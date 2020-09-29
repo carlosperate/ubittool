@@ -17,7 +17,7 @@ import tempfile
 import webbrowser
 from io import StringIO
 from threading import Timer
-from difflib import HtmlDiff
+from difflib import HtmlDiff, unified_diff
 from traceback import format_exc
 
 from intelhex import IntelHex
@@ -224,13 +224,16 @@ def compare_full_flash_hex(hex_file_path):
     :param hex_file_path: File path to the hex file to compare against.
     """
     with open(hex_file_path, encoding="utf-8") as f:
-        file_hex_str = f.readlines()
-    flash_hex_str = read_flash_hex(decode_hex=False)
+        file_hex_lines = f.read().splitlines()
+    flash_hex_lines = read_flash_hex(decode_hex=False).splitlines()
 
     html_code = _gen_diff_html(
-        "micro:bit", flash_hex_str.splitlines(), "Hex file", file_hex_str
+        "micro:bit", flash_hex_lines, "Hex file", file_hex_lines,
     )
     _open_temp_html(html_code)
+
+    diffs = list(unified_diff(flash_hex_lines, file_hex_lines))
+    return 1 if len(diffs) else 0
 
 
 def compare_uicr_customer(hex_file_path):

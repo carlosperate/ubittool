@@ -216,6 +216,7 @@ def test_compare_flash(mock_compare, mock_isfile, check_no_board_connected):
     """Test the compare-flash command."""
     file_name = "random_file_name.hex"
     mock_isfile.return_value = True
+    mock_compare.return_value = 0
     runner = CliRunner()
 
     results = [
@@ -225,9 +226,35 @@ def test_compare_flash(mock_compare, mock_isfile, check_no_board_connected):
 
     assert mock_compare.call_count == len(results)
     for result in results:
-        assert "Diff output loaded in default browser." in result.output
-        assert "Finished successfully!" in result.output
+        assert "Diff output loaded in the default browser." in result.output
+        assert "Finished successfully." in result.output
         assert result.exit_code == 0, "Exit code 0"
+
+
+@mock.patch("ubittool.cli.os.path.isfile", autospec=True)
+@mock.patch("ubittool.cli.compare_full_flash_hex", autospec=True)
+def test_compare_flash_diffs(
+    mock_compare, mock_isfile, check_no_board_connected
+):
+    """Test the compare-flash command."""
+    file_name = "random_file_name.hex"
+    mock_isfile.return_value = True
+    mock_compare.return_value = 1
+    runner = CliRunner()
+
+    results = [
+        runner.invoke(cli.compare_flash, ["-f", file_name]),
+        runner.invoke(cli.compare_flash, ["--file_path", file_name]),
+    ]
+
+    assert mock_compare.call_count == len(results)
+    for result in results:
+        assert "Diff output loaded in the default browser." in result.output
+        assert (
+            "There are some differences in the micro:bit flash!"
+            in result.output
+        )
+        assert result.exit_code != 0, "Exit code non-zero"
 
 
 @mock.patch("ubittool.cli.os.path.isfile", autospec=True)
