@@ -7,21 +7,29 @@ matrix:
       language: python
       python: 3.5
       env: PIPENV_SKIP_LOCK=True
+      services:
+        - xvfb
     - os: linux
       dist: xenial
       sudo: false
       language: python
       python: 3.6
+      services:
+        - xvfb
     - os: linux
       dist: xenial
       sudo: false
       language: python
       python: 3.7
+      services:
+        - xvfb
     - os: linux
       dist: xenial
       sudo: false
       language: python
       python: 3.8
+      services:
+        - xvfb
     # OS X 10.12 Sierra
     - os: osx
       osx_image: xcode8.3
@@ -69,8 +77,7 @@ install:
 
 script:
   # Running the tests. Linux needs frame buffer, so run with "xvfb-run".
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then xvfb-run python3 -m pipenv run python make.py check; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then python3 -m pipenv run python make.py check; fi
+  - python3 -m pipenv run python make.py check
   # Run cli app as a simple test to check uBitTool build is not broken
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./artifacts/ubittool-cli --help; fi
 
@@ -80,7 +87,7 @@ after_script:
   # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl --upload-file ./artifacts/ubittool-cli https://transfer.sh/ubittool-cli ; fi
   # - curl -F "file=@./artifacts/ubittool-gui.zip" "https://file.io/?expires=3"
   # - curl -F "file=@./artifacts/ubittool-cli" "https://file.io/?expires=3"
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl https://github.com/timvisee/ffsend/releases/download/v0.2.44/ffsend-v0.2.44-macos -L -o ffsend; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then curl https://github.com/timvisee/ffsend/releases/download/v0.2.67/ffsend-v0.2.67-macos -L -o ffsend; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sudo -H chmod +x ./ffsend; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@1.1; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ffsend upload ./artifacts/ubittool-gui.zip; fi
