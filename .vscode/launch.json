@@ -103,6 +103,21 @@
       "envFile": "${workspaceFolder}/.env",
       "debugOptions": [],
       "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Python: tests",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "pythonPath": "${command:python.interpreterPath}",
+      "program": "${workspaceFolder}/make.py",
+      "args": ["test"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {},
+      "envFile": "${workspaceFolder}/.env",
+      "debugOptions": [],
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }
