@@ -34,7 +34,7 @@ def test_window_console(capsys):
 
     with capsys.disabled():
         app = UBitToolWindow()
-        app.wait_visibility()
+        # app.wait_visibility()
 
         sys.stdout.write(std_out_content)
         sys.stderr.write(std_err_content)

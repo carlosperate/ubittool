@@ -113,7 +113,7 @@ def test_bytes_to_pretty_hexinvalid_data():
         raise AssertionError("Exception NOT raised")
 
 
-@mock.patch("ubittool.cmds.programmer.read_flash", autospec=True)
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
 @mock.patch("ubittool.cmds._bytes_to_intel_hex", autospec=True)
 def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     """."""
@@ -143,6 +143,7 @@ def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
             "    sleep(2000)",
         ]
     )
+    mock_read_flash.return_value = (0, "")
     mock_bytes_to_intel_hex.return_value = python_code_hex
 
     result = cmds.read_python_code()
@@ -150,9 +151,8 @@ def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     assert result == python_code
 
 
-@mock.patch("ubittool.cmds.programmer.read_flash", autospec=True)
 @mock.patch("ubittool.cmds._bytes_to_intel_hex", autospec=True)
-def test_read_python_code_empty(mock_bytes_to_intel_hex, mock_read_flash):
+def test_read_python_code_empty(mock_bytes_to_intel_hex):
     """Check error thrown if failing to find Python code in flash."""
     python_code_hex = "\n".join(
         [

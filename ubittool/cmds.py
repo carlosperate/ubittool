@@ -89,9 +89,10 @@ def read_flash_hex(decode_hex=False, **kwargs):
             Hex format.
     :return: String with the hex formatted as indicated.
     """
-    flash_data = programmer.read_flash(**kwargs)
+    with programmer.MicrobitMcu() as mb:
+        start_address, flash_data = mb.read_flash(**kwargs)
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
-    return to_hex(flash_data, offset=programmer.MICROBIT_FLASH_START)
+    return to_hex(flash_data, offset=start_address)
 
 
 def read_uicr_customer_hex(decode_hex=False):
@@ -99,12 +100,10 @@ def read_uicr_customer_hex(decode_hex=False):
 
     :return: String with the nicely decoded UIR Customer area data.
     """
-    uicr_data = programmer.read_uicr(
-        address=programmer.UICR_CUSTOMER_START,
-        count=programmer.UICR_CUSTOMER_SIZE_BYTES,
-    )
+    with programmer.MicrobitMcu() as mb:
+        start_address, uicr_data = mb.read_uicr_customer()
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
-    return to_hex(uicr_data, offset=programmer.MICROBIT_FLASH_START)
+    return to_hex(uicr_data, offset=start_address)
 
 
 def read_micropython():
@@ -112,12 +111,12 @@ def read_micropython():
 
     :return: String with Intel Hex format for the MicroPython runtime.
     """
-    flash_data = programmer.read_flash(
-        address=programmer.MICROPYTHON_START,
-        count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
-        decode_hex=False,
-    )
-    return _bytes_to_intel_hex(flash_data, offset=programmer.MICROPYTHON_START)
+    with programmer.MicrobitMcu() as mb:
+        start_address, flash_data = mb.read_flash(
+            address=programmer.MICROPYTHON_START,
+            count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
+        )
+    return _bytes_to_intel_hex(flash_data, offset=start_address)
 
 
 def read_python_code():
@@ -125,13 +124,12 @@ def read_python_code():
 
     :return: String with the MicroPython code.
     """
-    flash_data = programmer.read_flash(
-        address=programmer.PYTHON_CODE_START,
-        count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START),
-    )
-    py_code_hex = _bytes_to_intel_hex(
-        flash_data, offset=programmer.PYTHON_CODE_START
-    )
+    with programmer.MicrobitMcu() as mb:
+        start_address, flash_data = mb.read_flash(
+            address=programmer.PYTHON_CODE_START,
+            count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START),
+        )
+    py_code_hex = _bytes_to_intel_hex(flash_data, offset=start_address)
     try:
         python_code = extract_script(py_code_hex)
     except Exception:
