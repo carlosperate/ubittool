@@ -113,9 +113,7 @@ def test_bytes_to_pretty_hexinvalid_data():
         raise AssertionError("Exception NOT raised")
 
 
-@mock.patch.object(
-    cmds.programmer.MicrobitMicrocontroller, "read_flash", autospec=True
-)
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
 @mock.patch("ubittool.cmds._bytes_to_intel_hex", autospec=True)
 def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     """."""

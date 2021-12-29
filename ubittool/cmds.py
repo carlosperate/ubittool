@@ -89,7 +89,7 @@ def read_flash_hex(decode_hex=False, **kwargs):
             Hex format.
     :return: String with the hex formatted as indicated.
     """
-    with programmer.MicrobitMicrocontroller() as mb:
+    with programmer.MicrobitMcu() as mb:
         start_address, flash_data = mb.read_flash(**kwargs)
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
     return to_hex(flash_data, offset=start_address)
@@ -100,7 +100,7 @@ def read_uicr_customer_hex(decode_hex=False):
 
     :return: String with the nicely decoded UIR Customer area data.
     """
-    with programmer.MicrobitMicrocontroller() as mb:
+    with programmer.MicrobitMcu() as mb:
         start_address, uicr_data = mb.read_uicr_customer()
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
     return to_hex(uicr_data, offset=start_address)
@@ -111,7 +111,7 @@ def read_micropython():
 
     :return: String with Intel Hex format for the MicroPython runtime.
     """
-    with programmer.MicrobitMicrocontroller() as mb:
+    with programmer.MicrobitMcu() as mb:
         start_address, flash_data = mb.read_flash(
             address=programmer.MICROPYTHON_START,
             count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
@@ -124,7 +124,7 @@ def read_python_code():
 
     :return: String with the MicroPython code.
     """
-    with programmer.MicrobitMicrocontroller() as mb:
+    with programmer.MicrobitMcu() as mb:
         start_address, flash_data = mb.read_flash(
             address=programmer.PYTHON_CODE_START,
             count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START),

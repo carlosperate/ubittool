@@ -1,66 +1,50 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Functions to read data from the micro:bit using PyOCD."""
+from collections import namedtuple
+
 from pyocd.core.helpers import ConnectHelper
 
 
-# nRF51 256 KBs of flash starts at address 0
-MICROBIT_FLASH_START = {
-    "9900": 0x00000000,
-    "9901": 0x00000000,
-    "9903": 0x00000000,
-    "9904": 0x00000000,
-    "9905": 0x00000000,
-    "9906": 0x00000000,
-}
-MICROBIT_FLASH_SIZE_BYTES = {
-    "9900": 256 * 1024,
-    "9901": 256 * 1024,
-    "9903": 512 * 1024,
-    "9904": 512 * 1024,
-    "9905": 512 * 1024,
-    "9906": 512 * 1024,
-}
-MICROBIT_FLASH_END = {
-    "9900": MICROBIT_FLASH_START["9900"] + MICROBIT_FLASH_SIZE_BYTES["9900"],
-    "9901": MICROBIT_FLASH_START["9901"] + MICROBIT_FLASH_SIZE_BYTES["9901"],
-    "9903": MICROBIT_FLASH_START["9903"] + MICROBIT_FLASH_SIZE_BYTES["9903"],
-    "9904": MICROBIT_FLASH_START["9904"] + MICROBIT_FLASH_SIZE_BYTES["9904"],
-    "9905": MICROBIT_FLASH_START["9905"] + MICROBIT_FLASH_SIZE_BYTES["9905"],
-    "9906": MICROBIT_FLASH_START["9906"] + MICROBIT_FLASH_SIZE_BYTES["9906"],
-}
+MemoryRegions = namedtuple(
+    "MemoryRegions",
+    [
+        "flash_start",
+        "flash_size",
+        "flash_end",
+        "uicr_start",
+        "uicr_size",
+        "uicr_customer_offset",
+        "uicr_customer_size",
+    ],
+)
 
-# nRF51 User Information Configuration Registers
-UICR_START = {
-    "9900": 0x10001000,
-    "9901": 0x10001000,
-    "9903": 0x10001000,
-    "9904": 0x10001000,
-    "9905": 0x10001000,
-    "9906": 0x10001000,
+MEM_REGIONS_MB_V1 = MemoryRegions(
+    flash_start=0x00000000,
+    flash_size=256 * 1024,
+    flash_end=256 * 1024,
+    uicr_start=0x10001000,
+    uicr_size=0x100,
+    uicr_customer_offset=0x80,
+    uicr_customer_size=0x100 - 0x80,
+)
+MEM_REGIONS_MB_V2 = MemoryRegions(
+    flash_start=0x00000000,
+    flash_size=512 * 1024,
+    flash_end=512 * 1024,
+    uicr_start=0x10001000,
+    uicr_size=0x308,
+    uicr_customer_offset=0x80,
+    uicr_customer_size=0x200 - 0x80,
+)
+MICROBIT_MEM_REGIONS = {
+    "9900": MEM_REGIONS_MB_V1,
+    "9901": MEM_REGIONS_MB_V1,
+    "9903": MEM_REGIONS_MB_V2,
+    "9904": MEM_REGIONS_MB_V2,
+    "9905": MEM_REGIONS_MB_V2,
+    "9906": MEM_REGIONS_MB_V2,
 }
-UICR_SIZE_BYTES = {
-    "9900": 0x100,
-    "9901": 0x100,
-    "9903": 0x308,
-    "9904": 0x308,
-    "9905": 0x308,
-    "9906": 0x308,
-}
-UICR_END = {
-    "9900": UICR_START["9900"] + UICR_SIZE_BYTES["9900"],
-    "9901": UICR_START["9901"] + UICR_SIZE_BYTES["9901"],
-    "9903": UICR_START["9903"] + UICR_SIZE_BYTES["9903"],
-    "9904": UICR_START["9904"] + UICR_SIZE_BYTES["9904"],
-    "9905": UICR_START["9905"] + UICR_SIZE_BYTES["9906"],
-    "9906": UICR_START["9905"] + UICR_SIZE_BYTES["9906"],
-}
-
-# UICR reserved data for customer
-UICR_CUSTOMER_OFFSET = 0
-UICR_CUSTOMER_SIZE_BYTES = 0x308
-UICR_CUSTOMER_START = UICR_START["9900"] + UICR_CUSTOMER_OFFSET
-UICR_CUSTOMER_END = UICR_CUSTOMER_START + UICR_CUSTOMER_SIZE_BYTES
 
 # Assumes code attached to fixed location instead of using the filesystem
 PYTHON_CODE_START = 0x3E000
@@ -72,7 +56,7 @@ MICROPYTHON_START = 0x0
 MICROPYTHON_END = PYTHON_CODE_START
 
 
-class MicrobitMicrocontroller(object):
+class MicrobitMcu(object):
     """Read data from main microcontroller on the micro:bit board."""
 
     def __init__(self):
@@ -81,16 +65,7 @@ class MicrobitMicrocontroller(object):
         self.board = None
         self.target = None
         self.board_id = None
-        self.flash_start = None
-        self.flash_size = None
-        self.flash_end = None
-        self.uicr_start = None
-        self.uicr_size = None
-        self.uicr_end = None
-        # TODO: Set the UICR values for the different board IDs
-        self.uicr_customer_start = UICR_CUSTOMER_START
-        self.uicr_customer_size = UICR_CUSTOMER_SIZE_BYTES
-        self.uicr_customer_end = UICR_CUSTOMER_END
+        self.mem = None
 
     def _connect(self):
         """Connect PyOCD to the main micro:bit microcontroller."""
@@ -113,14 +88,9 @@ class MicrobitMicrocontroller(object):
                     "{}\n{}\n".format(str(e), "-" * 70)
                     + "Error: Did not find any connected boards."
                 )
-            if self.board_id not in MICROBIT_FLASH_START:
+            if self.board_id not in MICROBIT_MEM_REGIONS:
                 raise Exception("Incompatible board ID from connected device.")
-            self.flash_start = MICROBIT_FLASH_START[self.board_id]
-            self.flash_size = MICROBIT_FLASH_SIZE_BYTES[self.board_id]
-            self.flash_end = self.flash_start + self.flash_size
-            self.uicr_start = UICR_START[self.board_id]
-            self.uicr_size = UICR_SIZE_BYTES[self.board_id]
-            self.uicr_end = self.uicr_start + self.uicr_size
+            self.mem = MICROBIT_MEM_REGIONS[self.board_id]
 
     def _disconnect(self):
         """."""
@@ -163,19 +133,19 @@ class MicrobitMicrocontroller(object):
         self._connect()
 
         if address is None:
-            address = self.flash_start
+            address = self.mem.flash_start
         if count is None:
-            count = self.flash_size
+            count = self.mem.flash_end - self.mem.flash_start
 
         end = address + count
         if (
-            not (self.flash_start <= address < self.flash_end)
-            or end > self.flash_end
+            not (self.mem.flash_start <= address < self.mem.flash_end)
+            or end > self.mem.flash_end
         ):
             raise ValueError(
                 "Cannot read a flash address out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
-                    address, end, self.flash_start, self.flash_end
+                    address, end, self.mem.flash_start, self.mem.flash_end,
                 )
             )
 
@@ -192,19 +162,19 @@ class MicrobitMicrocontroller(object):
         self._connect()
 
         if address is None:
-            address = self.uicr_start
+            address = self.mem.uicr_start
         if count is None:
-            count = self.uicr_size
+            count = self.mem.uicr_end - self.mem.uicr_start
 
         end = address + count
         if (
-            not (self.uicr_start <= address < self.uicr_end)
-            or end > self.uicr_end
+            not (self.mem.uicr_start <= address < self.mem.uicr_end)
+            or end > self.mem.uicr_end
         ):
             raise ValueError(
                 "Cannot read a UICR location out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
-                    address, end, self.uicr_start, self.uicr_end
+                    address, end, self.mem.uicr_start, self.mem.uicr_end,
                 )
             )
 
@@ -219,5 +189,6 @@ class MicrobitMicrocontroller(object):
             each representing a byte of data.
         """
         return self.read_uicr(
-            address=self.uicr_customer_start, count=self.uicr_customer_size
+            address=self.mem.uicr_start + self.mem.uicr_customer_offset,
+            count=self.mem.uicr_customer_size,
         )
