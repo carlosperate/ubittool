@@ -33,11 +33,9 @@ def _ubittool_cmd(cmd_list):
     """
     module = [sys.executable, "-m", "ubittool"]
     module.extend(cmd_list)
-    cmd = ["ubit"]
-    cmd.extend(cmd_list)
     script = [sys.executable, "ubittool/cli.py"]
     script.extend(cmd_list)
-    return [_run_cli_cmd(module), _run_cli_cmd(cmd), _run_cli_cmd(script)]
+    return [_run_cli_cmd(module), _run_cli_cmd(script)]
 
 
 @pytest.fixture
