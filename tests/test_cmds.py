@@ -2,13 +2,32 @@
 # -*- coding: utf-8 -*-
 """Tests for cmds.py module."""
 import os
+from io import StringIO
 from unittest import mock
+
+from intelhex import IntelHex
 
 from ubittool import cmds
 
+
+###############################################################################
+# Helpers
+###############################################################################
 INTEL_HEX_EOF = ":00000001FF\n"
 
 
+def ihex_to_str(ih):
+    """Convert an Intel Hex instance into an Intel Hex string."""
+    sio = StringIO()
+    ih.write_hex_file(sio)
+    hex_str = sio.getvalue()
+    sio.close()
+    return hex_str
+
+
+###############################################################################
+# Data format conversions
+###############################################################################
 def test_bytes_to_intel_hex():
     """Test the data to Intel Hex string conversion."""
     data = [1, 2, 3, 4, 5]
@@ -113,6 +132,55 @@ def test_bytes_to_pretty_hexinvalid_data():
         raise AssertionError("Exception NOT raised")
 
 
+###############################################################################
+# Reading data commands
+###############################################################################
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+def test_read_flash_hex(mock_read_flash):
+    """Test read_flash_hex() with default arguments."""
+    data_bytes = bytes([x for x in range(256)] * 4)
+    intel_hex = IntelHex()
+    intel_hex.frombytes(data_bytes)
+    ihex_str = ihex_to_str(intel_hex)
+    mock_read_flash.return_value = (0, data_bytes)
+
+    result = cmds.read_flash_hex()
+
+    assert result == ihex_str
+
+
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+def test_read_flash_hex_decoded(mock_read_flash):
+    """Test read_flash_hex() with decoding hex."""
+    data_bytes = bytes([x for x in range(1, 17)])
+    expected = (
+        "0000  01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10  "
+        "|................|\n"
+    )
+    mock_read_flash.return_value = (0, data_bytes)
+
+    result = cmds.read_flash_hex(decode_hex=True)
+
+    assert result == expected
+
+
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+def test_read_flash_hex_non_zero_address(mock_read_flash):
+    """Test read_flash_hex() with given address and count."""
+    data_bytes = bytes([x for x in range(128)])
+    data_dict = {x + 1024: x for x in range(256)}
+    intel_hex = IntelHex()
+    intel_hex.fromdict(data_dict)
+    ihex_str = ihex_to_str(intel_hex)
+    # Remove the last 128 bytes, 8 lines, 9 with EoF
+    ihex_str = "\n".join(ihex_str.split()[:-9] + [INTEL_HEX_EOF])
+    mock_read_flash.return_value = (1024, data_bytes)
+
+    result = cmds.read_flash_hex(address=1024, count=128)
+
+    assert result == ihex_str
+
+
 @mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
 @mock.patch("ubittool.cmds._bytes_to_intel_hex", autospec=True)
 def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
@@ -175,6 +243,9 @@ def test_read_python_code_empty(mock_bytes_to_intel_hex):
         )
 
 
+###############################################################################
+# Hex comparison commands
+###############################################################################
 @mock.patch("ubittool.cmds.Timer", autospec=True)
 @mock.patch("ubittool.cmds.webbrowser.open", autospec=True)
 def test_open_temp_html(mock_browser_open, mock_timer):
