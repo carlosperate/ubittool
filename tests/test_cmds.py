@@ -181,6 +181,34 @@ def test_read_flash_hex_non_zero_address(mock_read_flash):
     assert result == ihex_str
 
 
+@mock.patch.object(
+    cmds.programmer.MicrobitMcu, "read_uicr_customer", autospec=True
+)
+def test_read_uicr_customer_hex(mock_read_uicr_customer):
+    """Test read_uicr_customer_hex() with default arguments."""
+    data_bytes = bytes([x for x in range(256)])
+    ihex_str = ihex_to_str(IntelHex({x + 0x10001080: x for x in range(256)}))
+    mock_read_uicr_customer.return_value = (0x10001080, data_bytes)
+
+    result = cmds.read_uicr_customer_hex()
+
+    assert result == ihex_str
+
+
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+def test_read_micropython(mock_read_flash):
+    """Test read_micropython() with default arguments."""
+    data_bytes = bytes([x for x in range(256)] * 4)
+    intel_hex = IntelHex()
+    intel_hex.frombytes(data_bytes)
+    ihex_str = ihex_to_str(intel_hex)
+    mock_read_flash.return_value = (0, data_bytes)
+
+    result = cmds.read_micropython()
+
+    assert result == ihex_str
+
+
 @mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
 @mock.patch("ubittool.cmds._bytes_to_intel_hex", autospec=True)
 def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
@@ -217,30 +245,6 @@ def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     result = cmds.read_python_code()
 
     assert result == python_code
-
-
-@mock.patch("ubittool.cmds._bytes_to_intel_hex", autospec=True)
-def test_read_python_code_empty(mock_bytes_to_intel_hex):
-    """Check error thrown if failing to find Python code in flash."""
-    python_code_hex = "\n".join(
-        [
-            ":020000040003F7",
-            ":10E00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF20",
-            ":10E01000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF10",
-            ":10E02000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00",
-            ":10E03000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0",
-        ]
-    )
-    mock_bytes_to_intel_hex.return_value = python_code_hex
-
-    try:
-        cmds.read_python_code()
-    except Exception:
-        assert True, "Could not decode Python user code"
-    else:
-        raise AssertionError(
-            "Decoded Python user code without throwing exception"
-        )
 
 
 ###############################################################################
