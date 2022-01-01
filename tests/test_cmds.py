@@ -247,6 +247,34 @@ def test_read_python_code(mock_bytes_to_intel_hex, mock_read_flash):
     assert result == python_code
 
 
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+def test_read_python_code_empty(mock_read_flash):
+    """Check an emptry Python code is returned on an empty flash."""
+    data_bytes = bytes([x for x in range(64)])
+    mock_read_flash.return_value = (0x3E000, data_bytes)
+
+    result = cmds.read_python_code()
+
+    assert result == ""
+
+
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+@mock.patch("ubittool.cmds.extract_script", autospec=True)
+def test_read_python_code_exception(mock_extract_script, mock_read_flash):
+    """Check error thrown if failing to find Python code in flash."""
+    data_bytes = bytes([x for x in range(64)])
+    mock_read_flash.return_value = (0x3E000, data_bytes)
+
+    mock_extract_script.side_effect = Exception("Boom")
+
+    try:
+        cmds.read_python_code()
+    except Exception as e:
+        assert str(e) == "Could not decode the MicroPython code from flash"
+    else:
+        raise AssertionError("Expected excepion not thrown.")
+
+
 ###############################################################################
 # Hex comparison commands
 ###############################################################################
