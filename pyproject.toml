@@ -32,14 +32,18 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6,<3.11"
 IntelHex = "^2.2.1"
 uflash = ">=1.1.0,<1.2.1"
 pyocd = "0.19.0"
 click = "^7.0"
 
 [tool.poetry.dev-dependencies]
-PyInstaller = "^3.6"
+# Packaging, PyInstaller needs macholib for macOS, pywin32 for Windows
+pyinstaller = "^4.7"
+macholib = { version = "^1.8", platform = "darwin" }
+pywin32 = { version = "^303", platform = "windows" }
+pywin32-ctypes = { version = "^0.2.0", platform = "windows" }
 # PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
 # Travis doesn't pick it up and PyOCD fails to install or run
 setuptools_scm = "*"
