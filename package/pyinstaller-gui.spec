@@ -23,7 +23,7 @@ exe = EXE(pyz,
           a.datas,
           name='ubittool-gui',
           strip=False,
-          upx=True,
+          upx=False,
           # False hides the cli window, useful ON to debug
           console=False,
           debug=False)
