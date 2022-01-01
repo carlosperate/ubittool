@@ -1,0 +1,35 @@
+name: Build Executables
+
+on: [push, pull_request]
+
+jobs:
+  pyinstaller-build:
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, macos-10.15, windows-2016]
+      fail-fast: false
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2.1.3
+      - name: Force poetry install without lock file when not macOS
+        if: runner.os != 'macOS'
+        run: rm poetry.lock
+      - name: Install ubittool dependencies
+        run: poetry install
+      - name: Run PyInstaller
+        run: poetry run python make.py build
+      # GitHub actions upload artifact breaks permissions, so tar workaround
+      # https://github.com/actions/upload-artifact/issues/38
+      - name: Tar files
+        run: tar -cvf ubittool-${{ runner.os }}.tar dist/
+      - uses: actions/upload-artifact@v1
+        with:
+          name: ubittool-${{ runner.os }}
+          path: ubittool-${{ runner.os }}.tar
