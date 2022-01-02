@@ -11,6 +11,8 @@ MemoryRegions = namedtuple(
     [
         "flash_start",
         "flash_size",
+        "ram_start",
+        "ram_size",
         "uicr_start",
         "uicr_size",
         "uicr_customer_offset",
@@ -21,6 +23,8 @@ MemoryRegions = namedtuple(
 MEM_REGIONS_MB_V1 = MemoryRegions(
     flash_start=0x0000_0000,
     flash_size=256 * 1024,
+    ram_start=0x2000_0000,
+    ram_size=16 * 1024,
     uicr_start=0x1000_1000,
     uicr_size=0x100,
     uicr_customer_offset=0x80,
@@ -29,6 +33,8 @@ MEM_REGIONS_MB_V1 = MemoryRegions(
 MEM_REGIONS_MB_V2 = MemoryRegions(
     flash_start=0x0000_0000,
     flash_size=512 * 1024,
+    ram_start=0x2000_0000,
+    ram_size=128 * 1024,
     uicr_start=0x1000_1000,
     uicr_size=0x308,
     uicr_customer_offset=0x80,
@@ -86,6 +92,7 @@ class MicrobitMcu(object):
                     + "Error: Did not find any connected boards."
                 )
             if self.board_id not in MICROBIT_MEM_REGIONS:
+                self._disconnect()
                 raise Exception("Incompatible board ID from connected device.")
             self.mem = MICROBIT_MEM_REGIONS[self.board_id]
 
@@ -133,7 +140,6 @@ class MicrobitMcu(object):
             address = self.mem.flash_start
         if count is None:
             count = self.mem.flash_size
-
         flash_end = self.mem.flash_start + self.mem.flash_size
 
         end = address + count
@@ -150,6 +156,35 @@ class MicrobitMcu(object):
 
         return address, self._read_memory(address=address, count=count)
 
+    def read_ram(self, address=None, count=None):
+        """Read the contents of the micro:bit RAM memory.
+
+        :param address: Integer indicating the start address to read.
+        :param count: Integer indicating how many bytes to read.
+        :return: The start address from the read and a list of integers,
+            each representing a byte of data.
+        """
+        self._connect()
+
+        if address is None:
+            address = self.mem.ram_start
+        if count is None:
+            count = self.mem.ram_size
+        ram_end = self.mem.ram_start + self.mem.ram_size
+
+        last_byte = address + count
+        if (
+            not (self.mem.ram_start <= address < ram_end)
+            or last_byte > ram_end
+        ):
+            raise ValueError(
+                "Cannot read a RAM location out of boundaries.\n"
+                "Reading from {} to {},\nlimits from {} to {}".format(
+                    address, last_byte, self.mem.ram_start, ram_end
+                )
+            )
+        return address, self._read_memory(address=address, count=count)
+
     def read_uicr(self, address=None, count=None):
         """Read data from UICR and returns it as a list of bytes.
 
@@ -164,7 +199,6 @@ class MicrobitMcu(object):
             address = self.mem.uicr_start
         if count is None:
             count = self.mem.uicr_size
-
         uicr_end = self.mem.uicr_start + self.mem.uicr_size
 
         end = address + count

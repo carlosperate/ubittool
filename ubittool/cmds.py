@@ -95,6 +95,25 @@ def read_flash_hex(decode_hex=False, **kwargs):
     return to_hex(flash_data, offset=start_address)
 
 
+def read_ram_hex(decode_hex=False, **kwargs):
+    """Read data from RAM and return as a hex string.
+
+    Read as a number of bytes of the micro:bit RAM from the given address.
+    Can return it in Intel Hex format or a pretty formatted and decoded hex
+    string.
+
+    :param address: Integer indicating the start address to read.
+    :param count: Integer indicating hoy many bytes to read.
+    :param decode_hex: True selects nice decoded format, False selects Intel
+            Hex format.
+    :return: String with the hex formatted as indicated.
+    """
+    with programmer.MicrobitMcu() as mb:
+        start_address, ram_data = mb.read_ram(**kwargs)
+    to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
+    return to_hex(ram_data, offset=start_address)
+
+
 def read_uicr_hex(decode_hex=False):
     """Read the full UICR data.
 

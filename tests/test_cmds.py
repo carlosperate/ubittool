@@ -193,6 +193,21 @@ def test_read_uicr_hex(mock_read_uicr):
     assert result == ihex_str
 
 
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_ram", autospec=True)
+def test_read_ram_hex(mock_read_uicr):
+    """Test read_ram_hex() with default arguments."""
+    data_bytes = bytes([x for x in range(16)] * 1024)
+    ihex = IntelHex(
+        {x + 0x20000000: data_bytes[x] for x in range(len(data_bytes))}
+    )
+    ihex_str = ihex_to_str(ihex)
+    mock_read_uicr.return_value = (0x20000000, data_bytes)
+
+    result = cmds.read_ram_hex()
+
+    assert result == ihex_str
+
+
 @mock.patch.object(
     cmds.programmer.MicrobitMcu, "read_uicr_customer", autospec=True
 )
