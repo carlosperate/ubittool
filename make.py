@@ -125,8 +125,18 @@ def style():
 def test():
     """Run PyTests with the coverage plugin."""
     _set_cwd()
+    # Only create an xml report in the CI for codecov SaaS to consume
+    report = "--cov-report=xml" if os.getenv("CI") else ""
     return_code = _run_cli_cmd(
-        [sys.executable, "-m", "pytest", "-v", "--cov=ubittool", "tests/"]
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "-v",
+            "--cov=ubittool",
+            report,
+            "tests/",
+        ]
     )
     if return_code != 0:
         sys.exit(return_code)
@@ -243,7 +253,7 @@ def clean():
         "ubittool.egg-info",
         "pip-wheel-metadata",
     ]
-    files_to_remove = [".coverage"]
+    files_to_remove = [".coverage", "coverage.xml"]
     for folder in folders_to_remove:
         _rm_dir(folder)
     for f in files_to_remove:
