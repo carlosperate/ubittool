@@ -7,8 +7,8 @@ from setuptools import setup
 from ubittool import __version__
 
 
-if sys.version_info.major != 3 or sys.version_info.minor < 5:
-    print("This package only supports Python 3.5+")
+if sys.version_info.major != 3 or sys.version_info.minor < 6:
+    print("This package only supports Python 3.6+")
     sys.exit(1)
 
 # Open the readme and requirements file
@@ -45,13 +45,13 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Education",
         "Topic :: Software Development :: Embedded Systems",
     ],
-    python_requires=">=3.5, <4",
+    python_requires=">=3.6, <4",
     entry_points={"console_scripts": ["ubit=ubittool.__main__:main"]},
 )
