@@ -11,7 +11,6 @@ MemoryRegions = namedtuple(
     [
         "flash_start",
         "flash_size",
-        "flash_end",
         "uicr_start",
         "uicr_size",
         "uicr_customer_offset",
@@ -20,19 +19,17 @@ MemoryRegions = namedtuple(
 )
 
 MEM_REGIONS_MB_V1 = MemoryRegions(
-    flash_start=0x00000000,
+    flash_start=0x0000_0000,
     flash_size=256 * 1024,
-    flash_end=256 * 1024,
-    uicr_start=0x10001000,
+    uicr_start=0x1000_1000,
     uicr_size=0x100,
     uicr_customer_offset=0x80,
     uicr_customer_size=0x100 - 0x80,
 )
 MEM_REGIONS_MB_V2 = MemoryRegions(
-    flash_start=0x00000000,
+    flash_start=0x0000_0000,
     flash_size=512 * 1024,
-    flash_end=512 * 1024,
-    uicr_start=0x10001000,
+    uicr_start=0x1000_1000,
     uicr_size=0x308,
     uicr_customer_offset=0x80,
     uicr_customer_size=0x200 - 0x80,
@@ -135,17 +132,19 @@ class MicrobitMcu(object):
         if address is None:
             address = self.mem.flash_start
         if count is None:
-            count = self.mem.flash_end - self.mem.flash_start
+            count = self.mem.flash_size
+
+        flash_end = self.mem.flash_start + self.mem.flash_size
 
         end = address + count
         if (
-            not (self.mem.flash_start <= address < self.mem.flash_end)
-            or end > self.mem.flash_end
+            not (self.mem.flash_start <= address < flash_end)
+            or end > flash_end
         ):
             raise ValueError(
                 "Cannot read a flash address out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
-                    address, end, self.mem.flash_start, self.mem.flash_end,
+                    address, end, self.mem.flash_start, flash_end,
                 )
             )
 
@@ -164,17 +163,16 @@ class MicrobitMcu(object):
         if address is None:
             address = self.mem.uicr_start
         if count is None:
-            count = self.mem.uicr_end - self.mem.uicr_start
+            count = self.mem.uicr_size
+
+        uicr_end = self.mem.uicr_start + self.mem.uicr_size
 
         end = address + count
-        if (
-            not (self.mem.uicr_start <= address < self.mem.uicr_end)
-            or end > self.mem.uicr_end
-        ):
+        if not (self.mem.uicr_start <= address < uicr_end) or end > uicr_end:
             raise ValueError(
                 "Cannot read a UICR location out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
-                    address, end, self.mem.uicr_start, self.mem.uicr_end,
+                    address, end, self.mem.uicr_start, uicr_end,
                 )
             )
 
