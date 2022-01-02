@@ -204,7 +204,7 @@ class MicrobitMcu(object):
         end = address + count
         if not (self.mem.uicr_start <= address < uicr_end) or end > uicr_end:
             raise ValueError(
-                "Cannot read a UICR location out of boundaries.\n"
+                "Cannot read a RAM location out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
                     address, end, self.mem.uicr_start, uicr_end,
                 )
