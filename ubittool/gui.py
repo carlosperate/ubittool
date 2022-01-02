@@ -14,15 +14,7 @@ except ImportError:
     from idlelib.redirector import WidgetRedirector
 
 from ubittool import __version__
-from ubittool.cmds import (
-    read_python_code,
-    read_micropython,
-    read_flash_hex,
-    read_uicr_hex,
-    read_uicr_customer_hex,
-    compare_full_flash_hex,
-    compare_uicr_customer,
-)
+from ubittool import cmds
 
 
 class ReadOnlyEditor(tkScrolledText):
@@ -282,7 +274,7 @@ class UBitToolWindow(tk.Tk):
         Displays it as text code in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_CODE)
-        python_code = read_python_code()
+        python_code = cmds.read_python_code()
         self.text_viewer.replace(python_code)
 
     def read_micropython(self):
@@ -291,7 +283,7 @@ class UBitToolWindow(tk.Tk):
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_UPY)
-        hex_str = read_micropython()
+        hex_str = cmds.read_micropython()
         self.text_viewer.replace(hex_str)
 
     def read_full_flash_intel(self):
@@ -300,7 +292,7 @@ class UBitToolWindow(tk.Tk):
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_FLASH_HEX)
-        hex_str = read_flash_hex(decode_hex=False)
+        hex_str = cmds.read_flash_hex(decode_hex=False)
         self.text_viewer.replace(hex_str)
 
     def read_full_flash_pretty(self):
@@ -310,7 +302,7 @@ class UBitToolWindow(tk.Tk):
         viewer.
         """
         self.set_next_cmd(self.CMD_READ_FLASH_PRETTY)
-        hex_str = read_flash_hex(decode_hex=True)
+        hex_str = cmds.read_flash_hex(decode_hex=True)
         self.text_viewer.replace(hex_str)
 
     def read_uicr(self):
@@ -319,7 +311,7 @@ class UBitToolWindow(tk.Tk):
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_UICR)
-        uicr_hex_str = read_uicr_hex(decode_hex=True)
+        uicr_hex_str = cmds.read_uicr_hex(decode_hex=True)
         self.text_viewer.replace(uicr_hex_str)
 
     def read_uicr_customer(self):
@@ -328,7 +320,7 @@ class UBitToolWindow(tk.Tk):
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_UICR_CUSTOMER)
-        uicr_hex_str = read_uicr_customer_hex(decode_hex=True)
+        uicr_hex_str = cmds.read_uicr_customer_hex(decode_hex=True)
         self.text_viewer.replace(uicr_hex_str)
 
     def compare_full_flash_intel(self):
@@ -341,7 +333,7 @@ class UBitToolWindow(tk.Tk):
         file_path = tkFileDialog.askopenfilename()
         if file_path:
             self.text_viewer.replace("Reading flash contents...")
-            compare_full_flash_hex(file_path)
+            cmds.compare_full_flash_hex(file_path)
             self.text_viewer.replace("Diff content loaded in default browser.")
 
     def compare_uicr_customer_intel(self):
@@ -355,7 +347,7 @@ class UBitToolWindow(tk.Tk):
         file_path = tkFileDialog.askopenfilename()
         if file_path:
             self.text_viewer.replace("Reading User UICR contents...")
-            compare_uicr_customer(file_path)
+            cmds.compare_uicr_customer(file_path)
             self.text_viewer.replace("Diff content loaded in default browser.")
 
     def file_open(self, event=None):

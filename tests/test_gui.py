@@ -111,7 +111,7 @@ def test_menu_bar_presence(gui_window):
     ), "Compare UICR in nrf menu"
 
 
-@mock.patch("ubittool.gui.read_python_code", autospec=True)
+@mock.patch("ubittool.gui.cmds.read_python_code", autospec=True)
 def test_read_python_code(mock_read_python_code, gui_window):
     """Tests the READ_CODE command."""
     python_code = "The Python code from the flash"
@@ -127,7 +127,7 @@ def test_read_python_code(mock_read_python_code, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.read_micropython", autospec=True)
+@mock.patch("ubittool.gui.cmds.read_micropython", autospec=True)
 def test_read_micropython(mock_read_micropython, gui_window):
     """Tests the READ_UPY command."""
     upy_hex = "The MicroPython runtime in Intel Hex format data"
@@ -143,7 +143,7 @@ def test_read_micropython(mock_read_micropython, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.read_flash_hex", autospec=True)
+@mock.patch("ubittool.gui.cmds.read_flash_hex", autospec=True)
 def test_read_full_flash_intel(mock_read_flash_hex, gui_window):
     """Tests the READ_FLASH_HEX command."""
     flash_data = "The full flash in Intel Hex format data"
@@ -159,7 +159,7 @@ def test_read_full_flash_intel(mock_read_flash_hex, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.read_flash_hex", autospec=True)
+@mock.patch("ubittool.gui.cmds.read_flash_hex", autospec=True)
 def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     """Tests the READ_FLASH_PRETTY command."""
     flash_data = "The full flash in pretty format data"
@@ -175,7 +175,7 @@ def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.read_uicr_hex", autospec=True)
+@mock.patch("ubittool.gui.cmds.read_uicr_hex", autospec=True)
 def test_read_uicr(mock_read_uicr, gui_window):
     """Tests the READ_UICR command."""
     uicr_data = "The UICR data"
@@ -191,7 +191,7 @@ def test_read_uicr(mock_read_uicr, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.read_uicr_customer_hex", autospec=True)
+@mock.patch("ubittool.gui.cmds.read_uicr_customer_hex", autospec=True)
 def test_read_uicr_customer(mock_read_uicr_customer, gui_window):
     """Tests the READ_UICR_CUSTOMER command."""
     uicr_data = "The UICR CUSTOMER data"
