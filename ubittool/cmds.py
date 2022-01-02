@@ -95,10 +95,21 @@ def read_flash_hex(decode_hex=False, **kwargs):
     return to_hex(flash_data, offset=start_address)
 
 
+def read_uicr_hex(decode_hex=False):
+    """Read the full UICR data.
+
+    :return: String with the nicely decoded UICR area data.
+    """
+    with programmer.MicrobitMcu() as mb:
+        start_address, uicr_data = mb.read_uicr()
+    to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
+    return to_hex(uicr_data, offset=start_address)
+
+
 def read_uicr_customer_hex(decode_hex=False):
     """Read the UICR Customer data.
 
-    :return: String with the nicely decoded UIR Customer area data.
+    :return: String with the nicely decoded UICR Customer area data.
     """
     with programmer.MicrobitMcu() as mb:
         start_address, uicr_data = mb.read_uicr_customer()

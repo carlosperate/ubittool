@@ -181,13 +181,25 @@ def test_read_flash_hex_non_zero_address(mock_read_flash):
     assert result == ihex_str
 
 
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_uicr", autospec=True)
+def test_read_uicr_hex(mock_read_uicr):
+    """Test read_uicr_hex() with default arguments."""
+    data_bytes = bytes([x for x in range(256)])
+    ihex_str = ihex_to_str(IntelHex({x + 0x10001000: x for x in range(256)}))
+    mock_read_uicr.return_value = (0x10001000, data_bytes)
+
+    result = cmds.read_uicr_hex()
+
+    assert result == ihex_str
+
+
 @mock.patch.object(
     cmds.programmer.MicrobitMcu, "read_uicr_customer", autospec=True
 )
 def test_read_uicr_customer_hex(mock_read_uicr_customer):
     """Test read_uicr_customer_hex() with default arguments."""
-    data_bytes = bytes([x for x in range(256)])
-    ihex_str = ihex_to_str(IntelHex({x + 0x10001080: x for x in range(256)}))
+    data_bytes = bytes([x for x in range(128)])
+    ihex_str = ihex_to_str(IntelHex({x + 0x10001080: x for x in range(128)}))
     mock_read_uicr_customer.return_value = (0x10001080, data_bytes)
 
     result = cmds.read_uicr_customer_hex()

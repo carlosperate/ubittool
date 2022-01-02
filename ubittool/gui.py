@@ -18,6 +18,7 @@ from ubittool.cmds import (
     read_python_code,
     read_micropython,
     read_flash_hex,
+    read_uicr_hex,
     read_uicr_customer_hex,
     compare_full_flash_hex,
     compare_uicr_customer,
@@ -161,7 +162,8 @@ class UBitToolWindow(tk.Tk):
     CMD_READ_UPY = "Read MicroPython runtime"
     CMD_READ_FLASH_HEX = "Read full flash contents (Intel Hex)"
     CMD_READ_FLASH_PRETTY = "Read full flash contents (Pretty Hex)"
-    CMD_READ_UICR = "Read UICR Customer"
+    CMD_READ_UICR = "Read UICR"
+    CMD_READ_UICR_CUSTOMER = "Read UICR Customer"
     CMD_COMPARE_FLASH = "Compare full flash contents (Intel Hex)"
     CMD_COMPARE_UICR = "Compare UICR Customer (Intel Hex)"
 
@@ -242,7 +244,10 @@ class UBitToolWindow(tk.Tk):
             command=self.read_full_flash_pretty,
         )
         self.nrf_menu.add_command(
-            label=self.CMD_READ_UICR, command=self.read_uicr_customer
+            label=self.CMD_READ_UICR, command=self.read_uicr
+        )
+        self.nrf_menu.add_command(
+            label=self.CMD_READ_UICR_CUSTOMER, command=self.read_uicr_customer
         )
         self.nrf_menu.add_separator()
         self.nrf_menu.add_command(
@@ -308,12 +313,21 @@ class UBitToolWindow(tk.Tk):
         hex_str = read_flash_hex(decode_hex=True)
         self.text_viewer.replace(hex_str)
 
-    def read_uicr_customer(self):
-        """Read the full contents of flash.
+    def read_uicr(self):
+        """Read the full contents of UICR.
 
         Displays it as Intel Hex in the read-only text viewer.
         """
         self.set_next_cmd(self.CMD_READ_UICR)
+        uicr_hex_str = read_uicr_hex(decode_hex=True)
+        self.text_viewer.replace(uicr_hex_str)
+
+    def read_uicr_customer(self):
+        """Read the Customer section of the UICR.
+
+        Displays it as Intel Hex in the read-only text viewer.
+        """
+        self.set_next_cmd(self.CMD_READ_UICR_CUSTOMER)
         uicr_hex_str = read_uicr_customer_hex(decode_hex=True)
         self.text_viewer.replace(uicr_hex_str)
 

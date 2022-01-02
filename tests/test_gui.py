@@ -92,21 +92,22 @@ def test_menu_bar_presence(gui_window):
     ), "Read Runtime present in micro:bit menu"
 
     nrf_labels = get_labels(menu_bar.winfo_children()[nrf_index])
-    assert len(nrf_labels) == 5, "nrf menu has 5 items"
+    assert len(nrf_labels) == 6, "nrf menu has 6 items"
     assert (
         "Read full flash contents (Intel Hex)" == nrf_labels[0]
     ), "Read Flash Hex present in nrf menu"
     assert (
         "Read full flash contents (Pretty Hex)" == nrf_labels[1]
     ), "Read Flash Pretty present in nrf menu"
+    assert "Read UICR" == nrf_labels[2], "Read UICR present in nrf menu"
     assert (
-        "Read UICR Customer" == nrf_labels[2]
+        "Read UICR Customer" == nrf_labels[3]
     ), "Read UICR present in nrf menu"
     assert (
-        "Compare full flash contents (Intel Hex)" == nrf_labels[3]
+        "Compare full flash contents (Intel Hex)" == nrf_labels[4]
     ), "Compare Flash present in nrf menu"
     assert (
-        "Compare UICR Customer (Intel Hex)" == nrf_labels[4]
+        "Compare UICR Customer (Intel Hex)" == nrf_labels[5]
     ), "Compare UICR in nrf menu"
 
 
@@ -174,8 +175,8 @@ def test_read_full_flash_pretty(mock_read_flash_hex, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.read_uicr_customer_hex", autospec=True)
-def test_read_uicr_customer(mock_read_uicr, gui_window):
+@mock.patch("ubittool.gui.read_uicr_hex", autospec=True)
+def test_read_uicr(mock_read_uicr, gui_window):
     """Tests the READ_UICR command."""
     uicr_data = "The UICR data"
     mock_read_uicr.return_value = uicr_data
@@ -187,6 +188,22 @@ def test_read_uicr_customer(mock_read_uicr, gui_window):
     assert mock_read_uicr.call_count == 1
     assert gui_window.cmd_title.cmd_title.get() == "Command: {}".format(
         gui_window.CMD_READ_UICR
+    )
+
+
+@mock.patch("ubittool.gui.read_uicr_customer_hex", autospec=True)
+def test_read_uicr_customer(mock_read_uicr_customer, gui_window):
+    """Tests the READ_UICR_CUSTOMER command."""
+    uicr_data = "The UICR CUSTOMER data"
+    mock_read_uicr_customer.return_value = uicr_data
+
+    gui_window.nrf_menu.invoke(3)
+
+    editor_content = gui_window.text_viewer.get(1.0, "end-1c")
+    assert uicr_data == editor_content
+    assert mock_read_uicr_customer.call_count == 1
+    assert gui_window.cmd_title.cmd_title.get() == "Command: {}".format(
+        gui_window.CMD_READ_UICR_CUSTOMER
     )
 
 

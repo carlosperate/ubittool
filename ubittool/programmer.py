@@ -188,6 +188,8 @@ class MicrobitMcu(object):
         :return: The start address from the read and a list of integers,
             each representing a byte of data.
         """
+        self._connect()
+
         return self.read_uicr(
             address=self.mem.uicr_start + self.mem.uicr_customer_offset,
             count=self.mem.uicr_customer_size,
