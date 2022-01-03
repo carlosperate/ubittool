@@ -8,7 +8,7 @@ nav_order: 3
 
 ## GUI
 
-### Read out the contents of a .hex file 
+### Read out the contents of a .hex file
 
 1. From the **nrf** menu select **Read full flash contents (Intel Hex)**
 
@@ -16,16 +16,18 @@ nav_order: 3
 
 A full image of the .hex file will appear in the GUI.
 
-2. From the **File** menu, select **Save as** and choose the destination to save your file. Add .hex as the suffix.
+2. From the **File** menu, select **Save as** and choose the destination to
+   save your file. Add .hex as the suffix.
 
 ![Save hex file](./assets/save-hex-gui.png)
 
 ## Command Line
 
-### Read out the contents of a .hex file 
+### Read out the contents of a .hex file
 
-Use ```read-flash``` which will output the contents to the console. You can optionally specify another output.
+Use `read-flash` which will output the contents to the console. You can
+optionally specify a file with the `-f`/`--file_path` flag.
 
 ```
-ubit read-flash > ~/Downloads/microbit-hex.hex
+ubit read-flash -f ~/Downloads/microbit-hex.hex
 ```

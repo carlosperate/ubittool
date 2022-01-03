@@ -9,7 +9,8 @@ nav_order: 4
 ## Installing from Source
 
 Originally this project used [pipenv](https://docs.pipenv.org/), however it is
-now transitioning to [poetry](https://poetry.eustace.io/).
+now transitioning to [poetry](https://poetry.eustace.io/), and in the mean time
+both methods will be available.
 
 ### Installing with Pipenv
 

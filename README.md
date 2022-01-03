@@ -1,8 +1,8 @@
 # uBitTool
 
 [![Code coverage](https://codecov.io/gh/carlosperate/ubittool/branch/master/graph/badge.svg)](https://codecov.io/gh/carlosperate/ubittool)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/byfv99vlf6rinxne?svg=true)](https://ci.appveyor.com/project/carlosperate/ubitextract)
-[![Travis build status](https://travis-ci.org/carlosperate/ubittool.svg?branch=master)](https://travis-ci.org/carlosperate/ubittool)
+[![CI: Tests](https://github.com/carlosperate/ubittool/actions/workflows/test.yml/badge.svg)](https://github.com/carlosperate/ubittool/actions/workflows/test.yml)
+[![CI: Build](https://github.com/carlosperate/ubittool/actions/workflows/build.yml/badge.svg)](https://github.com/carlosperate/ubittool/actions/workflows/build.yml)
 [![PyPI versions](https://img.shields.io/pypi/pyversions/ubittool.svg)](https://pypi.org/project/ubittool/)
 [![Code style Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![PyPI - License](https://img.shields.io/pypi/l/ubittool.svg)](LICENSE)

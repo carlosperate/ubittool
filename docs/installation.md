@@ -68,7 +68,7 @@ the Apple support website:
 
 ## Python Package
 
-This application is provided as a Python 3 (>3.5) package.
+This application is provided as a Python 3 (>=3.6) package.
 
 Using [pipx](https://pipxproject.github.io/pipx/) is not necessary, but highly
 encouraged, as it will automatically create a virtual environment, install
@@ -85,7 +85,7 @@ Then:
 $ pipx install ubittool
 ```
 
-Alternatively, create a Python 3 (>3.5) virtual environment and install the
+Alternatively, create a Python 3 (>=3.6) virtual environment and install the
 `ubittool` package inside:
 
 ```
