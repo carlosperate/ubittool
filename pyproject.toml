@@ -32,7 +32,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6,<3.11"
+python = "^3.6,<3.10"
 IntelHex = "^2.2.1"
 uflash = ">=1.1.0,<1.2.1"
 pyocd = "0.19.0"

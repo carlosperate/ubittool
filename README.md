@@ -16,10 +16,10 @@ It can:
 - Flash the micro:bit
 - Compare the contents of the micro:bit flash against a local hex file
 
-![screenshots](docs/assets/img/screenshots-white.png)
+![screenshots](https://www.embeddedlog.com/ubittool/assets/img/screenshots-white.png)
 
 <p align="center">
-  <img src="docs/assets/img/terminal-recording.svg" alt="terminal recording demo">
+  <img src="https://www.embeddedlog.com/ubittool/assets/img/terminal-recording.svg" alt="terminal recording demo">
 </p>
 
 ## Docs
