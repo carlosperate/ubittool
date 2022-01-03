@@ -44,7 +44,7 @@ uBitTool in the terminal:
 $ ubit --help
 Usage: ubit [OPTIONS] COMMAND [ARGS]...
 
-  uBitTool v0.5.0.
+  uBitTool v0.6.0.
 
   CLI and GUI utility to read content from the micro:bit.
 

@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 # Poetry settings
 [tool.poetry]
 name = "ubittool"
-version = "0.5.0"
+version = "0.6.0"
 description = "Tool to interface with the BBC micro:bit."
 authors = ["Carlos Pereira Atencio <carlosperate@embeddedlog.com>"]
 license = "MIT"
