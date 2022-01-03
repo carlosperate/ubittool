@@ -245,6 +245,42 @@ def test_read_uicr_customer(mock_read_uicr_customer, gui_window):
     )
 
 
+@mock.patch("ubittool.gui.cmds.compare_full_flash_hex", autospec=True)
+@mock.patch("ubittool.gui.tkFileDialog.askopenfilename", autospec=True)
+def test_compare_full_flash_intel(
+    mock_compare_full_flash, mock_open_file, gui_window
+):
+    """Tests the READ_UICR command."""
+    mock_open_file.return_value = "/some/path"
+
+    gui_window.nrf_menu.invoke(7)
+
+    editor_content = gui_window.text_viewer.get(1.0, "end-1c")
+    assert mock_compare_full_flash.call_count == 1
+    assert editor_content == "Diff content loaded in default browser."
+    assert gui_window.cmd_title.cmd_title.get() == "Command: {}".format(
+        gui_window.CMD_COMPARE_FLASH
+    )
+
+
+@mock.patch("ubittool.gui.cmds.compare_uicr_customer", autospec=True)
+@mock.patch("ubittool.gui.tkFileDialog.askopenfilename", autospec=True)
+def test_compare_uicr_customer(
+    mock_compare_uicr_customer, mock_open_file, gui_window
+):
+    """Tests the READ_UICR command."""
+    mock_open_file.return_value = "/some/path"
+
+    gui_window.nrf_menu.invoke(8)
+
+    editor_content = gui_window.text_viewer.get(1.0, "end-1c")
+    assert mock_compare_uicr_customer.call_count == 1
+    assert editor_content == "Diff content loaded in default browser."
+    assert gui_window.cmd_title.cmd_title.get() == "Command: {}".format(
+        gui_window.CMD_COMPARE_UICR
+    )
+
+
 @mock.patch("ubittool.gui.UBitToolWindow", autospec=True)
 def test_open_gui(mock_window):
     """Test the app instance is created and main loop invoked."""

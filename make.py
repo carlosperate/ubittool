@@ -132,7 +132,7 @@ def test():
             sys.executable,
             "-m",
             "pytest",
-            "-v",
+            "-vv",
             "--cov=ubittool",
             report,
             "tests/",
