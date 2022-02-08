@@ -13,6 +13,7 @@ format, or human readable text (for the Python code).
 """
 import os
 import sys
+import time
 import tempfile
 import webbrowser
 from io import StringIO
@@ -20,8 +21,8 @@ from threading import Timer
 from difflib import HtmlDiff, unified_diff
 from traceback import format_exc
 
+import uflash
 from intelhex import IntelHex
-from uflash import extract_script
 
 from ubittool import programmer
 
@@ -161,11 +162,33 @@ def read_python_code():
         )
     py_code_hex = _bytes_to_intel_hex(flash_data, offset=start_address)
     try:
-        python_code = extract_script(py_code_hex)
+        python_code = uflash.extract_script(py_code_hex)
     except Exception:
         sys.stderr.write(format_exc() + "\n" + "-" * 70 + "\n")
         raise Exception("Could not decode the MicroPython code from flash")
     return python_code
+
+
+#
+# Flashing commands
+#
+def flash_drag_n_drop(hex_path):
+    """Flash the micro:bit via a file transfer to the MICROBIT drive.
+
+    :param hex_path: Path to the hex file to flash to the micro:bit.
+    """
+    microbit_path = uflash.find_microbit()
+    if not microbit_path:
+        raise Exception("Could not find a MICROBIT drive to flash hex.")
+    with open(hex_path, "rb") as hex_file:
+        hex_bytes = hex_file.read()
+    with open(os.path.join(microbit_path, "input.hex"), "wb",) as hex_write:
+        hex_write.write(hex_bytes)
+        # Trying to force the OS to flush and sync in a blocking manner
+        hex_write.flush()
+        os.fsync(hex_write.fileno())
+    # After flashing the MICROBIT drive needs some time to remount
+    time.sleep(1)
 
 
 #

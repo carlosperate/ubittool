@@ -10,6 +10,7 @@ from ubittool import __version__
 from ubittool.cmds import (
     read_flash_hex,
     read_python_code,
+    flash_drag_n_drop,
     compare_full_flash_hex,
 )
 
@@ -116,7 +117,7 @@ def read_flash(file_path=None):
     "file_path",
     type=click.Path(),
     required=True,
-    help="Path to to the hex file to compare against the micro:bit.",
+    help="Path to the hex file to compare against the micro:bit.",
 )
 def compare_flash(file_path):
     """Compare the micro:bit flash contents with a hex file.
@@ -145,6 +146,69 @@ def compare_flash(file_path):
     else:
         click.echo("\nNo diffs between micro:bit flash and hex file :)")
         click.echo("Finished successfully.")
+
+
+@cli.command(
+    short_help="Copy the hex file into the MICROBIT drive, read back the "
+    "flash contents and compare them with a hex file."
+)
+@click.option(
+    "-i",
+    "--input_file_path",
+    "intput_file_path",
+    type=click.Path(),
+    required=True,
+    help="Path to the hex file to flash into the micro:bit.",
+)
+@click.option(
+    "-c",
+    "--compare_file_path",
+    "compare_file_path",
+    type=click.Path(),
+    required=True,
+    help="Path to the hex file to compare against the micro:bit flash.",
+)
+def flash_compare(compare_file_path, intput_file_path):
+    """Flash the micro:bit and compare its flash contents with a hex file.
+
+    Opens the default browser to display an HTML page with the comparison
+    output.
+    """
+    click.echo("Executing: Compare the micro:bit flash with a hex file.\n")
+    if not intput_file_path or not os.path.isfile(intput_file_path):
+        click.echo(
+            click.style(
+                "Abort: File {} does not exists".format(intput_file_path),
+                fg="red",
+            ),
+            err=True,
+        )
+        sys.exit(1)
+    if not compare_file_path or not os.path.isfile(compare_file_path):
+        click.echo(
+            click.style(
+                "Abort: File {} does not exists".format(compare_file_path),
+                fg="red",
+            ),
+            err=True,
+        )
+        sys.exit(1)
+
+    try:
+        click.echo(
+            "Copying the {} hex file into the MICROBIT drive...".format(
+                intput_file_path
+            )
+        )
+        flash_drag_n_drop(intput_file_path)
+        click.echo("Reading the micro:bit flash contents...")
+        compare_full_flash_hex(compare_file_path)
+    except Exception as e:
+        click.echo(click.style("Error: {}", fg="red").format(e), err=True)
+        sys.exit(1)
+    click.echo("Diff output loaded in default browser.")
+
+    click.echo("\nFinished successfully!")
 
 
 @cli.command()

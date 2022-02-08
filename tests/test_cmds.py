@@ -286,7 +286,7 @@ def test_read_python_code_empty(mock_read_flash):
 
 
 @mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
-@mock.patch("ubittool.cmds.extract_script", autospec=True)
+@mock.patch("ubittool.cmds.uflash.extract_script", autospec=True)
 def test_read_python_code_exception(mock_extract_script, mock_read_flash):
     """Check error thrown if failing to find Python code in flash."""
     data_bytes = bytes([x for x in range(64)])
