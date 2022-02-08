@@ -205,6 +205,7 @@ def _gen_diff_html(from_title, from_lines, to_title, to_lines):
         <title>Diff {from_title} vs. {to_title}</title>
         <style type="text/css">
             table {{font-family:Courier; border:medium}}
+            table table {{border: black 1px solid}}
             .diff_header {{background-color:#e0e0e0; padding:0px 10px}}
             td.diff_header {{text-align:right}}
             .diff_next {{background-color:#c0c0c0; padding:0px 10px}}
