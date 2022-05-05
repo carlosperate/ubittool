@@ -6,7 +6,7 @@ jobs:
   pyinstaller-build:
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-2016]
+        os: [ubuntu-18.04, macos-10.15, windows-2019]
       fail-fast: false
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
