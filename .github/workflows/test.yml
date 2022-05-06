@@ -7,7 +7,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        # The latest macOS 3.7 Python builds have tkinter issues
+        # https://github.com/actions/setup-python/issues/402
+        python-version: ["3.6", "3.7.9", "3.8", "3.9"]
       fail-fast: false
     name: Poetry - Py ${{ matrix.python-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -28,12 +30,12 @@ jobs:
       - name: Install ubittool dependencies (from lock file)
         if: matrix.python-version == 3.8 && runner.os == 'macOS'
         run: poetry install
-      - name: Prepare Ubuntu
+      - name: Prepare Ubuntu xvfb
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libxkbcommon-x11-0 xvfb
-      - name: Run tests
+      - name: Run tests (Ubuntu)
         if: runner.os == 'Linux'
         run: xvfb-run poetry run python make.py check
       - name: Run tests
@@ -46,7 +48,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        # The latest macOS 3.7 Python builds have tkinter issues
+        # https://github.com/actions/setup-python/issues/402
+        python-version: ["3.6", "3.7.9", "3.8", "3.9"]
       fail-fast: false
     name: Pipenv - Py ${{ matrix.python-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
