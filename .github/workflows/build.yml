@@ -29,7 +29,7 @@ jobs:
       # GitHub actions upload artifact breaks permissions, so tar workaround
       # https://github.com/actions/upload-artifact/issues/38
       - name: Tar files
-        run: tar -cvf ubittool-${{ runner.os }}.tar dist/
+        run: tar -cvf ubittool-${{ runner.os }}.tar dist
       - uses: actions/upload-artifact@v1
         with:
           name: ubittool-${{ runner.os }}
