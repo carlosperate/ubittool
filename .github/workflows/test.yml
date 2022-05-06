@@ -52,8 +52,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      # This is the last version to work correctly in the CI with Python 3.6
       - name: Install pipenv
-        run: pipx install pipenv
+        run: pipx install pipenv==2022.1.8
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -62,15 +63,15 @@ jobs:
       - name: Install ubittool dependencies (not locked)
         if: matrix.python-version != 3.8 || runner.os != 'macOS'
         run: pipenv install --dev -e . --skip-lock --python ${{ matrix.python-version }}
-      - name: Install ubittool dependencies (from lock file)
+      - name: Install ubittool dependencies (macOs, Py 3.8, from lock file)
         if: matrix.python-version == 3.8 && runner.os == 'macOS'
         run: pipenv install --dev -e . --python ${{ matrix.python-version }}
-      - name: Prepare Ubuntu
+      - name: Prepare Ubuntu xvfb
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libxkbcommon-x11-0 xvfb
-      - name: Run tests
+      - name: Run tests (Ubuntu)
         if: runner.os == 'Linux'
         run: xvfb-run pipenv run python make.py check
       - name: Run tests
