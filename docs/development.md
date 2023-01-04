@@ -8,43 +8,7 @@ nav_order: 4
 
 ## Installing from Source
 
-Originally this project used [pipenv](https://docs.pipenv.org/), however it is
-now transitioning to [poetry](https://poetry.eustace.io/), and in the mean time
-both methods will be available.
-
-### Installing with Pipenv
-
-You can install `pipenv` by simply doing:
-
-```
-$ pip install --user pipenv
-```
-
-Then clone the repository and install the development dependencies using
-`pipenv`:
-
-```
-$ git clone https://github.com/carlosperate/ubittool.git
-$ cd ubittool
-$ pipenv install --dev -e .
-```
-
-If you prefer to only install the dependencies necessary to run the tool and
-skip all the development dependencies you can replace the last command with:
-
-```
-$ pipenv install .
-```
-
-Then to run uBitTool:
-
-```
-$ pipenv run ubit --help
-```
-
-### Installing with Poetry
-
-Install poetry using their
+This project uses Poetry. You can install it using their
 [installation instructions](https://poetry.eustace.io/docs/#installation).
 
 Then clone the repository and install the development dependencies using
