@@ -9,26 +9,26 @@ jobs:
         os: [ubuntu-20.04, macos-11, windows-latest]
         # The latest macOS 3.7 Python builds have tkinter issues
         # https://github.com/actions/setup-python/issues/402
-        python-version: ["3.6", "3.7.9", "3.8", "3.9"]
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        exclude:
+        # The Tkinter shipped with Python 3.6 in GH Actions crashes in macOS 11
+        # Part of the error message: macOS 11 (1107) or later required, have instead 11 (1106)
+        # https://github.com/actions/setup-python/issues/580
+        - os: macos-11
+          python-version: "3.6"
       fail-fast: false
     name: Poetry - Py ${{ matrix.python-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - name: Install Poetry
         run: python -m pip install poetry
-      - name: Install ubittool dependencies (not locked)
-        if: matrix.python-version != 3.8 || runner.os != 'macOS'
-        run: |
-          rm poetry.lock
-          poetry install
-      - name: Install ubittool dependencies (from lock file)
-        if: matrix.python-version == 3.8 && runner.os == 'macOS'
+      - name: Install ubittool dependencies
         run: poetry install
       - name: Prepare Ubuntu xvfb
         if: runner.os == 'Linux'
@@ -42,4 +42,4 @@ jobs:
         if: runner.os != 'Linux'
         run: poetry run python make.py check
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
