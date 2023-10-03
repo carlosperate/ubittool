@@ -4,6 +4,7 @@
 [![CI: Tests](https://github.com/carlosperate/ubittool/actions/workflows/test.yml/badge.svg)](https://github.com/carlosperate/ubittool/actions/workflows/test.yml)
 [![CI: Build](https://github.com/carlosperate/ubittool/actions/workflows/build.yml/badge.svg)](https://github.com/carlosperate/ubittool/actions/workflows/build.yml)
 [![PyPI versions](https://img.shields.io/pypi/pyversions/ubittool.svg)](https://pypi.org/project/ubittool/)
+![Supported Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20macOs%20%7C%20Linux-blue)
 [![Code style Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![PyPI - License](https://img.shields.io/pypi/l/ubittool.svg)](LICENSE)
 

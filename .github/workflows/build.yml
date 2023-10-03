@@ -6,12 +6,12 @@ jobs:
   pyinstaller-build:
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-2019]
+        os: [ubuntu-20.04, macos-11, windows-2019]
       fail-fast: false
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
@@ -34,3 +34,15 @@ jobs:
         with:
           name: ubittool-${{ runner.os }}
           path: ubittool-${{ runner.os }}.tar
+      # Run the tests as the last step, we might still want the installed to be
+      # uploaded, but we should catch issues runnning the tests,
+      # specifically the GitHub Python builds with tkinker in macOS
+      - name: Run tests
+        if: runner.os != 'Linux'
+        run: poetry run python make.py check
+      - name: Run tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxkbcommon-x11-0 xvfb
+          xvfb-run poetry run python make.py check
