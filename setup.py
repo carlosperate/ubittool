@@ -52,6 +52,6 @@ setup(
         "Topic :: Education",
         "Topic :: Software Development :: Embedded Systems",
     ],
-    python_requires=">=3.6, <4",
+    python_requires=">=3.6, <3.10",
     entry_points={"console_scripts": ["ubit=ubittool.__main__:main"]},
 )
