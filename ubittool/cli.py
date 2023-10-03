@@ -9,6 +9,7 @@ import click
 from ubittool import __version__
 from ubittool.cmds import (
     read_flash_hex,
+    read_flash_uicr_hex,
     read_python_code,
     flash_drag_n_drop,
     compare_full_flash_hex,
@@ -93,6 +94,41 @@ def read_flash(file_path=None):
     click.echo("Reading the micro:bit flash contents...")
     try:
         flash_data = read_flash_hex()
+    except Exception as e:
+        click.echo(click.style("Error: {}", fg="red").format(e), err=True)
+        sys.exit(1)
+
+    if file_path:
+        click.echo("Saving the flash contents...")
+        with open(file_path, "w") as hex_file:
+            hex_file.write(flash_data)
+    else:
+        click.echo("Printing the flash contents")
+        click.echo("----------------------------------------")
+        click.echo(flash_data)
+        click.echo("----------------------------------------")
+
+    click.echo("\nFinished successfully!")
+
+
+@cli.command(
+    short_help="Read the micro:bit flash & UICR into a hex file or console."
+)
+@click.option(
+    "-f",
+    "--file_path",
+    "file_path",
+    type=click.Path(),
+    help="Path to the output file to write micro:bit flash content.",
+)
+def read_flash_uicr(file_path=None):
+    """Read the micro:bit flash & UICR contents into a hex file or console."""
+    click.echo("Executing: {}\n".format(read_flash.__doc__))
+    _file_checker("micro:bit flash hex", file_path)
+
+    click.echo("Reading the micro:bit flash contents...")
+    try:
+        flash_data = read_flash_uicr_hex()
     except Exception as e:
         click.echo(click.style("Error: {}", fg="red").format(e), err=True)
         sys.exit(1)

@@ -18,6 +18,7 @@ import tempfile
 import webbrowser
 from io import StringIO
 from threading import Timer
+from collections import namedtuple
 from difflib import HtmlDiff, unified_diff
 from traceback import format_exc
 
@@ -27,10 +28,13 @@ from intelhex import IntelHex
 from ubittool import programmer
 
 
+DataAndOffset = namedtuple("DataAndOffset", ["data", "offset"])
+
+
 #
 # Data format conversions
 #
-def _bytes_to_intel_hex(data, offset=0x0000):
+def _bytes_to_intel_hex(data_offsets):
     """Take a list of bytes and return a string in the Intel Hex format.
 
     :param data: List of integers, each representing a single byte.
@@ -38,11 +42,12 @@ def _bytes_to_intel_hex(data, offset=0x0000):
     :return: A string with the Intel Hex encoded data.
     """
     i_hex = IntelHex()
-    i_hex.frombytes(data, offset)
+    for do in data_offsets:
+        i_hex.frombytes(do.data, do.offset)
 
     fake_file = StringIO()
     try:
-        i_hex.tofile(fake_file, format="hex")
+        i_hex.tofile(fake_file, format="hex", byte_count=16)
     except IOError as e:
         sys.stderr.write("ERROR: File write: {}\n{}".format(fake_file, str(e)))
         return
@@ -52,7 +57,7 @@ def _bytes_to_intel_hex(data, offset=0x0000):
     return intel_hex_str
 
 
-def _bytes_to_pretty_hex(data, offset=0x0000):
+def _bytes_to_pretty_hex(data_offsets):
     """Convert a list of bytes to a nicely formatted ASCII decoded hex string.
 
     :param data: List of integers, each representing a single byte.
@@ -60,7 +65,8 @@ def _bytes_to_pretty_hex(data, offset=0x0000):
     :return: A string with the formatted hex data.
     """
     i_hex = IntelHex()
-    i_hex.frombytes(data, offset)
+    for do in data_offsets:
+        i_hex.frombytes(do.data, do.offset)
 
     fake_file = StringIO()
     try:
@@ -93,7 +99,21 @@ def read_flash_hex(decode_hex=False, **kwargs):
     with programmer.MicrobitMcu() as mb:
         start_address, flash_data = mb.read_flash(**kwargs)
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
-    return to_hex(flash_data, offset=start_address)
+    return to_hex([DataAndOffset(flash_data, start_address)])
+
+
+def read_flash_uicr_hex(decode_hex=False, **kwargs):
+    """TODO: Add docstrinsg."""
+    with programmer.MicrobitMcu() as mb:
+        flash_start, flash_data = mb.read_flash(**kwargs)
+        uicr_start, uicr_data = mb.read_uicr()
+    to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
+    return to_hex(
+        [
+            DataAndOffset(flash_data, flash_start),
+            DataAndOffset(uicr_data, uicr_start),
+        ]
+    )
 
 
 def read_ram_hex(decode_hex=False, **kwargs):
@@ -112,7 +132,7 @@ def read_ram_hex(decode_hex=False, **kwargs):
     with programmer.MicrobitMcu() as mb:
         start_address, ram_data = mb.read_ram(**kwargs)
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
-    return to_hex(ram_data, offset=start_address)
+    return to_hex([DataAndOffset(ram_data, start_address)])
 
 
 def read_uicr_hex(decode_hex=False):
@@ -123,7 +143,7 @@ def read_uicr_hex(decode_hex=False):
     with programmer.MicrobitMcu() as mb:
         start_address, uicr_data = mb.read_uicr()
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
-    return to_hex(uicr_data, offset=start_address)
+    return to_hex([DataAndOffset(uicr_data, start_address)])
 
 
 def read_uicr_customer_hex(decode_hex=False):
@@ -134,7 +154,7 @@ def read_uicr_customer_hex(decode_hex=False):
     with programmer.MicrobitMcu() as mb:
         start_address, uicr_data = mb.read_uicr_customer()
     to_hex = _bytes_to_pretty_hex if decode_hex else _bytes_to_intel_hex
-    return to_hex(uicr_data, offset=start_address)
+    return to_hex([DataAndOffset(uicr_data, start_address)])
 
 
 def read_micropython():
@@ -147,7 +167,7 @@ def read_micropython():
             address=programmer.MICROPYTHON_START,
             count=programmer.MICROPYTHON_END - programmer.MICROPYTHON_START,
         )
-    return _bytes_to_intel_hex(flash_data, offset=start_address)
+    return _bytes_to_intel_hex([DataAndOffset(flash_data, start_address)])
 
 
 def read_python_code():
@@ -160,7 +180,9 @@ def read_python_code():
             address=programmer.PYTHON_CODE_START,
             count=(programmer.PYTHON_CODE_END - programmer.PYTHON_CODE_START),
         )
-    py_code_hex = _bytes_to_intel_hex(flash_data, offset=start_address)
+    py_code_hex = _bytes_to_intel_hex(
+        [DataAndOffset(flash_data, start_address)]
+    )
     try:
         python_code = uflash.extract_script(py_code_hex)
     except Exception:

@@ -33,7 +33,9 @@ def test_bytes_to_intel_hex():
     data = [1, 2, 3, 4, 5]
     expected_hex_str = "\n".join([":050000000102030405EC", INTEL_HEX_EOF])
 
-    result = cmds._bytes_to_intel_hex(data=data)
+    result = cmds._bytes_to_intel_hex(
+        [cmds.DataAndOffset(data=data, offset=0)]
+    )
 
     assert expected_hex_str == result
 
@@ -46,7 +48,9 @@ def test_bytes_to_intel_hex_offset():
         [":020000040200F8", ":050000000102030405EC", INTEL_HEX_EOF]
     )
 
-    result = cmds._bytes_to_intel_hex(data=data, offset=offset)
+    result = cmds._bytes_to_intel_hex(
+        [cmds.DataAndOffset(data=data, offset=offset)]
+    )
 
     assert expected_hex_str == result
 
@@ -58,7 +62,9 @@ def test_bytes_to_intel_hex_io_error(mock_string_io, mock_stderr):
     data = [1, 2, 3, 4, 5]
     mock_string_io.return_value.write.side_effect = IOError()
 
-    result = cmds._bytes_to_intel_hex(data=data)
+    result = cmds._bytes_to_intel_hex(
+        [cmds.DataAndOffset(data=data, offset=0)]
+    )
 
     assert result is None
     assert mock_stderr.call_count == 1
@@ -69,7 +75,7 @@ def test_bytes_to_intel_hex_invalid_data():
     data = [1, 2, 3, 4, "500"]
 
     try:
-        cmds._bytes_to_intel_hex(data=data)
+        cmds._bytes_to_intel_hex([cmds.DataAndOffset(data=data, offset=0)])
     except Exception:
         # The exception that bubbles up from IntelHex is implementation detail
         # from that library, so it could be anything
@@ -86,7 +92,9 @@ def test_bytes_to_pretty_hex():
         "|................|\n"
     )
 
-    result = cmds._bytes_to_pretty_hex(data=data)
+    result = cmds._bytes_to_pretty_hex(
+        [cmds.DataAndOffset(data=data, offset=0)]
+    )
 
     assert expected == result
 
@@ -102,7 +110,9 @@ def test_bytes_to_pretty_hex_offset():
         "|.               |\n"
     )
 
-    result = cmds._bytes_to_pretty_hex(data=data, offset=offset)
+    result = cmds._bytes_to_pretty_hex(
+        [cmds.DataAndOffset(data=data, offset=offset)]
+    )
 
     assert expected == result
 
@@ -114,7 +124,9 @@ def test_bytes_to_pretty_hex_io_error(mock_string_io, mock_stderr):
     data = [1, 2, 3, 4, 5]
     mock_string_io.return_value.write.side_effect = IOError()
 
-    result = cmds._bytes_to_pretty_hex(data=data)
+    result = cmds._bytes_to_pretty_hex(
+        [cmds.DataAndOffset(data=data, offset=0)]
+    )
 
     assert result is None
     assert mock_stderr.call_count == 1
@@ -123,7 +135,9 @@ def test_bytes_to_pretty_hex_io_error(mock_string_io, mock_stderr):
 def test_bytes_to_pretty_hexinvalid_data():
     """Test there is an error thrown if the input data is invalid."""
     try:
-        cmds._bytes_to_pretty_hex(data=[1, 2, 3, 4, "500"])
+        cmds._bytes_to_pretty_hex(
+            [cmds.DataAndOffset(data=[1, 2, 3, 4, "500"], offset=0)]
+        )
     except Exception:
         # The exception that bubbles up from IntelHex is implementation detail
         # from that library, so it could be anything
