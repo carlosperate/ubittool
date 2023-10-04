@@ -154,6 +154,8 @@ class UBitToolWindow(tk.Tk):
     CMD_READ_UPY = "Read MicroPython runtime"
     CMD_READ_FLASH_HEX = "Read full flash contents (Intel Hex)"
     CMD_READ_FLASH_PRETTY = "Read full flash contents (Pretty Hex)"
+    CMD_READ_FLASH_UICR_HEX = "Read full flash + UICR (Intel Hex)"
+    CMD_READ_FLASH_UICR_PRETTY = "Read full flash + UICR (Pretty Hex)"
     CMD_READ_RAM_HEX = "Read full RAM contents (Intel Hex)"
     CMD_READ_RAM_PRETTY = "Read full RAM contents (Pretty Hex)"
     CMD_READ_UICR = "Read UICR"
@@ -238,6 +240,14 @@ class UBitToolWindow(tk.Tk):
             command=self.read_full_flash_pretty,
         )
         self.nrf_menu.add_command(
+            label=self.CMD_READ_FLASH_UICR_HEX,
+            command=self.read_full_flash_uicr_intel,
+        )
+        self.nrf_menu.add_command(
+            label=self.CMD_READ_FLASH_UICR_PRETTY,
+            command=self.read_full_flash_uicr_pretty,
+        )
+        self.nrf_menu.add_command(
             label=self.CMD_READ_RAM_HEX, command=self.read_ram_intel,
         )
         self.nrf_menu.add_command(
@@ -311,6 +321,25 @@ class UBitToolWindow(tk.Tk):
         """
         self.set_next_cmd(self.CMD_READ_FLASH_PRETTY)
         hex_str = cmds.read_flash_hex(decode_hex=True)
+        self.text_viewer.replace(hex_str)
+
+    def read_full_flash_uicr_intel(self):
+        """Read the full contents of flash + UICR.
+
+        Displays it as Intel Hex in the read-only text viewer.
+        """
+        self.set_next_cmd(self.CMD_READ_FLASH_UICR_HEX)
+        hex_str = cmds.read_flash_uicr_hex(decode_hex=False)
+        self.text_viewer.replace(hex_str)
+
+    def read_full_flash_uicr_pretty(self):
+        """Read the full contents of flash + UICR.
+
+        Displays it as a pretty hex and ASCII string in the read-only text
+        viewer.
+        """
+        self.set_next_cmd(self.CMD_READ_FLASH_UICR_PRETTY)
+        hex_str = cmds.read_flash_uicr_hex(decode_hex=True)
         self.text_viewer.replace(hex_str)
 
     def read_ram_intel(self):
