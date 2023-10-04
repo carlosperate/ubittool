@@ -15,7 +15,9 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          # Only Python version known to work with GH Action runner macOS with
+          # Tkinder & have a Windows build. More info in the test.yml file.
+          python-version: "3.9.13"
           cache: 'pip'
       - name: Install Poetry
         run: python -m pip install poetry

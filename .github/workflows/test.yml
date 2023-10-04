@@ -7,15 +7,25 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04, macos-11, windows-2019]
-        # Python 3.6 to 3.10 Python builds have tkinter issues in macOS
-        # https://github.com/actions/setup-python/issues/649
         python-version: ["3.6", "3.7", "3.8", "3.9"]
+        # There are issues with Tkinter & Python in the GH Actions environment
+        # So we control which exact minor versions are used, which are known to
+        # work, but unfortunately don't have a release for the Windows runner
+        # For Python 3.6 Tkinter crashes in all minor versions with error:
+        #   macOS 11 (1107) or later required, have instead 11 (1106)
+        #   https://github.com/actions/setup-python/issues/580
+        # The latest Python 3.7 to 3.10 minor releases have this tkinter error:
+        #   RuntimeError: tk.h version (8.5) doesn't match libtk.a version (8.6)
+        #   https://github.com/actions/setup-python/issues/649
         exclude:
-          # The Tkinter shipped with Python 3.6 in GH Actions crashes in macOS 11
-          # Part of the error message: macOS 11 (1107) or later required, have instead 11 (1106)
-          # https://github.com/actions/setup-python/issues/580
           - os: macos-11
-            python-version: "3.6"
+        include:
+          - os: macos-11
+            python-version: "3.7.15"
+          - os: macos-11
+            python-version: "3.8.15"
+          - os: macos-11
+            python-version: "3.9.15"
       fail-fast: false
     name: Py ${{ matrix.python-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
