@@ -220,39 +220,72 @@ class UBitToolWindow(tk.Tk):
             label=self.CMD_EXIT, command=self.app_quit, accelerator="Alt+F4"
         )
         menu.add_cascade(label="File", underline=0, menu=self.file_menu)
+
+        # Helper function to execute commands and display their output
+        def execute_cmd(cmd_str, cmd_function, *args, **kwargs):
+            self.set_next_cmd(cmd_str)
+            self.update()
+            output_str = cmd_function(*args, **kwargs)
+            self.text_viewer.replace(output_str)
+
         # Menu item micro:bit
         self.ubit_menu = tk.Menu(menu, tearoff=0)
         self.ubit_menu.add_command(
-            label=self.CMD_READ_CODE, command=self.read_python_code
+            label=self.CMD_READ_CODE,
+            command=lambda: execute_cmd(
+                self.CMD_READ_CODE, cmds.read_python_code
+            ),
         )
         self.ubit_menu.add_command(
-            label=self.CMD_READ_UPY, command=self.read_micropython
+            label=self.CMD_READ_UPY,
+            command=lambda: execute_cmd(
+                self.CMD_READ_UPY, cmds.read_micropython
+            ),
         )
         menu.add_cascade(label="micro:bit", underline=0, menu=self.ubit_menu)
         # Menu item nrf
         self.nrf_menu = tk.Menu(menu, tearoff=0)
         self.nrf_menu.add_command(
-            label=self.CMD_READ_FLASH_HEX, command=self.read_full_flash_intel
+            label=self.CMD_READ_FLASH_HEX,
+            command=lambda: execute_cmd(
+                self.CMD_READ_FLASH_HEX, cmds.read_flash_hex, decode_hex=False
+            ),
         )
         self.nrf_menu.add_command(
             label=self.CMD_READ_FLASH_PRETTY,
-            command=self.read_full_flash_pretty,
+            command=lambda: execute_cmd(
+                self.CMD_READ_FLASH_PRETTY, cmds.read_flash_hex, True
+            ),
         )
         self.nrf_menu.add_command(
-            label=self.CMD_READ_RAM_HEX, command=self.read_ram_intel,
+            label=self.CMD_READ_RAM_HEX,
+            command=lambda: execute_cmd(
+                self.CMD_READ_RAM_HEX, cmds.read_ram_hex, decode_hex=False
+            ),
         )
         self.nrf_menu.add_command(
-            label=self.CMD_READ_RAM_PRETTY, command=self.read_ram_pretty,
+            label=self.CMD_READ_RAM_PRETTY,
+            command=lambda: execute_cmd(
+                self.CMD_READ_RAM_PRETTY, cmds.read_ram_hex, decode_hex=True
+            ),
         )
         self.nrf_menu.add_command(
-            label=self.CMD_READ_UICR, command=self.read_uicr
+            label=self.CMD_READ_UICR,
+            command=lambda: execute_cmd(
+                self.CMD_READ_UICR, cmds.read_uicr_hex, decode_hex=False
+            ),
         )
         self.nrf_menu.add_command(
-            label=self.CMD_READ_UICR_CUSTOMER, command=self.read_uicr_customer
+            label=self.CMD_READ_UICR_CUSTOMER,
+            command=lambda: execute_cmd(
+                self.CMD_READ_UICR_CUSTOMER, cmds.read_uicr_customer_hex, False
+            ),
         )
         self.nrf_menu.add_command(
             label=self.CMD_READ_FLASH_UICR_HEX,
-            command=self.read_full_flash_uicr_intel,
+            command=lambda: execute_cmd(
+                self.CMD_READ_FLASH_UICR_HEX, cmds.read_flash_uicr_hex, False
+            ),
         )
         self.nrf_menu.add_separator()
         self.nrf_menu.add_command(
@@ -280,89 +313,6 @@ class UBitToolWindow(tk.Tk):
         self.text_viewer.clear()
         self.console.clear()
         self.cmd_title.set_text(cmd_name)
-
-    def read_python_code(self):
-        """Read the Python user code from the micro:bit flash.
-
-        Displays it as text code in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_CODE)
-        python_code = cmds.read_python_code()
-        self.text_viewer.replace(python_code)
-
-    def read_micropython(self):
-        """Read the MicroPython interpreter from the micro:bit flash.
-
-        Displays it as Intel Hex in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_UPY)
-        hex_str = cmds.read_micropython()
-        self.text_viewer.replace(hex_str)
-
-    def read_full_flash_intel(self):
-        """Read the full contents of flash.
-
-        Displays it as Intel Hex in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_FLASH_HEX)
-        hex_str = cmds.read_flash_hex(decode_hex=False)
-        self.text_viewer.replace(hex_str)
-
-    def read_full_flash_pretty(self):
-        """Read the full contents of flash.
-
-        Displays it as a pretty hex and ASCII string in the read-only text
-        viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_FLASH_PRETTY)
-        hex_str = cmds.read_flash_hex(decode_hex=True)
-        self.text_viewer.replace(hex_str)
-
-    def read_full_flash_uicr_intel(self):
-        """Read the full contents of flash + UICR.
-
-        Displays it as Intel Hex in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_FLASH_UICR_HEX)
-        hex_str = cmds.read_flash_uicr_hex(decode_hex=False)
-        self.text_viewer.replace(hex_str)
-
-    def read_ram_intel(self):
-        """Read the full contents of RAM.
-
-        Displays it as Intel Hex in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_RAM_HEX)
-        ram_hex_str = cmds.read_ram_hex(decode_hex=False)
-        self.text_viewer.replace(ram_hex_str)
-
-    def read_ram_pretty(self):
-        """Read the full contents of RAM.
-
-        Displays it as a pretty hex and ASCII string in the read-only text
-        viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_RAM_PRETTY)
-        ram_hex_str = cmds.read_ram_hex(decode_hex=True)
-        self.text_viewer.replace(ram_hex_str)
-
-    def read_uicr(self):
-        """Read the full contents of UICR.
-
-        Displays it as Intel Hex in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_UICR)
-        uicr_hex_str = cmds.read_uicr_hex(decode_hex=True)
-        self.text_viewer.replace(uicr_hex_str)
-
-    def read_uicr_customer(self):
-        """Read the Customer section of the UICR.
-
-        Displays it as Intel Hex in the read-only text viewer.
-        """
-        self.set_next_cmd(self.CMD_READ_UICR_CUSTOMER)
-        uicr_hex_str = cmds.read_uicr_customer_hex(decode_hex=True)
-        self.text_viewer.replace(uicr_hex_str)
 
     def compare_full_flash_intel(self):
         """Compare a hex file with the micro:bit flash.
