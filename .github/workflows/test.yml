@@ -39,7 +39,7 @@ jobs:
       - name: Install Poetry
         run: python -m pip install poetry
       - name: Install ubittool dependencies
-        run: poetry install
+        run: poetry install --verbose
       - name: Prepare Ubuntu xvfb
         if: runner.os == 'Linux'
         run: |
