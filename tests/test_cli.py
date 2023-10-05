@@ -370,6 +370,80 @@ def test_compare_flash_no_file():
     assert "Error: Missing option '-f' / '--file_path'." in result.output
 
 
+@mock.patch("ubittool.cli.os.path.isfile", autospec=True)
+@mock.patch("ubittool.cli.flash_drag_n_drop", autospec=True)
+@mock.patch("ubittool.cli.compare_full_flash_hex", autospec=True)
+def test_flash_compare(
+    mock_compare, mock_flash, mock_isfile, check_no_board_connected
+):
+    """Test the compare-flash command."""
+    file_input = "random_input_file.hex"
+    file_compare = "compare_file.hex"
+    mock_isfile.return_value = True
+    mock_compare.return_value = 0
+    runner = CliRunner()
+
+    results = [
+        runner.invoke(
+            cli.flash_compare, ["-i", file_input, "-c", file_compare]
+        ),
+        runner.invoke(
+            cli.flash_compare,
+            [
+                "--input_file_path",
+                file_input,
+                "--compare_file_path",
+                file_compare,
+            ],
+        ),
+    ]
+
+    assert mock_compare.call_count == len(results)
+    for result in results:
+        assert file_input + "' file to MICROBIT drive" in result.output
+        assert "Diff output loaded in the default browser" in result.output
+        assert "Finished successfully" in result.output
+        assert result.exit_code == 0, "Exit code 0"
+
+
+@mock.patch("ubittool.cli.os.path.isfile", autospec=True)
+def test_flash_compare_no_file(mock_isfile, check_no_board_connected):
+    """Test the compare-flash command."""
+    mock_isfile.side_effect = [False, True, False]
+    runner = CliRunner()
+
+    results = [
+        runner.invoke(
+            cli.flash_compare,
+            ["-i", "does_not_exist.hex", "-c", "does_not_matter.hex"],
+        ),
+        runner.invoke(
+            cli.flash_compare,
+            ["-i", "exists.hex", "-c", "does_not_exist.hex"],
+        ),
+    ]
+
+    for result in results:
+        assert "does not exists" in result.output
+        assert result.exit_code != 0, "Exit code non-zero"
+
+
+@mock.patch("ubittool.cli.os.path.isfile", autospec=True)
+def test_flash_compare_exception(mock_isfile, check_no_board_connected):
+    """Test the compare-flash command."""
+    file_input = "random_input_file.hex"
+    file_compare = "compare_file.hex"
+    mock_isfile.return_value = True
+    runner = CliRunner()
+
+    result = runner.invoke(
+        cli.flash_compare, ["-i", file_input, "-c", file_compare]
+    )
+
+    assert result.exit_code != 0, "Exit code non-zero"
+    assert "Error: Could not find a MICROBIT" in result.output
+
+
 @mock.patch("ubittool.gui.open_gui", autospec=True)
 def test_gui(mock_open_gui, check_no_board_connected):
     """Test the gui command."""
