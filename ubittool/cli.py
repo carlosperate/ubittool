@@ -112,7 +112,7 @@ def read_flash(file_path=None):
 
 
 @cli.command(
-    short_help="Read the micro:bit flash & UICR into a hex file or console."
+    short_help="Read the micro:bit flash and UICR into a hex file or console."
 )
 @click.option(
     "-f",
@@ -122,11 +122,11 @@ def read_flash(file_path=None):
     help="Path to the output file to write micro:bit flash content.",
 )
 def read_flash_uicr(file_path=None):
-    """Read the micro:bit flash & UICR contents into a hex file or console."""
-    click.echo("Executing: {}\n".format(read_flash.__doc__))
-    _file_checker("micro:bit flash hex", file_path)
+    """Read the micro:bit flash and UICR into a hex file or console."""
+    click.echo("Executing: {}\n".format(read_flash_uicr.__doc__))
+    _file_checker("micro:bit flash and UICR hex", file_path)
 
-    click.echo("Reading the micro:bit flash contents...")
+    click.echo("Reading the micro:bit flash and UICR contents...")
     try:
         flash_data = read_flash_uicr_hex()
     except Exception as e:
@@ -134,11 +134,11 @@ def read_flash_uicr(file_path=None):
         sys.exit(1)
 
     if file_path:
-        click.echo("Saving the flash contents...")
+        click.echo("Saving the flash and UICR contents...")
         with open(file_path, "w") as hex_file:
             hex_file.write(flash_data)
     else:
-        click.echo("Printing the flash contents")
+        click.echo("Printing the flash and UICR contents")
         click.echo("----------------------------------------")
         click.echo(flash_data)
         click.echo("----------------------------------------")

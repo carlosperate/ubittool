@@ -178,6 +178,24 @@ def test_read_flash_hex_decoded(mock_read_flash):
     assert result == expected
 
 
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_uicr", autospec=True)
+@mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
+def test_read_flash_uicr_hex(mock_read_flash, mock_read_uicr):
+    """Test read_flash_uicr_hex() with default arguments."""
+    flash_data_bytes = bytes([x for x in range(256)] * 4)
+    mock_read_flash.return_value = (0, flash_data_bytes)
+    uicr_data_bytes = bytes([x for x in range(64)])
+    mock_read_uicr.return_value = (0x10001000, uicr_data_bytes)
+    intel_hex = IntelHex()
+    intel_hex.frombytes(flash_data_bytes)
+    intel_hex.frombytes(uicr_data_bytes, 0x10001000)
+    flash_and_uicr_ihex_str = ihex_to_str(intel_hex)
+
+    result = cmds.read_flash_uicr_hex()
+
+    assert result == flash_and_uicr_ihex_str
+
+
 @mock.patch.object(cmds.programmer.MicrobitMcu, "read_flash", autospec=True)
 def test_read_flash_hex_non_zero_address(mock_read_flash):
     """Test read_flash_hex() with given address and count."""

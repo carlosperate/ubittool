@@ -103,7 +103,18 @@ def read_flash_hex(decode_hex=False, **kwargs):
 
 
 def read_flash_uicr_hex(decode_hex=False, **kwargs):
-    """TODO: Add docstrinsg."""
+    """Read data from the flash memory and the UICR and return as a hex string.
+
+    Read as a number of bytes of the micro:bit flash from the given address.
+    Can return it in Intel Hex format or a pretty formatted and decoded hex
+    string.
+
+    :param address: Integer indicating the start address to read.
+    :param count: Integer indicating hoy many bytes to read.
+    :param decode_hex: True selects nice decoded format, False selects Intel
+            Hex format.
+    :return: String with the hex formatted as indicated.
+    """
     with programmer.MicrobitMcu() as mb:
         flash_start, flash_data = mb.read_flash(**kwargs)
         uicr_start, uicr_data = mb.read_uicr()

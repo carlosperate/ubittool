@@ -92,7 +92,7 @@ def test_menu_bar_presence(gui_window):
     ), "Read Runtime present in micro:bit menu"
 
     nrf_labels = get_labels(menu_bar.winfo_children()[nrf_index])
-    assert len(nrf_labels) == 10, "nrf menu has 8 items"
+    assert len(nrf_labels) == 9, "nrf menu has 8 items"
     assert (
         "Read full flash contents (Intel Hex)" == nrf_labels[0]
     ), "Read Flash Hex present in nrf menu"
@@ -100,26 +100,23 @@ def test_menu_bar_presence(gui_window):
         "Read full flash contents (Pretty Hex)" == nrf_labels[1]
     ), "Read Flash UICR Pretty present in nrf menu"
     assert (
-        "Read full flash + UICR (Intel Hex)" == nrf_labels[2]
-    ), "Read Flash UICR Hex present in nrf menu"
-    assert (
-        "Read full flash + UICR (Pretty Hex)" == nrf_labels[3]
-    ), "Read Flash Pretty present in nrf menu"
-    assert (
-        "Read full RAM contents (Intel Hex)" == nrf_labels[4]
+        "Read full RAM contents (Intel Hex)" == nrf_labels[2]
     ), "Read RAM Hex present in nrf menu"
     assert (
-        "Read full RAM contents (Pretty Hex)" == nrf_labels[5]
+        "Read full RAM contents (Pretty Hex)" == nrf_labels[3]
     ), "Read RAM Pretty present in nrf menu"
-    assert "Read UICR" == nrf_labels[6], "Read UICR present in nrf menu"
+    assert "Read UICR" == nrf_labels[4], "Read UICR present in nrf menu"
     assert (
-        "Read UICR Customer" == nrf_labels[7]
+        "Read UICR Customer" == nrf_labels[5]
     ), "Read UICR Customer present in nrf menu"
     assert (
-        "Compare full flash contents (Intel Hex)" == nrf_labels[8]
+        "Read full flash + UICR" == nrf_labels[6]
+    ), "Read Flash UICR Hex present in nrf menu"
+    assert (
+        "Compare full flash contents (Intel Hex)" == nrf_labels[7]
     ), "Compare Flash present in nrf menu"
     assert (
-        "Compare UICR Customer (Intel Hex)" == nrf_labels[9]
+        "Compare UICR Customer (Intel Hex)" == nrf_labels[8]
     ), "Compare UICR in nrf menu"
 
 
@@ -193,7 +190,7 @@ def test_read_full_flash_uicr_intel(mock_read_flash_uicr_hex, gui_window):
     flash_data = "The full flash in Intel Hex format data"
     mock_read_flash_uicr_hex.return_value = flash_data
 
-    gui_window.nrf_menu.invoke(2)
+    gui_window.nrf_menu.invoke(6)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert flash_data == editor_content
@@ -203,29 +200,13 @@ def test_read_full_flash_uicr_intel(mock_read_flash_uicr_hex, gui_window):
     )
 
 
-@mock.patch("ubittool.gui.cmds.read_flash_uicr_hex", autospec=True)
-def test_read_full_flash_uicr_pretty(mock_read_flash_uicr_hex, gui_window):
-    """Tests the READ_FLASH_PRETTY command."""
-    flash_data = "The full flash in pretty format data"
-    mock_read_flash_uicr_hex.return_value = flash_data
-
-    gui_window.nrf_menu.invoke(3)
-
-    editor_content = gui_window.text_viewer.get(1.0, "end-1c")
-    assert flash_data == editor_content
-    assert mock_read_flash_uicr_hex.call_count == 1
-    assert gui_window.cmd_title.cmd_title.get() == "Command: {}".format(
-        gui_window.CMD_READ_FLASH_UICR_PRETTY
-    )
-
-
 @mock.patch("ubittool.gui.cmds.read_ram_hex", autospec=True)
 def test_read_ram_intel(mock_read_ram_hex, gui_window):
     """Tests the CMD_READ_RAM_HEX command."""
     ram_data = "The full RAM in Intel Hex format data"
     mock_read_ram_hex.return_value = ram_data
 
-    gui_window.nrf_menu.invoke(4)
+    gui_window.nrf_menu.invoke(2)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert ram_data == editor_content
@@ -241,7 +222,7 @@ def test_read_ram_pretty(mock_read_ram_hex, gui_window):
     ram_data = "The full RAM in pretty format data"
     mock_read_ram_hex.return_value = ram_data
 
-    gui_window.nrf_menu.invoke(5)
+    gui_window.nrf_menu.invoke(3)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert ram_data == editor_content
@@ -257,7 +238,7 @@ def test_read_uicr(mock_read_uicr, gui_window):
     uicr_data = "The UICR data"
     mock_read_uicr.return_value = uicr_data
 
-    gui_window.nrf_menu.invoke(6)
+    gui_window.nrf_menu.invoke(4)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert uicr_data == editor_content
@@ -273,7 +254,7 @@ def test_read_uicr_customer(mock_read_uicr_customer, gui_window):
     uicr_data = "The UICR CUSTOMER data"
     mock_read_uicr_customer.return_value = uicr_data
 
-    gui_window.nrf_menu.invoke(7)
+    gui_window.nrf_menu.invoke(5)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert uicr_data == editor_content
@@ -288,10 +269,10 @@ def test_read_uicr_customer(mock_read_uicr_customer, gui_window):
 def test_compare_full_flash_intel(
     mock_compare_full_flash, mock_open_file, gui_window
 ):
-    """Tests the READ_UICR command."""
+    """Tests the COMPARE_FULL_FLASH command."""
     mock_open_file.return_value = "/some/path"
 
-    gui_window.nrf_menu.invoke(9)
+    gui_window.nrf_menu.invoke(8)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert mock_compare_full_flash.call_count == 1
@@ -309,7 +290,7 @@ def test_compare_uicr_customer(
     """Tests the READ_UICR command."""
     mock_open_file.return_value = "/some/path"
 
-    gui_window.nrf_menu.invoke(10)
+    gui_window.nrf_menu.invoke(9)
 
     editor_content = gui_window.text_viewer.get(1.0, "end-1c")
     assert mock_compare_uicr_customer.call_count == 1

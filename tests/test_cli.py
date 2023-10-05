@@ -210,6 +210,72 @@ def test_read_flash_path_no_board(check_no_board_connected):
     assert not os.path.isfile(file_name), "File does not exist"
 
 
+@mock.patch("ubittool.cli.read_flash_uicr_hex", autospec=True)
+def test_read_flash_uicr(mock_read_flash_uicr_hex, check_no_board_connected):
+    """Test the read-flash-uicr command without a file option."""
+    flash_hex_content = "Intel Hex lines here"
+    mock_read_flash_uicr_hex.return_value = flash_hex_content
+    runner = CliRunner()
+
+    result = runner.invoke(cli.read_flash_uicr)
+
+    assert (
+        "micro:bit flash and UICR hex will be output to console."
+        in result.output
+    )
+    assert "Printing the flash and UICR contents" in result.output
+    assert flash_hex_content in result.output
+    assert "Finished successfully" in result.output
+    assert result.exit_code == 0
+
+
+def test_read_flash_uicr_no_board(check_no_board_connected):
+    """Test the read-flash-uicr command when no board is connected."""
+    runner = CliRunner()
+
+    result = runner.invoke(cli.read_flash_uicr)
+
+    assert result.exit_code != 0
+    assert (
+        "micro:bit flash and UICR hex will be output to console."
+        in result.output
+    )
+    assert "Did not find any connected boards." in result.output
+
+
+@mock.patch("ubittool.cli.read_flash_uicr_hex", autospec=True)
+def test_read_flash_uicr_path(
+    mock_read_flash_uicr_hex, check_no_board_connected
+):
+    """Test the read-code-uicr command with a file option."""
+    flash_hex_content = "Intel Hex lines here"
+    mock_read_flash_uicr_hex.return_value = flash_hex_content
+    file_name = "thisfile.py"
+    runner = CliRunner()
+
+    with mock.patch("ubittool.cli.open", mock.mock_open()) as m_open:
+        results = [
+            runner.invoke(cli.read_flash_uicr, ["--file_path", file_name])
+        ]
+    with mock.patch("ubittool.cli.open", mock.mock_open()) as m_open2:
+        results.append(runner.invoke(cli.read_flash_uicr, ["-f", file_name]))
+
+    m_open.assert_called_once_with(file_name, "w")
+    m_open2.assert_called_once_with(file_name, "w")
+    m_open().write.assert_called_once_with(flash_hex_content)
+    m_open2().write.assert_called_once_with(flash_hex_content)
+    for result in results:
+        assert (
+            "micro:bit flash and UICR hex will be written to: {}".format(
+                file_name
+            )
+            in result.output
+        )
+        assert "Saving the flash and UICR contents..." in result.output
+        assert "Finished successfully" in result.output
+        assert result.exit_code == 0
+
+
 @mock.patch("ubittool.cli.os.path.isfile", autospec=True)
 @mock.patch("ubittool.cli.compare_full_flash_hex", autospec=True)
 def test_compare_flash(mock_compare, mock_isfile, check_no_board_connected):
