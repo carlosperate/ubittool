@@ -286,8 +286,8 @@ def test_compare_flash(mock_compare, mock_isfile, check_no_board_connected):
     runner = CliRunner()
 
     results = [
-        runner.invoke(cli.compare_flash, ["-f", file_name]),
-        runner.invoke(cli.compare_flash, ["--file_path", file_name]),
+        runner.invoke(cli.compare, ["-f", file_name]),
+        runner.invoke(cli.compare, ["--file_path", file_name]),
     ]
 
     assert mock_compare.call_count == len(results)
@@ -309,8 +309,8 @@ def test_compare_flash_diffs(
     runner = CliRunner()
 
     results = [
-        runner.invoke(cli.compare_flash, ["-f", file_name]),
-        runner.invoke(cli.compare_flash, ["--file_path", file_name]),
+        runner.invoke(cli.compare, ["-f", file_name]),
+        runner.invoke(cli.compare, ["--file_path", file_name]),
     ]
 
     assert mock_compare.call_count == len(results)
@@ -335,8 +335,8 @@ def test_compare_flash_no_board(mock_isfile, check_no_board_connected):
         "ubittool.cmds.open", mock.mock_open(read_data=file_content)
     ) as m_open:
         results = [
-            runner.invoke(cli.compare_flash, ["-f", file_name]),
-            runner.invoke(cli.compare_flash, ["--file_path", file_name]),
+            runner.invoke(cli.compare, ["-f", file_name]),
+            runner.invoke(cli.compare, ["--file_path", file_name]),
         ]
 
     assert m_open.call_count == len(results)
@@ -351,8 +351,8 @@ def test_compare_flash_invalid_file():
     runner = CliRunner()
 
     results = [
-        runner.invoke(cli.compare_flash, ["--file_path", file_name]),
-        runner.invoke(cli.compare_flash, ["-f", file_name]),
+        runner.invoke(cli.compare, ["--file_path", file_name]),
+        runner.invoke(cli.compare, ["-f", file_name]),
     ]
 
     for result in results:
@@ -364,7 +364,7 @@ def test_compare_flash_no_file():
     """Test there is an error when compare-flash doesn't have a file arg."""
     runner = CliRunner()
 
-    result = runner.invoke(cli.compare_flash)
+    result = runner.invoke(cli.compare)
 
     assert result.exit_code != 0, "Exit code non-zero"
     assert "Error: Missing option '-f' / '--file_path'." in result.output

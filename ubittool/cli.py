@@ -155,7 +155,7 @@ def read_flash_uicr(file_path=None):
     required=True,
     help="Path to the hex file to compare against the micro:bit.",
 )
-def compare_flash(file_path):
+def compare(file_path):
     """Compare the micro:bit flash contents with a hex file.
 
     Opens the default browser to display an HTML page with the comparison
@@ -185,8 +185,8 @@ def compare_flash(file_path):
 
 
 @cli.command(
-    short_help="Copy the hex file into the MICROBIT drive, read back the "
-    "flash contents and compare them with a hex file."
+    short_help="Copy a hex file into the MICROBIT drive, read back the "
+    "flash contents, and compare them with a hex file."
 )
 @click.option(
     "-i",
