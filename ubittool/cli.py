@@ -15,6 +15,15 @@ from ubittool.cmds import (
     compare_full_flash_hex,
 )
 
+# GUI depends on tkinter, which could be packaged separately from Python or
+# excluded from CLI-only packing, but the other CLI commands should still work
+try:
+    from ubittool.gui import open_gui
+
+    GUI_AVAILABLE = True
+except ImportError:  # pragma: no cover
+    GUI_AVAILABLE = False
+
 
 @click.group(help="uBitTool v{}.\n\n{}".format(__version__, __doc__))
 def cli():
@@ -238,14 +247,12 @@ def flash_compare(compare_file_path, input_file_path):
     click.echo("\nFinished successfully!")
 
 
-@cli.command()
-def gui():
-    """Launch the GUI version of this app (has more options)."""
-    # GUI depends on tkinter, which could be packaged separately from Python
-    # for users that only want the CLI we can still use all the other commands
-    from ubittool.gui import open_gui
+if GUI_AVAILABLE:
 
-    open_gui()
+    @cli.command()
+    def gui():
+        """Launch the GUI version of this app (has more options)."""
+        open_gui()
 
 
 def main():

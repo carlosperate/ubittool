@@ -444,7 +444,7 @@ def test_flash_compare_exception(mock_isfile, check_no_board_connected):
     assert "Error: Could not find a MICROBIT" in result.output
 
 
-@mock.patch("ubittool.gui.open_gui", autospec=True)
+@mock.patch("ubittool.cli.open_gui", autospec=True)
 def test_gui(mock_open_gui, check_no_board_connected):
     """Test the gui command."""
     runner = CliRunner()
