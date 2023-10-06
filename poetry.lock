@@ -1,6 +1,6 @@
 [[package]]
 name = "altgraph"
-version = "0.17.3"
+version = "0.17.4"
 description = "Python graph (network) package"
 category = "dev"
 optional = false
@@ -145,7 +145,7 @@ pydocstyle = ">=2.1"
 
 [[package]]
 name = "future"
-version = "0.18.2"
+version = "0.18.3"
 description = "Clean single-source support for Python 3 and 2"
 category = "main"
 optional = false
@@ -153,7 +153,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "hidapi"
-version = "0.12.0.post2"
+version = "0.14.0"
 description = "A Cython interface to the hidapi from https://github.com/libusb/hidapi"
 category = "main"
 optional = false
@@ -204,7 +204,7 @@ sortedcontainers = ">=2.0,<3.0"
 
 [[package]]
 name = "macholib"
-version = "1.16.2"
+version = "1.16.3"
 description = "Mach-O header analysis and editing"
 category = "dev"
 optional = false
@@ -242,14 +242,11 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [[package]]
 name = "pefile"
-version = "2022.5.30"
+version = "2023.2.7"
 description = "Python PE parsing module"
 category = "dev"
 optional = false
 python-versions = ">=3.6.0"
-
-[package.dependencies]
-future = "*"
 
 [[package]]
 name = "pluggy"
@@ -284,7 +281,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pydocstyle"
-version = "6.2.2"
+version = "6.3.0"
 description = "Python docstring style checker"
 category = "dev"
 optional = false
@@ -299,7 +296,7 @@ toml = ["tomli (>=1.2.3)"]
 
 [[package]]
 name = "pyelftools"
-version = "0.29"
+version = "0.30"
 description = "Library for analyzing ELF files and DWARF debugging information"
 category = "main"
 optional = false
@@ -431,11 +428,11 @@ python-versions = "*"
 
 [[package]]
 name = "pywin32-ctypes"
-version = "0.2.0"
-description = ""
+version = "0.2.2"
+description = "A (partial) reimplementation of pywin32 using ctypes/cffi"
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 
 [[package]]
 name = "pywinusb"
@@ -455,7 +452,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [[package]]
 name = "regex"
-version = "2022.10.31"
+version = "2023.8.8"
 description = "Alternative regular expression module, to replace re."
 category = "dev"
 optional = false
@@ -519,7 +516,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "typed-ast"
-version = "1.5.4"
+version = "1.5.5"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
 category = "dev"
 optional = false
@@ -568,8 +565,8 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.6,<3.11"
-content-hash = "7142866c6ace724d852786ff29fd0abcf6f53b5746fd096fab2dd3034ebe9022"
+python-versions = "^3.6,<3.10"
+content-hash = "efef95541cd9a2baf909d24a6d96f475c91f72e58a80c66cc9791fd71f8b5f10"
 
 [metadata.files]
 altgraph = []
