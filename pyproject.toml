@@ -31,7 +31,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6,<3.10"
+python = "^3.6,<3.11"
 IntelHex = "^2.2.1"
 uflash = ">=1.1.0,<1.2.1"
 # This version of PyOCD fails in Python 3.10+
