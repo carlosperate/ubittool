@@ -44,7 +44,7 @@ uBitTool in the terminal:
 $ ubit --help
 Usage: ubit [OPTIONS] COMMAND [ARGS]...
 
-  uBitTool v0.6.0.
+  uBitTool v7.0.
 
   CLI and GUI utility to read content from the micro:bit.
 
@@ -52,10 +52,15 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  compare-flash  Compare the micro:bit flash contents with a hex file.
-  gui            Launch the GUI version of this app (has more options).
-  read-code      Extract the MicroPython code to a file or print it.
-  read-flash     Read the micro:bit flash contents into a hex file or...
+  compare          Compare the micro:bit flash contents with a hex file.
+  flash-compare    Copy a hex file into the MICROBIT drive, read back the
+                   flash contents, and compare them with a hex file.
+  gui              Launch the GUI version of this app (has more options).
+  read-code        Extract the MicroPython code to a file or print it.
+  read-flash       Read the micro:bit flash contents into a hex file or
+                   console.
+  read-flash-uicr  Read the micro:bit flash and UICR into a hex file or
+                   console.
 ```
 
 ## Run

@@ -5,29 +5,29 @@ build-backend = "poetry.core.masonry.api"
 # Poetry settings
 [tool.poetry]
 name = "ubittool"
-version = "0.6.0"
+version = "0.7.0"
 description = "Tool to interface with the BBC micro:bit."
 authors = ["Carlos Pereira Atencio <carlosperate@embeddedlog.com>"]
 license = "MIT"
 homepage = "https://carlosperate.github.io/ubittool/"
 repository = "https://github.com/carlosperate/ubittool/"
-documentation =  "https://carlosperate.github.io/ubittool/"
+documentation = "https://carlosperate.github.io/ubittool/"
 readme = "README.md"
 keywords = ["microbit", "micro:bit", "bbcmicrobit", "ubittool"]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Environment :: MacOS X",
-    "Environment :: Win32 (MS Windows)",
-    "Environment :: X11 Applications",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Education",
-    "Intended Audience :: End Users/Desktop",
-    "Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
-    "Operating System :: POSIX",
-    "Topic :: Education",
-    "Topic :: Software Development :: Embedded Systems",
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Environment :: MacOS X",
+  "Environment :: Win32 (MS Windows)",
+  "Environment :: X11 Applications",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Topic :: Education",
+  "Topic :: Software Development :: Embedded Systems",
 ]
 
 [tool.poetry.dependencies]
@@ -49,10 +49,10 @@ pywin32-ctypes = { version = "^0.2.0", platform = "windows" }
 setuptools_scm = "*"
 # Linting
 flake8 = "*"
-flake8-bugbear = {version = "*", python = "^3.5" }
+flake8-bugbear = { version = "*", python = "^3.5" }
 flake8-builtins = "*"
 flake8-docstrings = "*"
-black = {version = "19.10b0", python = "^3.6" }
+black = { version = "19.10b0", python = "^3.6" }
 # Tests
 pytest = "*"
 pytest-cov = "*"
