@@ -5,6 +5,7 @@ import os
 from io import StringIO
 from unittest import mock
 
+import pytest
 from intelhex import IntelHex
 
 from ubittool import cmds
@@ -435,3 +436,29 @@ def test_compare_uicr_customer(
         [file_hex_content],
     )
     assert mock_open_temp_html.call_count == 1
+
+
+@mock.patch("ubittool.cmds.os.fsync", autospec=True)
+@mock.patch("ubittool.cmds.uflash.find_microbit", autospec=True)
+def test_flash_drag_n_drop(mock_find_microbit, mock_fsync):
+    """Check the file copy flash function."""
+    fake_mb_path = "./not_a_real_MICROBIT_path"
+    fake_hex_path = "not_a_real.hex"
+    mock_find_microbit.return_value = fake_mb_path
+
+    with mock.patch("builtins.open", mock.mock_open()) as m_open:
+        cmds.flash_drag_n_drop(fake_hex_path)
+
+    m_open.assert_any_call(fake_hex_path, "rb")
+    m_open.assert_any_call(os.path.join(fake_mb_path, "input.hex"), "wb")
+
+
+@mock.patch("ubittool.cmds.uflash.find_microbit", autospec=True)
+def test_flash_drag_n_drop_no_mb(mock_find_microbit):
+    """Check the file copy flash function."""
+    mock_find_microbit.return_value = None
+
+    with pytest.raises(Exception) as exc_info:
+        cmds.flash_drag_n_drop("not_a_real.hex")
+
+    assert "Could not find a MICROBIT drive" in str(exc_info.value)

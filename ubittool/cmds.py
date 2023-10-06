@@ -215,7 +215,7 @@ def flash_drag_n_drop(hex_path):
         raise Exception("Could not find a MICROBIT drive to flash hex.")
     with open(hex_path, "rb") as hex_file:
         hex_bytes = hex_file.read()
-    with open(os.path.join(microbit_path, "input.hex"), "wb",) as hex_write:
+    with open(os.path.join(microbit_path, "input.hex"), "wb") as hex_write:
         hex_write.write(hex_bytes)
         # Trying to force the OS to flush and sync in a blocking manner
         hex_write.flush()
