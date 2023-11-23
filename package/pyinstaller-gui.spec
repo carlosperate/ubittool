@@ -1,10 +1,23 @@
 # -*- mode: python -*-
+# PyInstaller additional datas and hidden import from:
+# https://github.com/pyocd/pyOCD/issues/1529#issuecomment-1758960044
+from PyInstaller.utils.hooks import get_package_paths, collect_entry_point
+
+datas_probe, hiddenimports_probe = collect_entry_point('pyocd.probe')
+datas_rtos, hiddenimports_rtos = collect_entry_point('pyocd.rtos')
+
+datas = [
+    (get_package_paths('pyocd')[1], 'pyocd'),
+    (get_package_paths('cmsis_pack_manager')[1], 'cmsis_pack_manager'),
+    (get_package_paths('pylink')[1], 'pylink')
+]
+
 
 a = Analysis(['../ubittool/gui.py'],
              pathex=['../'],
              binaries=None,
-             datas=None,
-             hiddenimports=[],
+             datas=datas + datas_probe + datas_rtos,
+             hiddenimports=hiddenimports_probe + hiddenimports_rtos,
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
