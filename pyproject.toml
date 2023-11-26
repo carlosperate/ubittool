@@ -31,7 +31,9 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7,<3.13"
+# Currently libusb-package is incompatible to newer Python versions
+# https://github.com/pyocd/libusb-package/issues/16
+python = "^3.7,<3.12"
 IntelHex = "^2.2.1"
 uflash = ">=1.1.0,<1.2.1"
 # This version of PyOCD fails in Python 3.10+
