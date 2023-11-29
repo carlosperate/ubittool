@@ -16,6 +16,7 @@ import sys
 import time
 import tempfile
 import webbrowser
+import multiprocessing
 from io import StringIO
 from threading import Timer
 from collections import namedtuple
@@ -222,6 +223,55 @@ def flash_drag_n_drop(hex_path):
         os.fsync(hex_write.fileno())
     # After flashing the MICROBIT drive needs some time to remount
     time.sleep(1)
+
+
+def flash_pyocd(path_to_hex, unique_id=None):
+    """Flash the micro:bit with the given hex file using PyOCD.
+
+    :param path_to_hex: Path to the hex file to flash to the micro:bit.
+    :param unique_id: Optional USB Serial number of a micro:bit to flash.
+    """
+    with programmer.MicrobitMcu(unique_id=unique_id) as mb:
+        mb.flash_hex(path_to_hex)
+
+
+def batch_flash_hex(hex_path):
+    """Flash the micro:bit with the given hex file using multiprocessing.
+
+    :param hex_path: Path to the hex file to flash to the micro:bit.
+    """
+    found_microbits = set()
+    flash_processes = []
+
+    multiprocessing.set_start_method("spawn")
+
+    while True:
+        time.sleep(1)
+        connected_microbit_ids = programmer.find_microbit_ids()
+        if not connected_microbit_ids:
+            continue
+
+        for microbit_id in connected_microbit_ids:
+            if microbit_id not in found_microbits:
+                print(f"\nNew micro:bit found: {microbit_id}")
+                found_microbits.add(microbit_id)
+                flash_process = multiprocessing.Process(
+                    target=flash_pyocd, args=(hex_path, microbit_id),
+                )
+                flash_processes.append((flash_process, microbit_id))
+                flash_process.start()
+
+        # Check exit code for all processes
+        # Remove the ones that finished and retry the ones that failed
+        for flash_process_tuple in list(flash_processes):
+            flash_process, microbit_id = flash_process_tuple
+            if flash_process.exitcode is not None:
+                flash_processes.remove(flash_process_tuple)
+                if flash_process.exitcode != 0:
+                    print(f"\nFlashing of {microbit_id} failed, retrying...")
+                    found_microbits.remove(microbit_id)
+                else:
+                    print(f"\nFlashing of {microbit_id} finished successfully")
 
 
 #

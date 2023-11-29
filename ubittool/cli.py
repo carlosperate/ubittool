@@ -12,6 +12,7 @@ from ubittool.cmds import (
     read_flash_uicr_hex,
     read_python_code,
     flash_drag_n_drop,
+    batch_flash_hex,
     compare_full_flash_hex,
 )
 
@@ -245,6 +246,37 @@ def flash_compare(compare_file_path, input_file_path):
     click.echo("Diff output loaded in the default browser.")
 
     click.echo("\nFinished successfully!")
+
+
+@cli.command()
+@click.option(
+    "-f",
+    "--file-path",
+    "file_path",
+    type=click.Path(),
+    required=True,
+    help="Flash a hex file to the micro:bit.",
+)
+def batch_flash(file_path):
+    """Flash a hex file to the micro:bit."""
+    click.echo("Executing: Batch flash of hex files")
+    if not file_path or not os.path.isfile(file_path):
+        click.echo(
+            click.style("Abort: File does not exists", fg="red"), err=True
+        )
+        sys.exit(1)
+
+    click.echo(
+        f"Any micro:bit connected via USB will be flashed with file {file_path}"
+    )
+    try:
+        batch_flash_hex(file_path)
+    except KeyboardInterrupt as ke:
+        click.echo(click.style("Aborted by user.", fg="red"), err=True)
+        sys.exit(0)
+    except Exception as e:
+        click.echo(click.style("Error: {}", fg="red").format(e), err=True)
+        sys.exit(1)
 
 
 if GUI_AVAILABLE:
