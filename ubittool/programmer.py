@@ -4,6 +4,7 @@
 from collections import namedtuple
 
 from pyocd.core.helpers import ConnectHelper
+from pyocd.flash.file_programmer import FileProgrammer
 
 
 MemoryRegions = namedtuple(
@@ -62,8 +63,9 @@ MICROPYTHON_END = PYTHON_CODE_START
 class MicrobitMcu(object):
     """Read data from main microcontroller on the micro:bit board."""
 
-    def __init__(self):
+    def __init__(self, unique_id=None):
         """Declare all instance variables."""
+        self.unique_id = unique_id
         self.session = None
         self.board = None
         self.target = None
@@ -75,6 +77,7 @@ class MicrobitMcu(object):
         if not self.session:
             try:
                 self.session = ConnectHelper.session_with_chosen_probe(
+                    unique_id=self.unique_id,
                     blocking=False,
                     auto_unlock=False,
                     halt_on_connect=True,
@@ -226,3 +229,27 @@ class MicrobitMcu(object):
             address=self.mem.uicr_start + self.mem.uicr_customer_offset,
             count=self.mem.uicr_customer_size,
         )
+
+    def flash_hex(self, hex_path):
+        """Flash the micro:bit with the provided hex file and reset it.
+
+        :param hex_path: Path to the hex file to flash.
+        """
+        self._connect()
+
+        self.target.mass_erase()
+        FileProgrammer(self.session).program(hex_path)
+        self.target.reset()
+
+
+def find_microbit_ids():
+    """Find all connected micro:bit boards and return their USB unique IDs.
+
+    :return: A tuple of strings, each containing a connected micro:bit USB ID.
+    """
+    connected_boards = ConnectHelper.get_all_connected_probes(
+        unique_id="990", blocking=False, print_wait_message=True
+    )
+    return tuple(
+        [connected_board.unique_id for connected_board in connected_boards]
+    )

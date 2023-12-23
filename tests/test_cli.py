@@ -453,3 +453,33 @@ def test_gui(mock_open_gui, check_no_board_connected):
 
     assert result.exit_code == 0, "Exit code 0"
     assert mock_open_gui.call_count == 1, "open_gui() function called"
+
+
+def test_batch_flash(check_no_board_connected):
+    """Test the batch-flash command."""
+    runner = CliRunner()
+    file_path = "/path/to/hex/file.hex"
+
+    result = runner.invoke(cli.batch_flash, ["--file-path", file_path])
+
+    assert result.exit_code != 0, "Exit code non-zero"
+    assert "Batch flash of hex file" in result.output
+
+
+@mock.patch("ubittool.cli.os.path.isfile", autospec=True)
+def test_batch_flash_exit_keyboardexception(
+    mock_isfile, check_no_board_connected
+):
+    """Test the batch-flash command."""
+    runner = CliRunner()
+    file_path = "/path/to/hex/file.hex"
+
+    # Inject KeyboardException to stop the command
+    with mock.patch(
+        "ubittool.cli.batch_flash_hex", autospec=True
+    ) as mock_batch_flash_hex:
+        mock_batch_flash_hex.side_effect = KeyboardInterrupt
+        result = runner.invoke(cli.batch_flash, ["--file-path", file_path])
+
+    assert result.exit_code == 0, "Exit code zero"
+    assert "Batch flash of hex file" in result.output
