@@ -344,3 +344,41 @@ def test_read_uicr_customer(mock_read_memory):
     assert result_data1 == data_bytes
     assert start_addres2 == 0x1000_1080
     assert result_data2 == data_bytes
+
+
+###############################################################################
+# find_microbit_ids()
+###############################################################################
+@mock.patch(
+    "ubittool.programmer.ConnectHelper.get_all_connected_probes", autospec=True
+)
+def test_find_microbit_ids(mock_get_all_connected_probes):
+    """Test find_microbit_ids()."""
+
+    class MockProbe:
+        def __init__(self, _id):
+            self.unique_id = _id
+
+    mock_get_all_connected_probes.return_value = [
+        MockProbe("9900"),
+        MockProbe("9901"),
+        MockProbe("9903"),
+        MockProbe("9904"),
+        MockProbe("9905"),
+    ]
+
+    ids = programmer.find_microbit_ids()
+
+    assert ids == ("9900", "9901", "9903", "9904", "9905")
+
+
+@mock.patch(
+    "ubittool.programmer.ConnectHelper.get_all_connected_probes", autospec=True
+)
+def test_find_microbit_ids_empty(mock_get_all_connected_probes):
+    """Test find_microbit_ids()."""
+    mock_get_all_connected_probes.return_value = []
+
+    ids = programmer.find_microbit_ids()
+
+    assert ids == tuple()

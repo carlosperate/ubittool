@@ -438,6 +438,9 @@ def test_compare_uicr_customer(
     assert mock_open_temp_html.call_count == 1
 
 
+###############################################################################
+# Flash commands
+###############################################################################
 @mock.patch("ubittool.cmds.os.fsync", autospec=True)
 @mock.patch("ubittool.cmds.uflash.find_microbit", autospec=True)
 def test_flash_drag_n_drop(mock_find_microbit, mock_fsync):
@@ -462,3 +465,13 @@ def test_flash_drag_n_drop_no_mb(mock_find_microbit):
         cmds.flash_drag_n_drop("not_a_real.hex")
 
     assert "Could not find a MICROBIT drive" in str(exc_info.value)
+
+
+@mock.patch.object(cmds.programmer.MicrobitMcu, "flash_hex", autospec=True)
+def test_flash_pyocd(mock_microbit_mcu_flash_hex):
+    """Check the flash with PyOCD function."""
+    cmds.flash_pyocd("path/to/hex_file.hex")
+
+    assert (
+        mock_microbit_mcu_flash_hex.call_args[0][1] == "path/to/hex_file.hex"
+    )
