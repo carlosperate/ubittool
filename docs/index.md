@@ -44,7 +44,7 @@ uBitTool in the terminal:
 $ ubit --help
 Usage: ubit [OPTIONS] COMMAND [ARGS]...
 
-  uBitTool v7.0.
+  uBitTool v0.8.0.
 
   CLI and GUI utility to read content from the micro:bit.
 
@@ -52,6 +52,7 @@ Options:
   --help  Show this message and exit.
 
 Commands:
+  batch-flash      Flash any micro:bit connected until Ctrl+C is pressed.
   compare          Compare the micro:bit flash contents with a hex file.
   flash-compare    Copy a hex file into the MICROBIT drive, read back the
                    flash contents, and compare them with a hex file.
