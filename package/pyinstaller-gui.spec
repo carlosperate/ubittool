@@ -18,8 +18,8 @@ datas = [
 # datas.append((get_package_paths('cmsis_pack_manager')[1], 'cmsis_pack_manager'))
 excludes = ['cmsis_pack_manager']
 
-a = Analysis(['../ubittool/gui.py'],
-             pathex=['../'],
+a = Analysis(['../src/ubittool/gui.py'],
+             pathex=['../src'],
              binaries=None,
              datas=datas + datas_probe + datas_rtos,
              hiddenimports=hiddenimports_probe + hiddenimports_rtos,

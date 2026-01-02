@@ -5,6 +5,7 @@
 No dependencies outside of what is on the Pipfile, so it works on all platforms
 without installing other stuff (e.g. Make on Windows).
 """
+
 from __future__ import print_function
 import os
 import sys
@@ -90,12 +91,12 @@ def make():
 
 @make.command()
 def linter():
-    """Run Flake8 linter with all its plugins."""
+    """Run Ruff linter."""
     _set_cwd()
     print("---------------")
     print("Running linter:")
     print("---------------")
-    return_code = _run_cli_cmd(["flake8", "ubittool/", "tests/"])
+    return_code = _run_cli_cmd(["ruff", "check", "src/ubittool/", "tests/"])
     if return_code != 0:
         sys.exit(return_code)
     print("All good :)")
@@ -104,18 +105,12 @@ def linter():
 
 @make.command()
 def style():
-    """Run Black as a linter without automatic formatting."""
+    """Run Ruff formatter check."""
     _set_cwd()
     print("----------------------")
     print("Running Style Checker:")
     print("----------------------")
-    try:
-        import black
-    except ImportError:
-        print("Black Python module not found, style check skipped.")
-        return 0
-    black_cmd = ["black", ".", "--check", "--diff"]
-    return_code = _run_cli_cmd(black_cmd)
+    return_code = _run_cli_cmd(["ruff", "format", "--check", "."])
     if return_code != 0:
         sys.exit(return_code)
     return return_code
@@ -129,11 +124,9 @@ def test():
     report = "--cov-report=xml" if os.getenv("CI") else ""
     return_code = _run_cli_cmd(
         [
-            sys.executable,
-            "-m",
             "pytest",
             "-vv",
-            "--cov=ubittool",
+            "--cov=src/ubittool",
             report,
             "tests/",
         ]
@@ -181,7 +174,7 @@ def package():
     print("------------------------")
     print("Building Python Package:")
     print("------------------------")
-    rtn_code = _run_cli_cmd(["poetry", "build"])
+    rtn_code = _run_cli_cmd(["uv", "build"])
     if rtn_code != 0:
         sys.exit(rtn_code)
     return 0
@@ -199,15 +192,12 @@ def publish_test(ctx):
     print("-----------------------------")
     rtn_code = _run_cli_cmd(
         [
-            "poetry",
-            "config",
-            "repositories.testpypi",
+            "uv",
+            "publish",
+            "--publish-url",
             "https://test.pypi.org/legacy/",
         ]
     )
-    if rtn_code != 0:
-        sys.exit(rtn_code)
-    rtn_code = _run_cli_cmd(["poetry", "publish", "-r", "testpypi"])
     if rtn_code != 0:
         sys.exit(rtn_code)
     return 0
@@ -221,19 +211,9 @@ def publish(ctx):
     ctx.invoke(package)
     _set_cwd()
     print("-----------------------------")
-    print("Publish package to test PyPI:")
+    print("Publish package to PyPI:")
     print("-----------------------------")
-    rtn_code = _run_cli_cmd(
-        [
-            "poetry",
-            "config",
-            "repositories.testpypi",
-            "https://test.pypi.org/legacy/",
-        ]
-    )
-    if rtn_code != 0:
-        sys.exit(rtn_code)
-    rtn_code = _run_cli_cmd(["poetry", "publish"])
+    rtn_code = _run_cli_cmd(["uv", "publish"])
     if rtn_code != 0:
         sys.exit(rtn_code)
     return 0

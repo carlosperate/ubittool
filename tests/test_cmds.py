@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for cmds.py module."""
+
 import os
 from io import StringIO
 from unittest import mock

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for GUI."""
+
 import sys
 from unittest import mock
 import tkinter
@@ -71,9 +72,9 @@ def test_menu_bar_presence(gui_window):
 
     top_labels = get_labels(menu_bar)
     assert "File" == top_labels[file_index], "File present in window menu"
-    assert (
-        "micro:bit" == top_labels[microbit_index]
-    ), "micro:bit present in window menu"
+    assert "micro:bit" == top_labels[microbit_index], (
+        "micro:bit present in window menu"
+    )
     assert "nrf" == top_labels[nrf_index], "nrf present in window menu"
 
     file_labels = get_labels(menu_bar.winfo_children()[file_index])
@@ -84,40 +85,40 @@ def test_menu_bar_presence(gui_window):
 
     microbit_labels = get_labels(menu_bar.winfo_children()[microbit_index])
     assert len(microbit_labels) == 2, "micro:bit menu has 3 items"
-    assert (
-        "Read MicroPython code" == microbit_labels[0]
-    ), "Read Code present in micro:bit menu"
-    assert (
-        "Read MicroPython runtime" == microbit_labels[1]
-    ), "Read Runtime present in micro:bit menu"
+    assert "Read MicroPython code" == microbit_labels[0], (
+        "Read Code present in micro:bit menu"
+    )
+    assert "Read MicroPython runtime" == microbit_labels[1], (
+        "Read Runtime present in micro:bit menu"
+    )
 
     nrf_labels = get_labels(menu_bar.winfo_children()[nrf_index])
     assert len(nrf_labels) == 9, "nrf menu has 8 items"
-    assert (
-        "Read full flash contents (Intel Hex)" == nrf_labels[0]
-    ), "Read Flash Hex present in nrf menu"
-    assert (
-        "Read full flash contents (Pretty Hex)" == nrf_labels[1]
-    ), "Read Flash UICR Pretty present in nrf menu"
-    assert (
-        "Read full RAM contents (Intel Hex)" == nrf_labels[2]
-    ), "Read RAM Hex present in nrf menu"
-    assert (
-        "Read full RAM contents (Pretty Hex)" == nrf_labels[3]
-    ), "Read RAM Pretty present in nrf menu"
+    assert "Read full flash contents (Intel Hex)" == nrf_labels[0], (
+        "Read Flash Hex present in nrf menu"
+    )
+    assert "Read full flash contents (Pretty Hex)" == nrf_labels[1], (
+        "Read Flash UICR Pretty present in nrf menu"
+    )
+    assert "Read full RAM contents (Intel Hex)" == nrf_labels[2], (
+        "Read RAM Hex present in nrf menu"
+    )
+    assert "Read full RAM contents (Pretty Hex)" == nrf_labels[3], (
+        "Read RAM Pretty present in nrf menu"
+    )
     assert "Read UICR" == nrf_labels[4], "Read UICR present in nrf menu"
-    assert (
-        "Read UICR Customer" == nrf_labels[5]
-    ), "Read UICR Customer present in nrf menu"
-    assert (
-        "Read full flash + UICR" == nrf_labels[6]
-    ), "Read Flash UICR Hex present in nrf menu"
-    assert (
-        "Compare full flash contents (Intel Hex)" == nrf_labels[7]
-    ), "Compare Flash present in nrf menu"
-    assert (
-        "Compare UICR Customer (Intel Hex)" == nrf_labels[8]
-    ), "Compare UICR in nrf menu"
+    assert "Read UICR Customer" == nrf_labels[5], (
+        "Read UICR Customer present in nrf menu"
+    )
+    assert "Read full flash + UICR" == nrf_labels[6], (
+        "Read Flash UICR Hex present in nrf menu"
+    )
+    assert "Compare full flash contents (Intel Hex)" == nrf_labels[7], (
+        "Compare Flash present in nrf menu"
+    )
+    assert "Compare UICR Customer (Intel Hex)" == nrf_labels[8], (
+        "Compare UICR in nrf menu"
+    )
 
 
 @mock.patch("ubittool.gui.cmds.read_python_code", autospec=True)

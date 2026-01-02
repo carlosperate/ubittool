@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """CLI and GUI utility to read content from the micro:bit."""
+
 import os
 import sys
 

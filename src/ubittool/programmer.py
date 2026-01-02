@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Functions to read data from the micro:bit using PyOCD."""
+
 from collections import namedtuple
 
 from pyocd.core.helpers import ConnectHelper
@@ -153,7 +154,10 @@ class MicrobitMcu(object):
             raise ValueError(
                 "Cannot read a flash address out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
-                    address, end, self.mem.flash_start, flash_end,
+                    address,
+                    end,
+                    self.mem.flash_start,
+                    flash_end,
                 )
             )
 
@@ -209,7 +213,10 @@ class MicrobitMcu(object):
             raise ValueError(
                 "Cannot read a UICR location out of boundaries.\n"
                 "Reading from {} to {},\nlimits are from {} to {}".format(
-                    address, end, self.mem.uicr_start, uicr_end,
+                    address,
+                    end,
+                    self.mem.uicr_start,
+                    uicr_end,
                 )
             )
 

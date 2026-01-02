@@ -1,5 +1,4 @@
 # -*- mode: python -*-
-# -*- mode: python -*-
 # PyInstaller additional datas and hidden import from:
 # https://github.com/pyocd/pyOCD/issues/1529#issuecomment-1758960044
 import os
@@ -23,8 +22,8 @@ excludes = ['cmsis_pack_manager']
 excludes.append('tkinter')
 
 
-a = Analysis(['../ubittool/cli.py'],
-             pathex=['../'],
+a = Analysis(['../src/ubittool/cli.py'],
+             pathex=['../src'],
              binaries=None,
              datas=datas + datas_probe + datas_rtos,
              hiddenimports=hiddenimports_probe + hiddenimports_rtos,

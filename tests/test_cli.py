@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for cli.py."""
+
 import os
 from unittest import mock
 
@@ -126,9 +127,9 @@ def test_read_code_path_no_board(check_no_board_connected):
             "MicroPython code will be written to: {}".format(file_name)
             in result.output
         ), "Message written to file"
-        assert (
-            "Did not find any connected boards." in result.output
-        ), "Message error, board not found"
+        assert "Did not find any connected boards." in result.output, (
+            "Message error, board not found"
+        )
     # File not mocked, so checking command hasn't created it
     assert not os.path.isfile(file_name), "File does not exist"
 
@@ -203,9 +204,9 @@ def test_read_flash_path_no_board(check_no_board_connected):
             "micro:bit flash hex will be written to: {}".format(file_name)
             in result.output
         ), "Message written to file"
-        assert (
-            "Did not find any connected boards." in result.output
-        ), "Message error, board not found"
+        assert "Did not find any connected boards." in result.output, (
+            "Message error, board not found"
+        )
     # File not mocked, so checking command hasn't created it
     assert not os.path.isfile(file_name), "File does not exist"
 

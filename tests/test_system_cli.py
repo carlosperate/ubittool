@@ -7,6 +7,7 @@ Here we only do a simple command line invocation to ensure we can access the
 app via terminal, and we trust that the library click implements all the
 commands as it is a fully tested package.
 """
+
 import subprocess
 import sys
 
@@ -33,7 +34,7 @@ def _ubittool_cmd(cmd_list):
     """
     module = [sys.executable, "-m", "ubittool"]
     module.extend(cmd_list)
-    script = [sys.executable, "ubittool/cli.py"]
+    script = [sys.executable, "src/ubittool/cli.py"]
     script.extend(cmd_list)
     return [_run_cli_cmd(module), _run_cli_cmd(script)]
 

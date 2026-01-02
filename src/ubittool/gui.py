@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """A GUI to display the content from performing the uBitTool actions."""
+
 import sys
 import logging
 import platform

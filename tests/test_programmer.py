@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Tests for programmer.py module."""
+
 import types
 from unittest import mock
 

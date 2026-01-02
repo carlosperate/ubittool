@@ -8,29 +8,28 @@ nav_order: 4
 
 ## Installing from Source
 
-This project uses Poetry. You can install it using their
-[installation instructions](https://poetry.eustace.io/docs/#installation).
+This project uses uv. You can install it using their
+[installation instructions](https://docs.astral.sh/uv/getting-started/installation/).
 
-Then clone the repository and install the development dependencies using
-`poetry`:
+Then clone the repository and install the development dependencies using `uv`:
 
 ```
 $ git clone https://github.com/carlosperate/ubittool.git
 $ cd ubittool
-$ poetry install
+$ uv sync
 ```
 
 If you prefer to only install the dependencies necessary to run the tool and
 skip all the development dependencies you can replace the last command with:
 
 ```
-$ poetry install --no-dev
+$ uv sync --no-dev
 ```
 
 Then to run uBitTool:
 
 ```
-$ poetry run ubit --help
+$ uv run ubit --help
 ```
 
 ## make.py
@@ -70,7 +69,7 @@ feel free to explore the other commands with the `--help` flag.
 Run all the checkers (`linter`, `test`, and `style`):
 
 ```
-$ python make.py check
+$ uv run python make.py check
 ```
 
 ### Build
@@ -78,5 +77,5 @@ $ python make.py check
 Builds the CLI and GUI executables using PyInstaller:
 
 ```
-$ python make.py build
+$ uv run python make.py build
 ```

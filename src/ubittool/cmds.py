@@ -11,6 +11,7 @@ areas of Flash (full flash, MicroPython, Python code) and UICR (to read the
 customer data), and format the output into Intel Hex, a nicely decoded string
 format, or human readable text (for the Python code).
 """
+
 import os
 import sys
 import time
@@ -256,7 +257,8 @@ def batch_flash_hex(hex_path):
                 print(f"\nNew micro:bit found: {microbit_id}")
                 found_microbits.add(microbit_id)
                 flash_process = multiprocessing.Process(
-                    target=flash_pyocd, args=(hex_path, microbit_id),
+                    target=flash_pyocd,
+                    args=(hex_path, microbit_id),
                 )
                 flash_processes.append((flash_process, microbit_id))
                 flash_process.start()
@@ -363,7 +365,10 @@ def compare_full_flash_hex(hex_file_path):
     flash_hex_lines = read_flash_hex(decode_hex=False).splitlines()
 
     html_code = _gen_diff_html(
-        "micro:bit", flash_hex_lines, "Hex file", file_hex_lines,
+        "micro:bit",
+        flash_hex_lines,
+        "Hex file",
+        file_hex_lines,
     )
     _open_temp_html(html_code)
 

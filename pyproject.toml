@@ -1,18 +1,17 @@
 [build-system]
-requires = ["setuptools", "poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build"]
+build-backend = "uv_build"
 
-# Poetry settings
-[tool.poetry]
+[project]
 name = "ubittool"
 version = "0.8.0"
 description = "Tool to interface with the BBC micro:bit."
-authors = ["Carlos Pereira Atencio <carlosperate@embeddedlog.com>"]
-license = "MIT"
-homepage = "https://carlosperate.github.io/ubittool/"
-repository = "https://github.com/carlosperate/ubittool/"
-documentation = "https://carlosperate.github.io/ubittool/"
+authors = [
+  { name = "Carlos Pereira Atencio", email = "carlosperate@embeddedlog.com" },
+]
+license = { text = "MIT" }
 readme = "README.md"
+requires-python = ">=3.8, <3.14"
 keywords = ["microbit", "micro:bit", "bbcmicrobit", "ubittool"]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -29,62 +28,62 @@ classifiers = [
   "Topic :: Education",
   "Topic :: Software Development :: Embedded Systems",
 ]
+dependencies = [
+  "IntelHex>=2.2.1",
+  "uflash>=1.1.0,<1.2.1",
+  "pyocd==0.36.0",
+  "click>=7.0",
+]
 
-[tool.poetry.dependencies]
-# libusb-package is not compatible with Python 3.12+
-# https://github.com/pyocd/libusb-package/issues/16
-# Pyinstaller requires Python <3.13,>=3.7
-python = "^3.7,<3.12"
-IntelHex = "^2.2.1"
-uflash = ">=1.1.0,<1.2.1"
-# This version of PyOCD fails in Python 3.10+
-pyocd = "0.36.0"
-click = "^7.0"
+[dependency-groups]
+dev = [
+  "pyinstaller>=5.13.2",
+  "macholib>=1.8; sys_platform == 'darwin'",
+  "pywin32>=303; sys_platform == 'win32'",
+  "pywin32-ctypes>=0.2.0; sys_platform == 'win32'",
+  # PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
+  # Travis doesn't pick it up and PyOCD fails to install or run
+  "setuptools_scm",
+  "ruff",
+  "pytest>=7.4.3",
+  "pytest-cov>=4.1.0",
+]
 
-[tool.poetry.dev-dependencies]
-# Packaging, PyInstaller needs macholib for macOS, pywin32 for Windows
-pyinstaller = "^5.13.2"
-macholib = { version = "^1.8", platform = "darwin" }
-pywin32 = { version = "^303", platform = "windows" }
-pywin32-ctypes = { version = "^0.2.0", platform = "windows" }
-# PyOCD needs this as a setup_requires, for some reason 'pipenv install' in
-# Travis doesn't pick it up and PyOCD fails to install or run
-setuptools_scm = "*"
-# Linting
-flake8 = "*"
-flake8-bugbear = { version = "*", python = "^3.5" }
-flake8-builtins = "*"
-flake8-docstrings = "*"
-black = { version = "19.10b0", python = "^3.6" }
-# Tests
-pytest = "^7.4.3"
-pytest-cov = "^4.1.0"
+[project.scripts]
+ubit = "ubittool.__main__:main"
 
-[tool.poetry.scripts]
-ubit = 'ubittool.__main__:main'
+[project.urls]
+Homepage = "https://carlosperate.github.io/ubittool/"
+Repository = "https://github.com/carlosperate/ubittool/"
+Documentation = "https://carlosperate.github.io/ubittool/"
 
-# Black settings
-[tool.black]
+[tool.ruff]
 line-length = 79
-target-version = ['py35']
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  # Above this line are defaults and below are project specific
-  | ignoreme
-)/
-'''
+target-version = "py38"
+exclude = [
+  ".eggs",
+  ".git",
+  ".hg",
+  ".mypy_cache",
+  ".tox",
+  ".venv",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "ignoreme",
+]
 
-# Coverage settings
+[tool.ruff.lint]
+# Enable Pyflakes (F) and a subset of the pycodestyle (E) codes by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
 [tool.coverage.run]
 branch = false
 
