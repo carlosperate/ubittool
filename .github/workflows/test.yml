@@ -6,34 +6,29 @@ jobs:
   run-tests:
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-11, windows-2019]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
-        # There are issues with Tkinter & Python in the GH Actions environment
-        # So we control which exact minor versions are used, which are known to
-        # work, but unfortunately don't have a release for the Windows runner
-        # The latest Python 3.7 to 3.10 minor releases have this tkinter error:
-        #   RuntimeError: tk.h version (8.5) doesn't match libtk.a version (8.6)
-        #   https://github.com/actions/setup-python/issues/649
+        # macOS 15 Intel runner is x86_64 and macOS 14 runner is arm64
+        os: [ubuntu-22.04, macos-15-intel, macos-14, windows-2019]
+        python-version: ["3.7","3.8", "3.9", "3.10", "3.11"]
         exclude:
-          - os: macos-11
+          # 3.7 not available for arm macOS
+          - os: macos-14
+            python-version: "3.7"
+          # Issues with tkinter & the Python built by setup-python in macOS
+          # https://github.com/actions/setup-python/issues/649#issuecomment-2601049254
+          - os: macos-15-intel
+            python-version: "3.7"
         include:
-          - os: macos-11
+          # This older version does work
+          # https://github.com/actions/setup-python/issues/649#issuecomment-1903762448
+          - os: macos-15-intel
             python-version: "3.7.15"
-          - os: macos-11
-            python-version: "3.8.15"
-          - os: macos-11
-            python-version: "3.9.15"
-          - os: macos-11
-            python-version: "3.10.10"
-          - os: macos-11
-            python-version: "3.11"
       fail-fast: false
     name: Py ${{ matrix.python-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -53,4 +48,4 @@ jobs:
         if: runner.os != 'Linux'
         run: poetry run python make.py check
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5

@@ -31,8 +31,9 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-# Currently libusb-package is incompatible to newer Python versions
+# libusb-package is not compatible with Python 3.12+
 # https://github.com/pyocd/libusb-package/issues/16
+# Pyinstaller requires Python <3.13,>=3.7
 python = "^3.7,<3.12"
 IntelHex = "^2.2.1"
 uflash = ">=1.1.0,<1.2.1"
